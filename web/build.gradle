@@ -1,0 +1,25 @@
+plugins {
+    id 'war'
+}
+
+group = 'com.epam'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: servletApiVersion
+    compileOnly group: 'javax.websocket', name: 'javax.websocket-api', version: websocketVersion
+
+    implementation group: 'org.springframework', name: 'spring-web', version: springVersion
+    implementation group: 'org.springframework', name: 'spring-webmvc', version: springVersion
+
+    implementation project(":service")
+}
+
+war {
+    archiveName 'certificates.war'
+}

@@ -1,0 +1,13 @@
+plugins {
+    id 'java'
+}
+
+dependencies {
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: modelMapperVersion
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
+
+    implementation project(":repository")
+
+    testImplementation group: 'org.springframework', name: 'spring-test', version: springVersion
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.9.0'
+}

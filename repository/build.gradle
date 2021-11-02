@@ -1,0 +1,12 @@
+plugins {
+    id 'java'
+}
+
+dependencies {
+    implementation group: 'mysql', name: 'mysql-connector-java', version: mysqlConnectorVersion
+    implementation group: 'org.apache.commons', name: 'commons-dbcp2', version: dbcpVersion
+    implementation group: 'com.h2database', name: 'h2', version: h2Version
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
+
+    testImplementation group: 'org.springframework', name: 'spring-test', version: springVersion
+}
