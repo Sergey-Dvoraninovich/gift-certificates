@@ -101,7 +101,7 @@ public class GiftCertificateServiceTest {
         when(giftCertificateDtoMapper.toEntity(certificateDto)).thenReturn(certificate);
         when(giftCertificateDtoMapper.toDto(certificate, tags)).thenReturn(certificateDto);
         when(giftCertificateValidator.validate(any(String.class), any(String.class), any(String.class),
-                any(String.class), any(String.class), any(String.class))).thenReturn(Collections.emptyList());
+                any(String.class))).thenReturn(Collections.emptyList());
         when(tagValidator.validate(any(String.class))).thenReturn(new ArrayList<>());
 
         when(giftCertificateRepository.findByName(certificate.getName())).thenReturn(Optional.empty());
@@ -132,7 +132,7 @@ public class GiftCertificateServiceTest {
         when(giftCertificateDtoMapper.toDto(any(GiftCertificate.class), eq(tags))).thenReturn(updatedCertificateDto);
 
         when(giftCertificateValidator.validate(any(String.class), any(String.class), any(String.class),
-                any(String.class), any(String.class), any(String.class))).thenReturn(Collections.emptyList());
+                any(String.class))).thenReturn(Collections.emptyList());
         when(tagValidator.validate(any(String.class))).thenReturn(new ArrayList<>());
 
         when(giftCertificateRepository.findById(updatedCertificate.getId())).thenReturn(Optional.of(certificate));

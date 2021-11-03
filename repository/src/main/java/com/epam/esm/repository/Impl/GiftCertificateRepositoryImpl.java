@@ -27,8 +27,6 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     private static final String DESCRIPTION_PARAM = "description";
     private static final String PRICE_PARAM = "price";
     private static final String DURATION_PARAM = "duration";
-    private static final String CREATE_DATE_PARAM = "createDate";
-    private static final String LAST_UPDATE_DATE_PARAM = "lastUpdateDate";
 
     private static final String TAG_NAME_PARAM = "tagName";
     private static final String ID_GIFT_CERTIFICATE_PARAM = "idGiftCertificate";
@@ -76,12 +74,12 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
 
     private static final String INSERT_GIFT_CERTIFICATE
             = "INSERT INTO gift_certificates(name, description, price, duration, create_date, last_update_date) "
-            + "VALUES (:name, :description, :price, :duration, :createDate, :lastUpdateDate);";
+            + "VALUES (:name, :description, :price, :duration, CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3));";
 
     private static final String UPDATE_GIFT_CERTIFICATE
             = "UPDATE gift_certificates SET gift_certificates.name = :name, gift_certificates.description = :description, "
             +        "gift_certificates.price = :price, gift_certificates.duration = :duration, "
-            +        "gift_certificates.create_date = :createDate, gift_certificates.last_update_date = :lastUpdateDate "
+            +        "gift_certificates.last_update_date = CURRENT_TIMESTAMP(3) "
             + "WHERE gift_certificates.id = :id;";
 
     private static final String DELETE_GIFT_CERTIFICATE
@@ -94,7 +92,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
 
     private static final String DELETE_GIFT_CERTIFICATE_TAG
             = "DELETE FROM gift_certificates_tags "
-            + "WHERE gift_certificates_tags.id_gift_certificate = :idGiftCertificate,"
+            + "WHERE gift_certificates_tags.id_gift_certificate = :idGiftCertificate AND "
             +       "gift_certificates_tags.id_tag = :idTag;";
 
 
@@ -182,7 +180,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         parameters.addValue(ID_GIFT_CERTIFICATE_PARAM, certificateId);
         parameters.addValue(ID_TAG_PARAM, tagId);
 
-        int result = namedJdbcTemplate.update(ADD_GIFT_CERTIFICATE_TAG, parameters);
+        int result = namedJdbcTemplate.update(DELETE_GIFT_CERTIFICATE_TAG, parameters);
         return result > 0;
     }
 
@@ -194,8 +192,6 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         parameters.addValue(DESCRIPTION_PARAM, certificate.getDescription());
         parameters.addValue(PRICE_PARAM, certificate.getPrice());
         parameters.addValue(DURATION_PARAM, certificate.getDuration().toDays());
-        parameters.addValue(CREATE_DATE_PARAM, certificate.getCreateDate());
-        parameters.addValue(LAST_UPDATE_DATE_PARAM, certificate.getLastUpdateDate());
 
         namedJdbcTemplate.update(INSERT_GIFT_CERTIFICATE, parameters, keyHolder);
 
@@ -210,8 +206,6 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         parameters.addValue(DESCRIPTION_PARAM, certificate.getDescription());
         parameters.addValue(PRICE_PARAM, certificate.getPrice());
         parameters.addValue(DURATION_PARAM, certificate.getDuration().toDays());
-        parameters.addValue(CREATE_DATE_PARAM, certificate.getCreateDate());
-        parameters.addValue(LAST_UPDATE_DATE_PARAM, certificate.getLastUpdateDate());
         parameters.addValue(ID_PARAM, certificate.getId());
 
         int result = namedJdbcTemplate.update(UPDATE_GIFT_CERTIFICATE, parameters);

@@ -48,47 +48,46 @@ public class GiftCertificateValidator {
         }
         if (validationErrors.size() == 0) {
             validationErrors.addAll(validate(certificateDto.getName(), certificateDto.getDescription(), certificateDto.getPrice().toString(),
-                    String.valueOf(certificateDto.getDuration().toDays()), null, null));
+                    String.valueOf(certificateDto.getDuration().toDays())));
         }
         return validationErrors;
     }
 
-    public List<ValidationError> validate(String name, String description, String price,
-                                                     String duration, String createDate, String lastUpdateDate) {
+    public List<ValidationError> validate(String name, String description, String price, String duration) {
         List<ValidationError> validationErrors = new ArrayList<>();
 
         if (name != null) {
             if (name.length() < NAME_MIN_LENGTH) {
-                validationErrors.add(TOO_SHORT_NAME);
+                validationErrors.add(TOO_SHORT_GIFT_CERTIFICATE_NAME);
             }
             else if (name.length() > NAME_MAX_LENGTH) {
-                validationErrors.add(TOO_LONG_NAME);
+                validationErrors.add(TOO_LONG_GIFT_CERTIFICATE_NAME);
             }
             else {
                 if (!Pattern.matches(NAME_NO_LEADING_SYMBOLS_REGEXP, name)
                         && Pattern.matches(NAME_SYMBOLS_REGEXP, name)) {
-                    validationErrors.add(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_NAME);
+                    validationErrors.add(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_GIFT_CERTIFICATE_NAME);
                 }
                 if (!Pattern.matches(NAME_SYMBOLS_REGEXP, name)) {
-                    validationErrors.add(INVALID_SYMBOLS_IN_NAME);
+                    validationErrors.add(INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_NAME);
                 }
             }
         }
 
         if (description != null) {
             if (description.length() < DESCRIPTION_MIN_LENGTH) {
-                validationErrors.add(TOO_SHORT_DESCRIPTION);
+                validationErrors.add(TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION);
             }
             else if (description.length() > DESCRIPTION_MAX_LENGTH) {
-                validationErrors.add(TOO_LONG_DESCRIPTION);
+                validationErrors.add(TOO_LONG_GIFT_CERTIFICATE_DESCRIPTION);
             }
             else {
                 if (!Pattern.matches(DESCRIPTION_NO_LEADING_SYMBOLS_REGEXP, description)
                     && Pattern.matches(DESCRIPTION_SYMBOLS_REGEXP, description)) {
-                    validationErrors.add(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_DESCRIPTION);
+                    validationErrors.add(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION);
                 }
                 if (!Pattern.matches(DESCRIPTION_SYMBOLS_REGEXP, description)) {
-                    validationErrors.add(INVALID_SYMBOLS_IN_DESCRIPTION);
+                    validationErrors.add(INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION);
                 }
             }
         }
@@ -96,32 +95,32 @@ public class GiftCertificateValidator {
         if (duration != null) {
             if (!Pattern.matches(DURATION_REGEXP, duration)) {
                 if (Pattern.matches(DURATION_VALID_UNLIMITED_REGEXP, duration)) {
-                    validationErrors.add(TOO_LONG_DURATION);
+                    validationErrors.add(TOO_LONG_GIFT_CERTIFICATE_DURATION);
                 }
                 else {
-                    validationErrors.add(INVALID_SYMBOLS_IN_DURATION);
+                    validationErrors.add(INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DURATION);
                 }
             } else {
                 Duration durationValue = Duration.ofDays(Long.parseLong(duration));
                 if (durationValue.compareTo(MIN_DURATION) < 0) {
-                     validationErrors.add(TOO_SHORT_DURATION);
+                     validationErrors.add(TOO_SHORT_GIFT_CERTIFICATE_DURATION);
                 }
                 if (MAX_DURATION.compareTo(durationValue) < 0) {
-                     validationErrors.add(TOO_LONG_DURATION);
+                     validationErrors.add(TOO_LONG_GIFT_CERTIFICATE_DURATION);
                 }
             }
         }
 
         if (price != null) {
             if (!Pattern.matches(PRICE_REGEXP, price)) {
-                validationErrors.add(INVALID_PRICE_FORMAT);
+                validationErrors.add(INVALID_GIFT_CERTIFICATE_PRICE_FORMAT);
             } else {
                 BigDecimal priceValue = new BigDecimal(price);
                 if (priceValue.compareTo(MIN_PRICE) < 0) {
-                    validationErrors.add(TOO_SMALL_PRICE);
+                    validationErrors.add(TOO_SMALL_GIFT_CERTIFICATE_PRICE);
                 }
                 if (MAX_PRICE.compareTo(priceValue) < 0) {
-                    validationErrors.add(TOO_BIG_PRICE);
+                    validationErrors.add(TOO_BIG_GIFT_CERTIFICATE_PRICE);
                 }
             }
         }

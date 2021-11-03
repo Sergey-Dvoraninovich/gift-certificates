@@ -54,13 +54,13 @@ public class GiftCertificateSearchParamsValidator {
 
         if (certificateDescription != null) {
             if (certificateDescription.length() < DESCRIPTION_MIN_LENGTH) {
-                validationErrors.add(TOO_SHORT_DESCRIPTION);
+                validationErrors.add(TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION);
             }
             else if (certificateDescription.length() > DESCRIPTION_MAX_LENGTH) {
-                validationErrors.add(TOO_LONG_DESCRIPTION);
+                validationErrors.add(TOO_LONG_GIFT_CERTIFICATE_DESCRIPTION);
             }
             else if (!Pattern.matches(DESCRIPTION_REGEXP, certificateDescription)) {
-                validationErrors.add(INVALID_SYMBOLS_IN_DESCRIPTION);
+                validationErrors.add(INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION);
             }
         }
 

@@ -140,7 +140,7 @@ public class GiftCertificateRepositoryTest {
 
     @Test
     void testRemoveCertificateTag() {
-        boolean result = giftCertificateRepository.addCertificateTag(1L, 1L);
+        boolean result = giftCertificateRepository.removeCertificateTag(1L, 1L);
 
         assertTrue(result);
     }
@@ -211,8 +211,8 @@ public class GiftCertificateRepositoryTest {
         giftCertificate.setDescription("New certificate for test");
         giftCertificate.setPrice(new BigDecimal("200.00"));
         giftCertificate.setDuration(Duration.ofDays(365));
-        giftCertificate.setCreateDate(LocalDateTime.now(UTC));
-        giftCertificate.setLastUpdateDate(LocalDateTime.now(UTC));
+        //giftCertificate.setCreateDate(LocalDateTime.now(UTC));
+        //giftCertificate.setLastUpdateDate(LocalDateTime.now(UTC));
         return giftCertificate;
     }
 

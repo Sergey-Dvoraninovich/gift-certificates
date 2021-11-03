@@ -33,18 +33,18 @@ public class TagValidator {
 
         if (name != null) {
             if (name.length() < NAME_MIN_LENGTH) {
-                validationErrors.add(TOO_SHORT_NAME);
+                validationErrors.add(TOO_SHORT_TAG_NAME);
             }
             else if (name.length() > NAME_MAX_LENGTH) {
-                validationErrors.add(TOO_LONG_NAME);
+                validationErrors.add(TOO_LONG_TAG_NAME);
             }
             else {
                 if (!Pattern.matches(NAME_NO_LEADING_SYMBOLS_REGEXP, name)
                         && Pattern.matches(NAME_SYMBOLS_REGEXP, name)) {
-                    validationErrors.add(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_NAME);
+                    validationErrors.add(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_TAG_NAME);
                 }
                 if (!Pattern.matches(NAME_SYMBOLS_REGEXP, name)) {
-                    validationErrors.add(INVALID_SYMBOLS_IN_NAME);
+                    validationErrors.add(INVALID_SYMBOLS_IN_TAG_NAME);
                 }
             }
         }

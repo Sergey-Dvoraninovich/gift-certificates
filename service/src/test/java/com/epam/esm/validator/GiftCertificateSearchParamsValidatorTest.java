@@ -1,13 +1,8 @@
 package com.epam.esm.validator;
 
-import com.epam.esm.dto.mapping.MapperConfiguration;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,9 +51,9 @@ public class GiftCertificateSearchParamsValidatorTest {
         testCases.add(Arguments.of(null, null, null, "Description", null, Collections.emptyList()));
         testCases.add(Arguments.of(null, null, null, generateString("Description", 2), null, Collections.emptyList()));
         testCases.add(Arguments.of(null, null, null, generateString("Description", 500), null, Collections.emptyList()));
-        testCases.add(Arguments.of(null, null, null, "Description$", null, Collections.singletonList(INVALID_SYMBOLS_IN_DESCRIPTION)));
-        testCases.add(Arguments.of(null, null, null, "D", null, Collections.singletonList(TOO_SHORT_DESCRIPTION)));
-        testCases.add(Arguments.of(null, null, null, generateString("Description", 501), null, Collections.singletonList(TOO_LONG_DESCRIPTION)));
+        testCases.add(Arguments.of(null, null, null, "Description$", null, Collections.singletonList(INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION)));
+        testCases.add(Arguments.of(null, null, null, "D", null, Collections.singletonList(TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION)));
+        testCases.add(Arguments.of(null, null, null, generateString("Description", 501), null, Collections.singletonList(TOO_LONG_GIFT_CERTIFICATE_DESCRIPTION)));
 
         testCases.add(Arguments.of(null, null, null, null, DESC, Collections.emptyList()));
         testCases.add(Arguments.of(null, null, null, null, "Error", Collections.singletonList(INVALID_CREATE_DATE_ORDERING_TYPE)));

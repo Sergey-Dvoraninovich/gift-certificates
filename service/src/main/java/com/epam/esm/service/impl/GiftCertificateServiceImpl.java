@@ -1,6 +1,7 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.mapping.GiftCertificateDtoMapper;
 import com.epam.esm.dto.mapping.TagDtoMapper;
 import com.epam.esm.entity.GiftCertificate;
@@ -98,21 +99,25 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             throw new InvalidEntityException(validationErrors, GiftCertificateDto.class);
         }
 
-        List<Tag> certificateTags = processTags(certificateDto);
-
         GiftCertificate certificate = giftCertificateDtoMapper.toEntity(certificateDto);
         String name = certificate.getName();
         if (giftCertificateRepository.findByName(name).isPresent()) {
             throw new EntityAlreadyExistsException();
         }
 
-        certificate.setCreateDate(LocalDateTime.now(UTC));
-        certificate.setLastUpdateDate(LocalDateTime.now(UTC));
         long certificateId = giftCertificateRepository.create(certificate);
         certificate.setId(certificateId);
 
-        updateCertificateTagsRepository(certificate, certificateTags);
+        List<Tag> certificateTags;
+        if (certificateDto.getTagsDto() != null) {
+            certificateTags = processTags(certificateDto.getTagsDto());
+            updateCertificateTagsRepository(certificate, certificateTags);
+        }
+        else {
+            certificateTags = new ArrayList<>();
+        }
 
+        certificate = giftCertificateRepository.findById(certificateId).get();
         return giftCertificateDtoMapper.toDto(certificate, certificateTags);
     }
 
@@ -120,10 +125,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     public GiftCertificateDto update(GiftCertificateDto certificateDto) {
         GiftCertificate certificate = giftCertificateDtoMapper.toEntity(certificateDto);
-        
+
+        String priceString = certificate.getPrice() == null ? null : certificate.getPrice().toString();
+        String durationString = certificate.getDuration() == null ? null : String.valueOf(certificate.getDuration().toDays());
         List<ValidationError> validationErrors = giftCertificateValidator.validate(certificate.getName(), certificate.getDescription(),
-                certificate.getPrice().toString(), String.valueOf(certificate.getDuration().toDays()),
-                certificate.getCreateDate().toString(), certificate.getLastUpdateDate().toString());
+                priceString, durationString);
 
         if (!validationErrors.isEmpty()) {
             throw new InvalidEntityException(validationErrors, GiftCertificateDto.class);
@@ -133,20 +139,25 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         long id = certificate.getId();
         Optional<GiftCertificate> optionalCertificate = giftCertificateRepository.findById(id);
         if (!optionalCertificate.isPresent()) {
-            throw new EntityAlreadyExistsException();
+            throw new EntityNotFoundException(id, GiftCertificateDto.class);
         }
         else {
             storedCertificate = optionalCertificate.get();
         }
+
         updateFields(storedCertificate, certificate);
-
-        List<Tag> certificateTags = processTags(certificateDto);
-
-        storedCertificate.setLastUpdateDate(LocalDateTime.now(UTC));
         giftCertificateRepository.update(storedCertificate);
 
-        updateCertificateTagsRepository(storedCertificate, certificateTags);
+        List<Tag> certificateTags;
+        if (certificateDto.getTagsDto() != null) {
+            certificateTags = processTags(certificateDto.getTagsDto());
+            updateCertificateTagsRepository(storedCertificate, certificateTags);
+        }
+        else {
+            certificateTags = tagRepository.findByCertificateId(storedCertificate.getId());
+        }
 
+        storedCertificate = giftCertificateRepository.findById(id).get();
         return giftCertificateDtoMapper.toDto(storedCertificate, certificateTags);
     }
 
@@ -165,35 +176,28 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         String description = certificate.getDescription();
         BigDecimal price = certificate.getPrice();
         Duration duration = certificate.getDuration();
-        LocalDateTime createDate = certificate.getCreateDate();
-        LocalDateTime lastUpdateDate = certificate.getLastUpdateDate();
 
         storedCertificate.setName(name == null ? storedCertificate.getName() : name);
         storedCertificate.setDescription(description == null ? storedCertificate.getDescription() : description);
         storedCertificate.setPrice(price == null ? storedCertificate.getPrice() : price);
         storedCertificate.setDuration(duration == null ? storedCertificate.getDuration() : duration);
-        storedCertificate.setCreateDate(createDate == null ? storedCertificate.getCreateDate() : createDate);
-        storedCertificate.setLastUpdateDate(lastUpdateDate == null ? storedCertificate.getLastUpdateDate() : lastUpdateDate);
     }
 
-    private List<Tag> processTags(GiftCertificateDto certificateDto){
-        List<Tag> certificateTags = new ArrayList<>();
-        if (certificateDto.getTagsDto() != null) {
-            certificateTags = certificateDto.getTagsDto()
+    private List<Tag> processTags(List<TagDto> certificateTagsDto){
+        List<Tag> certificateTags = certificateTagsDto
                     .stream()
                     .map(tagDtoMapper::toEntity)
                     .collect(Collectors.toList());
-        }
         for (Tag tag: certificateTags) {
-            List<ValidationError> validationErrors = tagValidator.validate(tag.getName());
-
-            if (!validationErrors.isEmpty()) {
-                throw new InvalidEntityException(validationErrors, Tag.class);
-            }
-
             Optional<Tag> tagOptional = tagRepository.findByName(tag.getName());
 
             if (!tagOptional.isPresent()) {
+                List<ValidationError> validationErrors = tagValidator.validate(tag.getName());
+
+                if (!validationErrors.isEmpty()) {
+                    throw new InvalidEntityException(validationErrors, Tag.class);
+                }
+
                 long tagId;
                 tagId = tagRepository.create(tag);
                 tag.setId(tagId);
