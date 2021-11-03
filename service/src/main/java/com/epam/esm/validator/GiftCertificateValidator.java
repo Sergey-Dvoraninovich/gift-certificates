@@ -13,14 +13,14 @@ import static com.epam.esm.validator.ValidationError.*;
 
 @Component
 public class GiftCertificateValidator {
-    private static final String NAME_NO_LEADING_SYMBOLS_REGEXP = "^[A-Za-z]{1}[A-Za-z\\s]{1,498}[A-Za-z]{1}$";
-    private static final String NAME_SYMBOLS_REGEXP = "^[A-Za-z\\s]{3,45}$";
-    private static final int NAME_MIN_LENGTH = 3;
+    private static final String NAME_NO_LEADING_SYMBOLS_REGEXP = "^[A-Za-z]{1}[A-Za-z\\s]{0,498}[A-Za-z]{1}$";
+    private static final String NAME_SYMBOLS_REGEXP = "^[A-Za-z\\s]{2,45}$";
+    private static final int NAME_MIN_LENGTH = 2;
     private static final int NAME_MAX_LENGTH = 45;
 
-    private static final String DESCRIPTION_NO_LEADING_SYMBOLS_REGEXP = "^[A-Za-z]{1}[A-Za-z,.:;!?\\s]{1,498}[A-Za-z]{1}$";
-    private static final String DESCRIPTION_SYMBOLS_REGEXP = "^[A-Za-z,.:;!?\\s]{3,500}$";
-    private static final int DESCRIPTION_MIN_LENGTH = 3;
+    private static final String DESCRIPTION_NO_LEADING_SYMBOLS_REGEXP = "^[A-Za-z]{1}[A-Za-z,.:;!?\\s]{0,498}[A-Za-z,.:;!?]{1}$";
+    private static final String DESCRIPTION_SYMBOLS_REGEXP = "^[A-Za-z,.:;!?\\s]{2,500}$";
+    private static final int DESCRIPTION_MIN_LENGTH = 2;
     private static final int DESCRIPTION_MAX_LENGTH = 500;
 
     private static final String DURATION_REGEXP = "^\\d{1,4}$";
@@ -32,28 +32,28 @@ public class GiftCertificateValidator {
     private static final BigDecimal MIN_PRICE = new BigDecimal("9.99");
     private static final BigDecimal MAX_PRICE = new BigDecimal("10000");
 
-    public List<ValidationError> validate(GiftCertificateDto certificateDto) {
+    public List<ValidationError> validateWithRequiredParams(GiftCertificateDto certificateDto) {
         List<ValidationError> validationErrors = new ArrayList<>();
         if (certificateDto.getName() == null){
-            validationErrors.add(NAME_REQUIRED);
+            validationErrors.add(GIFT_CERTIFICATE_NAME_REQUIRED);
         }
         if (certificateDto.getDescription() == null){
-            validationErrors.add(DESCRIPTION_REQUIRED);
+            validationErrors.add(GIFT_CERTIFICATE_DESCRIPTION_REQUIRED);
         }
         if (certificateDto.getPrice() == null){
-            validationErrors.add(PRICE_REQUIRED);
+            validationErrors.add(GIFT_CERTIFICATE_PRICE_REQUIRED);
         }
         if (certificateDto.getDuration() == null){
-            validationErrors.add(DURATION_REQUIRED);
+            validationErrors.add(GIFT_CERTIFICATE_DURATION_REQUIRED);
         }
         if (validationErrors.size() == 0) {
-            validationErrors.addAll(validate(certificateDto.getName(), certificateDto.getDescription(), certificateDto.getPrice().toString(),
+            validationErrors.addAll(validateParams(certificateDto.getName(), certificateDto.getDescription(), certificateDto.getPrice().toString(),
                     String.valueOf(certificateDto.getDuration().toDays())));
         }
         return validationErrors;
     }
 
-    public List<ValidationError> validate(String name, String description, String price, String duration) {
+    public List<ValidationError> validateParams(String name, String description, String price, String duration) {
         List<ValidationError> validationErrors = new ArrayList<>();
 
         if (name != null) {

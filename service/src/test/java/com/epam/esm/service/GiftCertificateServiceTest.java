@@ -100,10 +100,10 @@ public class GiftCertificateServiceTest {
 
         when(giftCertificateDtoMapper.toEntity(certificateDto)).thenReturn(certificate);
         when(giftCertificateDtoMapper.toDto(certificate, tags)).thenReturn(certificateDto);
-        when(giftCertificateValidator.validate(any(String.class), any(String.class), any(String.class),
-                any(String.class))).thenReturn(Collections.emptyList());
-        when(tagValidator.validate(any(String.class))).thenReturn(new ArrayList<>());
+        when(giftCertificateValidator.validateWithRequiredParams(any(GiftCertificateDto.class))).thenReturn(Collections.emptyList());
+        when(tagValidator.validateParams(any(String.class))).thenReturn(new ArrayList<>());
 
+        when(giftCertificateRepository.findById(certificate.getId())).thenReturn(Optional.of(certificate));
         when(giftCertificateRepository.findByName(certificate.getName())).thenReturn(Optional.empty());
         when(giftCertificateRepository.create(any(GiftCertificate.class))).thenReturn(certificate.getId());
         for (int i = 0; i < tags.size(); i++){
@@ -131,9 +131,9 @@ public class GiftCertificateServiceTest {
         when(giftCertificateDtoMapper.toEntity(updatedCertificateDto)).thenReturn(updatedCertificate);
         when(giftCertificateDtoMapper.toDto(any(GiftCertificate.class), eq(tags))).thenReturn(updatedCertificateDto);
 
-        when(giftCertificateValidator.validate(any(String.class), any(String.class), any(String.class),
+        when(giftCertificateValidator.validateParams(any(String.class), any(String.class), any(String.class),
                 any(String.class))).thenReturn(Collections.emptyList());
-        when(tagValidator.validate(any(String.class))).thenReturn(new ArrayList<>());
+        when(tagValidator.validateParams(any(String.class))).thenReturn(new ArrayList<>());
 
         when(giftCertificateRepository.findById(updatedCertificate.getId())).thenReturn(Optional.of(certificate));
         when(giftCertificateRepository.update(any(GiftCertificate.class))).thenReturn(true);

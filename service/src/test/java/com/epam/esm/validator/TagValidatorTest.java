@@ -1,17 +1,13 @@
 package com.epam.esm.validator;
 
-import com.epam.esm.dto.mapping.MapperConfiguration;
-import org.junit.jupiter.api.extension.ExtendWith;
+import com.epam.esm.dto.TagDto;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,9 +19,20 @@ public class TagValidatorTest {
 
     @ParameterizedTest
     @MethodSource("provideTagParams")
-    void testFindByParams(String name, List<ValidationError> expected) {
+    void testTagsValidator(String name, List<ValidationError> expected) {
 
-        List<ValidationError> actual = tagValidator.validate(name);
+        List<ValidationError> actual = tagValidator.validateParams(name);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void testTagsValidator() {
+        List<ValidationError> expected = Arrays.asList(TAG_NAME_REQUIRED);
+        TagDto testTag = provideTagDto();
+        testTag.setName(null);
+
+        List<ValidationError> actual = tagValidator.validateWithRequiredParams(testTag);
 
         assertEquals(expected, actual);
     }
@@ -34,12 +41,12 @@ public class TagValidatorTest {
         List<Arguments> testCases = new ArrayList<>();
 
         testCases.add(Arguments.of("name", Collections.emptyList()));
-        testCases.add(Arguments.of(generateString("name", 3), Collections.emptyList()));
+        testCases.add(Arguments.of(generateString("name", 2), Collections.emptyList()));
         testCases.add(Arguments.of(generateString("name", 45), Collections.emptyList()));
-        testCases.add(Arguments.of("name!", Collections.singletonList(INVALID_SYMBOLS_IN_NAME)));
-        testCases.add(Arguments.of(" name ", Collections.singletonList(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_NAME)));
-        testCases.add(Arguments.of("n", Collections.singletonList(TOO_SHORT_NAME)));
-        testCases.add(Arguments.of(generateString("name", 46), Collections.singletonList(TOO_LONG_NAME)));
+        testCases.add(Arguments.of("name!", Collections.singletonList(INVALID_SYMBOLS_IN_TAG_NAME)));
+        testCases.add(Arguments.of(" name ", Collections.singletonList(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_TAG_NAME)));
+        testCases.add(Arguments.of("n", Collections.singletonList(TOO_SHORT_TAG_NAME)));
+        testCases.add(Arguments.of(generateString("name", 46), Collections.singletonList(TOO_LONG_TAG_NAME)));
 
         return testCases;
     }
@@ -50,5 +57,12 @@ public class TagValidatorTest {
             result.append(line);
         }
         return result.substring(0, length);
+    }
+
+    private TagDto provideTagDto() {
+        TagDto firstTag = new TagDto();
+        firstTag.setId(1L);
+        firstTag.setName("first tag");
+        return firstTag;
     }
 }

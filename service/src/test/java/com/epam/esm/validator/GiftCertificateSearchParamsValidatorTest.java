@@ -45,7 +45,6 @@ public class GiftCertificateSearchParamsValidatorTest {
         testCases.add(Arguments.of(null, "C", null, null, null, Collections.singletonList(TOO_SHORT_GIFT_CERTIFICATE_NAME)));
         testCases.add(Arguments.of(null, generateString("Certificate", 46), null, null, null, Collections.singletonList(TOO_LONG_GIFT_CERTIFICATE_NAME)));
 
-        testCases.add(Arguments.of(null, null, ASC, null, null, Collections.emptyList()));
         testCases.add(Arguments.of(null, null, "Error", null, null, Collections.singletonList(INVALID_NAME_ORDERING_TYPE)));
 
         testCases.add(Arguments.of(null, null, null, "Description", null, Collections.emptyList()));
@@ -55,7 +54,6 @@ public class GiftCertificateSearchParamsValidatorTest {
         testCases.add(Arguments.of(null, null, null, "D", null, Collections.singletonList(TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION)));
         testCases.add(Arguments.of(null, null, null, generateString("Description", 501), null, Collections.singletonList(TOO_LONG_GIFT_CERTIFICATE_DESCRIPTION)));
 
-        testCases.add(Arguments.of(null, null, null, null, DESC, Collections.emptyList()));
         testCases.add(Arguments.of(null, null, null, null, "Error", Collections.singletonList(INVALID_CREATE_DATE_ORDERING_TYPE)));
 
         return testCases;

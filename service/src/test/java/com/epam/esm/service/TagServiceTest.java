@@ -88,7 +88,7 @@ public class TagServiceTest {
         TagDto tagDto = provideTagDto();
         when(tagDtoMapper.toDto(tag)).thenReturn(tagDto);
         when(tagDtoMapper.toEntity(tagDto)).thenReturn(tag);
-        when(tagValidator.validate(tag.getName())).thenReturn(new ArrayList<>());
+        when(tagValidator.validateWithRequiredParams(tagDto)).thenReturn(new ArrayList<>());
 
         TagDto actual = tagService.create(tagDto);
 

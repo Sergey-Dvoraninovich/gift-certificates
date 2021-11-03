@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.epam.esm.service.GiftCertificateServiceTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2021-11-03T22:11:03" hostname="DESKTOP-NISJN62" time="0.423">
+  <properties/>
+  <testcase name="testFindAll()" classname="com.epam.esm.service.GiftCertificateServiceTest" time="0.399"/>
+  <testcase name="testFindById()" classname="com.epam.esm.service.GiftCertificateServiceTest" time="0.004"/>
+  <testcase name="testCreate()" classname="com.epam.esm.service.GiftCertificateServiceTest" time="0.009"/>
+  <testcase name="testDelete()" classname="com.epam.esm.service.GiftCertificateServiceTest" time="0.002"/>
+  <testcase name="testUpdate()" classname="com.epam.esm.service.GiftCertificateServiceTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

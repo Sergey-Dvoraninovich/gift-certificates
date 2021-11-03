@@ -22,14 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static java.time.ZoneOffset.UTC;
-import static org.springframework.core.env.AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME;
 
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService {
@@ -93,7 +89,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional
     public GiftCertificateDto create(GiftCertificateDto certificateDto) {
-        List<ValidationError> validationErrors = giftCertificateValidator.validate(certificateDto);
+        List<ValidationError> validationErrors = giftCertificateValidator.validateWithRequiredParams(certificateDto);
 
         if (!validationErrors.isEmpty()) {
             throw new InvalidEntityException(validationErrors, GiftCertificateDto.class);
@@ -128,7 +124,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         String priceString = certificate.getPrice() == null ? null : certificate.getPrice().toString();
         String durationString = certificate.getDuration() == null ? null : String.valueOf(certificate.getDuration().toDays());
-        List<ValidationError> validationErrors = giftCertificateValidator.validate(certificate.getName(), certificate.getDescription(),
+        List<ValidationError> validationErrors = giftCertificateValidator.validateParams(certificate.getName(), certificate.getDescription(),
                 priceString, durationString);
 
         if (!validationErrors.isEmpty()) {
@@ -192,7 +188,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             Optional<Tag> tagOptional = tagRepository.findByName(tag.getName());
 
             if (!tagOptional.isPresent()) {
-                List<ValidationError> validationErrors = tagValidator.validate(tag.getName());
+                List<ValidationError> validationErrors = tagValidator.validateParams(tag.getName());
 
                 if (!validationErrors.isEmpty()) {
                     throw new InvalidEntityException(validationErrors, Tag.class);

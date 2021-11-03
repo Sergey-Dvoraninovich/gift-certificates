@@ -1,6 +1,5 @@
 package com.epam.esm.validator;
 
-import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
 import org.springframework.stereotype.Component;
 
@@ -12,23 +11,23 @@ import static com.epam.esm.validator.ValidationError.*;
 
 @Component
 public class TagValidator {
-    private static final String NAME_NO_LEADING_SYMBOLS_REGEXP = "^[A-Za-z]{1}[A-Za-z\\s]{1,43}[A-Za-z]{1}$";
-    private static final String NAME_SYMBOLS_REGEXP = "^[A-Za-z\\s]{3,45}$";
-    private static final int NAME_MIN_LENGTH = 3;
+    private static final String NAME_NO_LEADING_SYMBOLS_REGEXP = "^[A-Za-z]{1}[A-Za-z\\s]{0,43}[A-Za-z]{1}$";
+    private static final String NAME_SYMBOLS_REGEXP = "^[A-Za-z\\s]{2,45}$";
+    private static final int NAME_MIN_LENGTH = 2;
     private static final int NAME_MAX_LENGTH = 45;
 
-    public List<ValidationError> validate(TagDto tagDto) {
+    public List<ValidationError> validateWithRequiredParams(TagDto tagDto) {
         List<ValidationError> validationErrors = new ArrayList<>();
         if (tagDto.getName() == null){
-            validationErrors.add(NAME_REQUIRED);
+            validationErrors.add(TAG_NAME_REQUIRED);
         }
         if (validationErrors.size() == 0) {
-            validationErrors.addAll(validate(tagDto.getName()));
+            validationErrors.addAll(validateParams(tagDto.getName()));
         }
         return validationErrors;
     }
 
-    public List<ValidationError> validate(String name) {
+    public List<ValidationError> validateParams(String name) {
         List<ValidationError> validationErrors = new ArrayList<>();
 
         if (name != null) {

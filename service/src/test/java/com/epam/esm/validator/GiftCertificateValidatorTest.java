@@ -1,10 +1,17 @@
 package com.epam.esm.validator;
 
+import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.TagDto;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,10 +24,25 @@ public class GiftCertificateValidatorTest {
 
     @ParameterizedTest
     @MethodSource("provideTagParams")
-    void testFindByParams(String name, String description, String price,
+    void testValidateGiftCertificate(String name, String description, String price,
                           String duration, List<ValidationError> expected) {
 
-        List<ValidationError> actual = giftCertificateValidator.validate(name, description, price, duration);
+        List<ValidationError> actual = giftCertificateValidator.validateParams(name, description, price, duration);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void testValidateGiftCertificateRequiredParams() {
+        List<ValidationError> expected = Arrays.asList(GIFT_CERTIFICATE_NAME_REQUIRED, GIFT_CERTIFICATE_DESCRIPTION_REQUIRED,
+                GIFT_CERTIFICATE_PRICE_REQUIRED, GIFT_CERTIFICATE_DURATION_REQUIRED);
+        GiftCertificateDto testCertificate = provideGiftCertificateDto();
+        testCertificate.setName(null);
+        testCertificate.setDescription(null);
+        testCertificate.setPrice(null);
+        testCertificate.setDuration(null);
+
+        List<ValidationError> actual = giftCertificateValidator.validateWithRequiredParams(testCertificate);
 
         assertEquals(expected, actual);
     }
@@ -29,18 +51,18 @@ public class GiftCertificateValidatorTest {
         List<Arguments> testCases = new ArrayList<>();
 
         testCases.add(Arguments.of("name", null, null, null, Collections.emptyList()));
-        testCases.add(Arguments.of(generateString("name", 3),null, null, null, Collections.emptyList()));
+        testCases.add(Arguments.of(generateString("name", 2),null, null, null, Collections.emptyList()));
         testCases.add(Arguments.of(generateString("name", 45), null, null, null, Collections.emptyList()));
-        testCases.add(Arguments.of("name!", null, null, null, Collections.singletonList(INVALID_SYMBOLS_IN_NAME)));
-        testCases.add(Arguments.of("name ", null, null, null, Collections.singletonList(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_NAME)));
-        testCases.add(Arguments.of("n", null, null, null, Collections.singletonList(TOO_SHORT_NAME)));
-        testCases.add(Arguments.of(generateString("name", 46), null, null, null, Collections.singletonList(TOO_LONG_NAME)));
+        testCases.add(Arguments.of("name!", null, null, null, Collections.singletonList(INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_NAME)));
+        testCases.add(Arguments.of("name ", null, null, null, Collections.singletonList(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_GIFT_CERTIFICATE_NAME)));
+        testCases.add(Arguments.of("n", null, null, null, Collections.singletonList(TOO_SHORT_GIFT_CERTIFICATE_NAME)));
+        testCases.add(Arguments.of(generateString("name", 46), null, null, null, Collections.singletonList(TOO_LONG_GIFT_CERTIFICATE_NAME)));
 
         testCases.add(Arguments.of(null, "description", null, null, Collections.emptyList()));
-        testCases.add(Arguments.of(null, generateString("description", 3), null, null, Collections.emptyList()));
+        testCases.add(Arguments.of(null, generateString("description", 2), null, null, Collections.emptyList()));
         testCases.add(Arguments.of(null, generateString("description",500), null, null, Collections.emptyList()));
         testCases.add(Arguments.of(null, "description$", null, null, Collections.singletonList(INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION)));
-        testCases.add(Arguments.of(null, " description", null, null, Collections.singletonList(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_DESCRIPTION)));
+        testCases.add(Arguments.of(null, " description", null, null, Collections.singletonList(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION)));
         testCases.add(Arguments.of(null, "d", null, null, Collections.singletonList(TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION)));
         testCases.add(Arguments.of(null, generateString("description", 501), null, null, Collections.singletonList(TOO_LONG_GIFT_CERTIFICATE_DESCRIPTION)));
 
@@ -69,5 +91,18 @@ public class GiftCertificateValidatorTest {
             result.append(line);
         }
         return result.substring(0, length);
+    }
+
+    private GiftCertificateDto provideGiftCertificateDto() {
+        GiftCertificateDto certificate = new GiftCertificateDto();
+        certificate.setId(1L);
+        certificate.setName("certificate first and second tags");
+        certificate.setDescription("certificate with first tag and second tag");
+        certificate.setPrice(new BigDecimal("50.00"));
+        certificate.setDuration(Duration.ofDays(90));
+        certificate.setTagsDto(Collections.emptyList());
+        certificate.setCreateDate(LocalDateTime.of(2000, 1, 1, 11, 11, 11, 222000000));
+        certificate.setLastUpdateDate(LocalDateTime.of(2000, 1, 1, 11, 11, 11, 222000000));
+        return certificate;
     }
 }

@@ -10,7 +10,6 @@ import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validator.TagValidator;
 import com.epam.esm.validator.ValidationError;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,7 +64,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public TagDto create(TagDto tagDto){
         Tag tag = tagMapper.toEntity(tagDto);
-        List<ValidationError> validationErrors = tagValidator.validate(tagDto);
+        List<ValidationError> validationErrors = tagValidator.validateWithRequiredParams(tagDto);
 
         if (!validationErrors.isEmpty()) {
             throw new InvalidEntityException(validationErrors, Tag.class);
