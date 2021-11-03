@@ -38,6 +38,7 @@ public class GiftCertificateController {
 
     @PostMapping
     public ResponseEntity<GiftCertificateDto> createGiftCertificate(@RequestBody GiftCertificateDto giftCertificateDto) {
+        System.out.println(giftCertificateDto);
         GiftCertificateDto createdGiftCertificate = giftCertificateService.create(giftCertificateDto);
         return new ResponseEntity<>(createdGiftCertificate, OK);
     }

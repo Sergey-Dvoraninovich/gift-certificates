@@ -12,11 +12,11 @@ import static com.epam.esm.validator.ValidationError.*;
 
 @Component
 public class GiftCertificateSearchParamsValidator {
-    private static final String TAG_NAME_REGEXP = "^[A-Za-z]{2,45}$";
+    private static final String TAG_NAME_REGEXP = "^[A-Za-z\\s]{2,45}$";
     private static final int TAG_NAME_MIN_LENGTH = 2;
     private static final int TAG_NAME_MAX_LENGTH = 45;
 
-    private static final String GIFT_CERTIFICATE_NAME_REGEXP = "^[A-Za-z]{2,45}$";
+    private static final String GIFT_CERTIFICATE_NAME_REGEXP = "^[A-Za-z\\s]{2,45}$";
     private static final int GIFT_CERTIFICATE_NAME_MIN_LENGTH = 2;
     private static final int GIFT_CERTIFICATE_NAME_MAX_LENGTH = 45;
 

@@ -23,7 +23,7 @@ public class ApplicationConfig {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename(ERROR_MESSAGES_BUNDLE_NAME);
         messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
-        System.setProperty(ACTIVE_PROFILES_PROPERTY_NAME, PRODUCTION_PROFILE);
+        System.setProperty(ACTIVE_PROFILES_PROPERTY_NAME, DEVELOPMENT_PROFILE);
 
         return messageSource;
     }

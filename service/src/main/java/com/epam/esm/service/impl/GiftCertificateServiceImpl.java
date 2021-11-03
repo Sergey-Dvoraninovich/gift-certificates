@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.time.ZoneOffset.UTC;
+import static org.springframework.core.env.AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME;
 
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService {
@@ -61,7 +62,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         List<ValidationError> validationErrors = searchParamsValidator.validate(tagName, certificateName, orderingName,
                                                                                 certificateDescription, orderingCreateDate);
         if (!validationErrors.isEmpty()) {
-            throw new InvalidEntityException(validationErrors, GiftCertificate.class);
+            throw new InvalidEntityException(validationErrors, String.class);
         }
 
         OrderingType orderingNameType = orderingName == null ? null : OrderingType.valueOf(orderingName);
@@ -84,26 +85,22 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             return giftCertificateDtoMapper.toDto(certificateOptional.get(), certificateTags);
         }
         else {
-            throw new EntityNotFoundException(id, GiftCertificate.class);
+            throw new EntityNotFoundException(id, GiftCertificateDto.class);
         }
     }
 
     @Override
     @Transactional
     public GiftCertificateDto create(GiftCertificateDto certificateDto) {
-        //TODO certificate null fix
-        GiftCertificate certificate = giftCertificateDtoMapper.toEntity(certificateDto);
-
-        List<ValidationError> validationErrors = giftCertificateValidator.validate(certificate.getName(), certificate.getDescription(),
-                certificate.getPrice().toString(), String.valueOf(certificate.getDuration().toDays()),
-                certificate.getCreateDate().toString(), certificate.getLastUpdateDate().toString());
+        List<ValidationError> validationErrors = giftCertificateValidator.validate(certificateDto);
 
         if (!validationErrors.isEmpty()) {
-            throw new InvalidEntityException(validationErrors, GiftCertificate.class);
+            throw new InvalidEntityException(validationErrors, GiftCertificateDto.class);
         }
 
         List<Tag> certificateTags = processTags(certificateDto);
 
+        GiftCertificate certificate = giftCertificateDtoMapper.toEntity(certificateDto);
         String name = certificate.getName();
         if (giftCertificateRepository.findByName(name).isPresent()) {
             throw new EntityAlreadyExistsException();
@@ -123,13 +120,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     public GiftCertificateDto update(GiftCertificateDto certificateDto) {
         GiftCertificate certificate = giftCertificateDtoMapper.toEntity(certificateDto);
-
+        
         List<ValidationError> validationErrors = giftCertificateValidator.validate(certificate.getName(), certificate.getDescription(),
                 certificate.getPrice().toString(), String.valueOf(certificate.getDuration().toDays()),
                 certificate.getCreateDate().toString(), certificate.getLastUpdateDate().toString());
 
         if (!validationErrors.isEmpty()) {
-            throw new InvalidEntityException(validationErrors, GiftCertificate.class);
+            throw new InvalidEntityException(validationErrors, GiftCertificateDto.class);
         }
 
         GiftCertificate storedCertificate;
@@ -158,7 +155,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public void delete(long id) {
         Optional<GiftCertificate> giftCertificate = giftCertificateRepository.findById(id);
         if (!giftCertificate.isPresent()){
-            throw new EntityNotFoundException(id, GiftCertificate.class);
+            throw new EntityNotFoundException(id, GiftCertificateDto.class);
         }
         tagRepository.delete(id);
     }
@@ -180,10 +177,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     private List<Tag> processTags(GiftCertificateDto certificateDto){
-        List<Tag> certificateTags = certificateDto.getTagsDto()
-                .stream()
-                .map(tagDtoMapper::toEntity)
-                .collect(Collectors.toList());
+        List<Tag> certificateTags = new ArrayList<>();
+        if (certificateDto.getTagsDto() != null) {
+            certificateTags = certificateDto.getTagsDto()
+                    .stream()
+                    .map(tagDtoMapper::toEntity)
+                    .collect(Collectors.toList());
+        }
         for (Tag tag: certificateTags) {
             List<ValidationError> validationErrors = tagValidator.validate(tag.getName());
 

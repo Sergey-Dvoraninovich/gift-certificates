@@ -33,7 +33,6 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<TagDto> findAll(){
         List<Tag> tags = tagRepository.findAll();
-        System.out.println(tagMapper.toDto(tags.get(0)));
         return tagRepository.findAll()
                 .stream()
                 .map(tagMapper::toDto)
@@ -66,7 +65,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public TagDto create(TagDto tagDto){
         Tag tag = tagMapper.toEntity(tagDto);
-        List<ValidationError> validationErrors = tagValidator.validate(tag.getName());
+        List<ValidationError> validationErrors = tagValidator.validate(tagDto);
 
         if (!validationErrors.isEmpty()) {
             throw new InvalidEntityException(validationErrors, Tag.class);

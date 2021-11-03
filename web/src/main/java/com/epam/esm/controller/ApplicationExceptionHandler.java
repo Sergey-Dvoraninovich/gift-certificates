@@ -31,9 +31,15 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     private static final String INVALID_ENTITY_MESSAGE = "invalid_entity";
     private static final String INTERNAL_SERVER_ERROR_MESSAGE = "internal_server_error";
 
+    private static final String NAME_REQUIRED_MESSAGE = "invalid_entity.name_required";
+    private static final String DESCRIPTION_REQUIRED_MESSAGE = "invalid_entity.description_required";
+    private static final String PRICE_REQUIRED_MESSAGE = "invalid_entity.price_required";
+    private static final String DURATION_REQUIRED_MESSAGE = "invalid_entity.duration_required";
+
     private static final String TOO_LONG_NAME_MESSAGE = "invalid_entity.too_long_name";
     private static final String TOO_SHORT_NAME_MESSAGE = "invalid_entity.too_short_name";
     private static final String INVALID_NAME_MESSAGE = "invalid_entity.invalid_name";
+    private static final String INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_NAME_MESSAGE = "invalid_entity.invalid_leading_or_closing_symbols_in_name";
 
     private static final String TOO_SHORT_DESCRIPTION_MESSAGE = "invalid_entity.too_short_description";
     private static final String TOO_LONG_DESCRIPTION_MESSAGE = "invalid_entity.too_long_description";
@@ -86,6 +92,23 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 
         for (ValidationError error: validationErrors) {
             switch (error) {
+                case NAME_REQUIRED: {
+                    errorLine.append(getErrorMessage(NAME_REQUIRED_MESSAGE));
+                    break;
+                }
+                case DESCRIPTION_REQUIRED: {
+                    errorLine.append(getErrorMessage(DESCRIPTION_REQUIRED_MESSAGE));
+                    break;
+                }
+                case PRICE_REQUIRED: {
+                    errorLine.append(getErrorMessage(PRICE_REQUIRED_MESSAGE));
+                    break;
+                }
+                case DURATION_REQUIRED: {
+                    errorLine.append(getErrorMessage(DURATION_REQUIRED_MESSAGE));
+                    break;
+                }
+
                 case TOO_SHORT_NAME: {
                     errorLine.append(getErrorMessage(TOO_SHORT_NAME_MESSAGE));
                     break;
@@ -96,6 +119,10 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
                 }
                 case INVALID_SYMBOLS_IN_NAME: {
                     errorLine.append(getErrorMessage(INVALID_NAME_MESSAGE));
+                    break;
+                }
+                case INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_NAME: {
+                    errorLine.append(getErrorMessage(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_NAME_MESSAGE));
                     break;
                 }
 

@@ -1,5 +1,7 @@
 package com.epam.esm.validator;
 
+import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.TagDto;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -10,10 +12,21 @@ import static com.epam.esm.validator.ValidationError.*;
 
 @Component
 public class TagValidator {
-    private static final String NAME_NO_LEADING_SYMBOLS_REGEXP = "^[A-Za-z]{1}[A-Za-z\\s]{1,498}[A-Za-z]{1}$";
+    private static final String NAME_NO_LEADING_SYMBOLS_REGEXP = "^[A-Za-z]{1}[A-Za-z\\s]{1,43}[A-Za-z]{1}$";
     private static final String NAME_SYMBOLS_REGEXP = "^[A-Za-z\\s]{3,45}$";
     private static final int NAME_MIN_LENGTH = 3;
     private static final int NAME_MAX_LENGTH = 45;
+
+    public List<ValidationError> validate(TagDto tagDto) {
+        List<ValidationError> validationErrors = new ArrayList<>();
+        if (tagDto.getName() == null){
+            validationErrors.add(NAME_REQUIRED);
+        }
+        if (validationErrors.size() == 0) {
+            validationErrors.addAll(validate(tagDto.getName()));
+        }
+        return validationErrors;
+    }
 
     public List<ValidationError> validate(String name) {
         List<ValidationError> validationErrors = new ArrayList<>();

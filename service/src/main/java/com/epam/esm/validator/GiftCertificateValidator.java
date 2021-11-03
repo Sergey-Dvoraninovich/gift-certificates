@@ -1,5 +1,6 @@
 package com.epam.esm.validator;
 
+import com.epam.esm.dto.GiftCertificateDto;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -31,8 +32,29 @@ public class GiftCertificateValidator {
     private static final BigDecimal MIN_PRICE = new BigDecimal("9.99");
     private static final BigDecimal MAX_PRICE = new BigDecimal("10000");
 
+    public List<ValidationError> validate(GiftCertificateDto certificateDto) {
+        List<ValidationError> validationErrors = new ArrayList<>();
+        if (certificateDto.getName() == null){
+            validationErrors.add(NAME_REQUIRED);
+        }
+        if (certificateDto.getDescription() == null){
+            validationErrors.add(DESCRIPTION_REQUIRED);
+        }
+        if (certificateDto.getPrice() == null){
+            validationErrors.add(PRICE_REQUIRED);
+        }
+        if (certificateDto.getDuration() == null){
+            validationErrors.add(DURATION_REQUIRED);
+        }
+        if (validationErrors.size() == 0) {
+            validationErrors.addAll(validate(certificateDto.getName(), certificateDto.getDescription(), certificateDto.getPrice().toString(),
+                    String.valueOf(certificateDto.getDuration().toDays()), null, null));
+        }
+        return validationErrors;
+    }
+
     public List<ValidationError> validate(String name, String description, String price,
-                                          String duration, String createDate, String lastUpdateDate) {
+                                                     String duration, String createDate, String lastUpdateDate) {
         List<ValidationError> validationErrors = new ArrayList<>();
 
         if (name != null) {

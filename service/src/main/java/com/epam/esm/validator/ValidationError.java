@@ -1,6 +1,11 @@
 package com.epam.esm.validator;
 
 public enum ValidationError {
+    NAME_REQUIRED,
+    DESCRIPTION_REQUIRED,
+    PRICE_REQUIRED,
+    DURATION_REQUIRED,
+
     TOO_SHORT_NAME,
     TOO_LONG_NAME,
     INVALID_SYMBOLS_IN_NAME,
