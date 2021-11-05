@@ -3,8 +3,14 @@ package com.epam.esm.controller;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PatchMapping;
 import javax.websocket.server.PathParam;
 import java.util.List;
 
@@ -45,8 +51,6 @@ public class GiftCertificateController {
     @PatchMapping("/{id}")
     public ResponseEntity<GiftCertificateDto> updateGiftCertificate(@PathVariable("id") long id,
                                                                     @RequestBody GiftCertificateDto giftCertificate) {
-        System.out.println(id);
-        System.out.println(giftCertificate);
         giftCertificate.setId(id);
         GiftCertificateDto updatedGiftCertificate = giftCertificateService.update(giftCertificate);
         return new ResponseEntity<>(updatedGiftCertificate, OK);

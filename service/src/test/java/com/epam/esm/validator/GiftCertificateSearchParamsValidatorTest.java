@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.epam.esm.repository.OrderingType.ASC;
-import static com.epam.esm.repository.OrderingType.DESC;
 import static com.epam.esm.validator.ValidationError.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
