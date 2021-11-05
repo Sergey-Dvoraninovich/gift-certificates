@@ -68,9 +68,10 @@ public class TagRepositoryTest {
 
     @Test
     void testCreate() {
-        Tag tag = provideTagsList().get(2);
+        Tag newTag = new Tag();
+        newTag.setName("new tag");
 
-        long generatedId = tagRepository.create(tag);
+        long generatedId = tagRepository.create(newTag);
         boolean result = generatedId > 0;
 
         assertTrue(result);
