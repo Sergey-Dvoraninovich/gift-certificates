@@ -138,9 +138,9 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
 
     @Override
     public boolean addCertificateTag(long certificateId, long tagId){
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue(ID_GIFT_CERTIFICATE_PARAM, certificateId);
-        parameters.addValue(ID_TAG_PARAM, tagId);
+        MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue(ID_GIFT_CERTIFICATE_PARAM, certificateId)
+                .addValue(ID_TAG_PARAM, tagId);
 
         int result = namedJdbcTemplate.update(ADD_GIFT_CERTIFICATE_TAG, parameters);
         return result > 0;
@@ -148,9 +148,9 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
 
     @Override
     public boolean removeCertificateTag(long certificateId, long tagId){
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue(ID_GIFT_CERTIFICATE_PARAM, certificateId);
-        parameters.addValue(ID_TAG_PARAM, tagId);
+        MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue(ID_GIFT_CERTIFICATE_PARAM, certificateId)
+                .addValue(ID_TAG_PARAM, tagId);
 
         int result = namedJdbcTemplate.update(DELETE_GIFT_CERTIFICATE_TAG, parameters);
         return result > 0;
@@ -159,11 +159,11 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     @Override
     public long create(GiftCertificate certificate) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue(NAME_PARAM, certificate.getName());
-        parameters.addValue(DESCRIPTION_PARAM, certificate.getDescription());
-        parameters.addValue(PRICE_PARAM, certificate.getPrice());
-        parameters.addValue(DURATION_PARAM, certificate.getDuration().toDays());
+        MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue(NAME_PARAM, certificate.getName())
+                .addValue(DESCRIPTION_PARAM, certificate.getDescription())
+                .addValue(PRICE_PARAM, certificate.getPrice())
+                .addValue(DURATION_PARAM, certificate.getDuration().toDays());
 
         namedJdbcTemplate.update(INSERT_GIFT_CERTIFICATE, parameters, keyHolder);
 
@@ -173,12 +173,12 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
 
     @Override
     public boolean update(GiftCertificate certificate) {
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue(NAME_PARAM, certificate.getName());
-        parameters.addValue(DESCRIPTION_PARAM, certificate.getDescription());
-        parameters.addValue(PRICE_PARAM, certificate.getPrice());
-        parameters.addValue(DURATION_PARAM, certificate.getDuration().toDays());
-        parameters.addValue(ID_PARAM, certificate.getId());
+        MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue(NAME_PARAM, certificate.getName())
+                .addValue(DESCRIPTION_PARAM, certificate.getDescription())
+                .addValue(PRICE_PARAM, certificate.getPrice())
+                .addValue(DURATION_PARAM, certificate.getDuration().toDays())
+                .addValue(ID_PARAM, certificate.getId());
 
         int result = namedJdbcTemplate.update(UPDATE_GIFT_CERTIFICATE, parameters);
         return result > 0;
