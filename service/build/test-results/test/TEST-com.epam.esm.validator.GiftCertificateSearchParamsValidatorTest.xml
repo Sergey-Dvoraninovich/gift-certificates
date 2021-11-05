@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" tests="20" skipped="0" failures="0" errors="0" timestamp="2021-11-05T09:16:14" hostname="DESKTOP-NISJN62" time="0.057">
+<testsuite name="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" tests="20" skipped="0" failures="0" errors="0" timestamp="2021-11-05T13:24:26" hostname="DESKTOP-NISJN62" time="0.059">
   <properties/>
-  <testcase name="[1] Tag, null, null, null, null, []" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.015"/>
-  <testcase name="[2] Ta, null, null, null, null, []" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.001"/>
-  <testcase name="[3] TagTagTagTagTagTagTagTagTagTagTagTagTagTagTag, null, null, null, null, []" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.0"/>
-  <testcase name="[4] Tag!, null, null, null, null, [INVALID_SYMBOLS_IN_TAG_NAME]" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.001"/>
+  <testcase name="[1] Tag, null, null, null, null, []" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.017"/>
+  <testcase name="[2] Ta, null, null, null, null, []" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.0"/>
+  <testcase name="[3] TagTagTagTagTagTagTagTagTagTagTagTagTagTagTag, null, null, null, null, []" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.001"/>
+  <testcase name="[4] Tag!, null, null, null, null, [INVALID_SYMBOLS_IN_TAG_NAME]" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.0"/>
   <testcase name="[5] T, null, null, null, null, [TOO_SHORT_TAG_NAME]" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.001"/>
   <testcase name="[6] TagTagTagTagTagTagTagTagTagTagTagTagTagTagTagT, null, null, null, null, [TOO_LONG_TAG_NAME]" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.001"/>
   <testcase name="[7] null, Certificate, null, null, null, []" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.001"/>
-  <testcase name="[8] null, Ce, null, null, null, []" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.001"/>
+  <testcase name="[8] null, Ce, null, null, null, []" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.0"/>
   <testcase name="[9] null, CertificateCertificateCertificateCertificateC, null, null, null, []" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.001"/>
   <testcase name="[10] null, Certificate!, null, null, null, [INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_NAME]" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.001"/>
   <testcase name="[11] null, C, null, null, null, [TOO_SHORT_GIFT_CERTIFICATE_NAME]" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.001"/>
   <testcase name="[12] null, CertificateCertificateCertificateCertificateCe, null, null, null, [TOO_LONG_GIFT_CERTIFICATE_NAME]" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.001"/>
   <testcase name="[13] null, null, Error, null, null, [INVALID_NAME_ORDERING_TYPE]" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.004"/>
-  <testcase name="[14] null, null, null, Description, null, []" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.0"/>
+  <testcase name="[14] null, null, null, Description, null, []" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.001"/>
   <testcase name="[15] null, null, null, De, null, []" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.001"/>
   <testcase name="[16] null, null, null, DescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescr, null, []" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.001"/>
-  <testcase name="[17] null, null, null, Description$, null, [INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION]" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.0"/>
-  <testcase name="[18] null, null, null, D, null, [TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION]" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.0"/>
-  <testcase name="[19] null, null, null, DescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescri, null, [TOO_LONG_GIFT_CERTIFICATE_DESCRIPTION]" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.001"/>
+  <testcase name="[17] null, null, null, Description$, null, [INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION]" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.001"/>
+  <testcase name="[18] null, null, null, D, null, [TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION]" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.001"/>
+  <testcase name="[19] null, null, null, DescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescri, null, [TOO_LONG_GIFT_CERTIFICATE_DESCRIPTION]" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.0"/>
   <testcase name="[20] null, null, null, null, Error, [INVALID_CREATE_DATE_ORDERING_TYPE]" classname="com.epam.esm.validator.GiftCertificateSearchParamsValidatorTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

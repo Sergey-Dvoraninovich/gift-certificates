@@ -104,42 +104,18 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     public List<GiftCertificate> findAll(String tagName, String certificateName, OrderingType orderingName,
                                          String certificateDescription, OrderingType orderingCreateDate) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
-        String request = PARTIAL_REQUEST_BEGINNING;
-
-        String lineWhere = "";
         if (tagName != null) {
-            lineWhere = WHERE;
-            lineWhere += TAG_NAME_SEARCH;
-            request = PARTIAL_REQUEST_TAGS_JOIN;
             parameters.addValue(TAG_NAME_PARAM, "%" + tagName + "%");
         }
-
-        if (certificateName != null){
-            lineWhere = lineWhere.equals("") ? WHERE : lineWhere + WHERE_DELIMITER;
-            lineWhere += CERTIFICATE_NAME_SEARCH;
+        if (certificateName != null) {
             parameters.addValue(CERTIFICATE_NAME_PARAM, "%" + certificateName + "%");
         }
-
-        if (certificateDescription != null){
-            lineWhere = lineWhere.equals("") ? WHERE : lineWhere + WHERE_DELIMITER;
-            lineWhere += CERTIFICATE_DESCRIPTION_SEARCH;
-            parameters.addValue(CERTIFICATE_DESCRIPTION_PARAM, "%" + certificateDescription  + "%");
-        }
-        lineWhere += PARAMETERS_LINE_APPENDER;
-
-        String lineOrderBy = "";
-        if (orderingName != null){
-            lineOrderBy = ORDER_BY;
-            lineOrderBy += CERTIFICATE_NAME_ORDERING + orderingName;
+        if (certificateDescription != null) {
+            parameters.addValue(CERTIFICATE_DESCRIPTION_PARAM, "%" + certificateDescription + "%");
         }
 
-        if (orderingCreateDate != null){
-            lineOrderBy = lineOrderBy.equals("") ? ORDER_BY : lineOrderBy + ORDERING_DELIMITER;
-            lineOrderBy += CERTIFICATE_DATE_ORDERING + orderingCreateDate;
-        }
-        lineOrderBy += PARAMETERS_LINE_APPENDER;
+        String request = buildRequest(tagName, certificateName, orderingName, certificateDescription, orderingCreateDate);
 
-        request += lineWhere + lineOrderBy + REQUEST_APPENDER;
         List<GiftCertificate> giftCertificates = namedJdbcTemplate.query(request, parameters, rowMapper);
         return giftCertificates;
     }
@@ -213,5 +189,46 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         SqlParameterSource parameters = new MapSqlParameterSource().addValue(ID_PARAM, id);
         int result = namedJdbcTemplate.update(DELETE_GIFT_CERTIFICATE, parameters);
         return result > 0;
+    }
+
+    private String buildRequest(String tagName, String certificateName, OrderingType orderingName, String certificateDescription, OrderingType orderingCreateDate){
+        String request = PARTIAL_REQUEST_BEGINNING;
+        request = addWhereToRequest(request, tagName, certificateName, certificateDescription);
+        request = addOrderByToRequest(request, orderingName, orderingCreateDate);
+        return request + REQUEST_APPENDER;
+    }
+
+    private String addWhereToRequest(String request, String tagName, String certificateName, String certificateDescription) {
+        String lineWhere = "";
+        if (tagName != null) {
+            lineWhere = WHERE;
+            lineWhere += TAG_NAME_SEARCH;
+            request = PARTIAL_REQUEST_TAGS_JOIN;
+        }
+
+        if (certificateName != null){
+            lineWhere = lineWhere.equals("") ? WHERE : lineWhere + WHERE_DELIMITER;
+            lineWhere += CERTIFICATE_NAME_SEARCH;
+        }
+
+        if (certificateDescription != null){
+            lineWhere = lineWhere.equals("") ? WHERE : lineWhere + WHERE_DELIMITER;
+            lineWhere += CERTIFICATE_DESCRIPTION_SEARCH;
+        }
+        return request + lineWhere + PARAMETERS_LINE_APPENDER;
+    }
+
+    private String addOrderByToRequest(String request, OrderingType orderingName, OrderingType orderingCreateDate) {
+        String lineOrderBy = "";
+        if (orderingName != null){
+            lineOrderBy = ORDER_BY;
+            lineOrderBy += CERTIFICATE_NAME_ORDERING + orderingName;
+        }
+
+        if (orderingCreateDate != null){
+            lineOrderBy = lineOrderBy.equals("") ? ORDER_BY : lineOrderBy + ORDERING_DELIMITER;
+            lineOrderBy += CERTIFICATE_DATE_ORDERING + orderingCreateDate;
+        }
+        return request + lineOrderBy + PARAMETERS_LINE_APPENDER;
     }
 }

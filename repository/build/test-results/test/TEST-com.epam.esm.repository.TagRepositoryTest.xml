@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.epam.esm.repository.TagRepositoryTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-11-05T09:52:59" hostname="DESKTOP-NISJN62" time="0.384">
+<testsuite name="com.epam.esm.repository.TagRepositoryTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2021-11-05T13:24:24" hostname="DESKTOP-NISJN62" time="0.025">
   <properties/>
-  <testcase name="testCreate()" classname="com.epam.esm.repository.TagRepositoryTest" time="0.384"/>
+  <testcase name="testFindByName()" classname="com.epam.esm.repository.TagRepositoryTest" time="0.003"/>
+  <testcase name="testFindByCertificateId()" classname="com.epam.esm.repository.TagRepositoryTest" time="0.003"/>
+  <testcase name="testFindById()" classname="com.epam.esm.repository.TagRepositoryTest" time="0.003"/>
+  <testcase name="testFindByAll()" classname="com.epam.esm.repository.TagRepositoryTest" time="0.003"/>
+  <testcase name="testCreate()" classname="com.epam.esm.repository.TagRepositoryTest" time="0.003"/>
+  <testcase name="testDelete()" classname="com.epam.esm.repository.TagRepositoryTest" time="0.003"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
