@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.epam.esm.validator.TagValidatorTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2021-11-05T13:24:27" hostname="DESKTOP-NISJN62" time="0.013">
+<testsuite name="com.epam.esm.validator.TagValidatorTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2021-11-05T15:36:11" hostname="DESKTOP-NISJN62" time="0.01">
   <properties/>
   <testcase name="testTagsValidator()" classname="com.epam.esm.validator.TagValidatorTest" time="0.0"/>
   <testcase name="[1] name, []" classname="com.epam.esm.validator.TagValidatorTest" time="0.0"/>
-  <testcase name="[2] na, []" classname="com.epam.esm.validator.TagValidatorTest" time="0.001"/>
-  <testcase name="[3] namenamenamenamenamenamenamenamenamenamenamen, []" classname="com.epam.esm.validator.TagValidatorTest" time="0.001"/>
+  <testcase name="[2] na, []" classname="com.epam.esm.validator.TagValidatorTest" time="0.0"/>
+  <testcase name="[3] namenamenamenamenamenamenamenamenamenamenamen, []" classname="com.epam.esm.validator.TagValidatorTest" time="0.0"/>
   <testcase name="[4] name!, [INVALID_SYMBOLS_IN_TAG_NAME]" classname="com.epam.esm.validator.TagValidatorTest" time="0.0"/>
   <testcase name="[5]  name , [INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_TAG_NAME]" classname="com.epam.esm.validator.TagValidatorTest" time="0.001"/>
-  <testcase name="[6] n, [TOO_SHORT_TAG_NAME]" classname="com.epam.esm.validator.TagValidatorTest" time="0.001"/>
-  <testcase name="[7] namenamenamenamenamenamenamenamenamenamenamena, [TOO_LONG_TAG_NAME]" classname="com.epam.esm.validator.TagValidatorTest" time="0.0"/>
+  <testcase name="[6] n, [TOO_SHORT_TAG_NAME]" classname="com.epam.esm.validator.TagValidatorTest" time="0.0"/>
+  <testcase name="[7] namenamenamenamenamenamenamenamenamenamenamena, [TOO_LONG_TAG_NAME]" classname="com.epam.esm.validator.TagValidatorTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

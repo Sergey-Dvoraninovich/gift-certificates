@@ -98,7 +98,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         GiftCertificate certificate = giftCertificateDtoMapper.toEntity(certificateDto);
         String name = certificate.getName();
         if (giftCertificateRepository.findByName(name).isPresent()) {
-            throw new EntityAlreadyExistsException();
+            throw new EntityAlreadyExistsException(GiftCertificateDto.class);
         }
 
         long certificateId = giftCertificateRepository.create(certificate);
@@ -191,7 +191,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 List<ValidationError> validationErrors = tagValidator.validateParams(tag.getName());
 
                 if (!validationErrors.isEmpty()) {
-                    throw new InvalidEntityException(validationErrors, Tag.class);
+                    throw new InvalidEntityException(validationErrors, TagDto.class);
                 }
 
                 long tagId;

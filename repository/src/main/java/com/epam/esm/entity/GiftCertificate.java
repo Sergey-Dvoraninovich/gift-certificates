@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
@@ -15,6 +16,6 @@ public class GiftCertificate {
     private String description;
     private BigDecimal price;
     private Duration duration;
-    private LocalDateTime createDate;
-    private LocalDateTime lastUpdateDate;
+    private Instant createDate;
+    private Instant lastUpdateDate;
 }

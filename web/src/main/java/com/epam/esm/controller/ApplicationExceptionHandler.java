@@ -1,5 +1,7 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.TagDto;
 import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
@@ -31,6 +33,13 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     private static final String ENTITY_NOT_FOUND_MESSAGE = "entity_not_found";
     private static final String INVALID_ENTITY_MESSAGE = "invalid_entity";
     private static final String INTERNAL_SERVER_ERROR_MESSAGE = "internal_server_error";
+
+    private static final String TAG_ENTITY_NAME_MESSAGE = "entities.tag";
+    private static final String GIFT_CERTIFICATE_ENTITY_NAME_MESSAGE = "entities.gift_certificate";
+    private static final String ENTITY_PLACEHOLDER_MESSAGE = "entities.placeholder";
+
+    private static final String TAG_ALREADY_EXISTS_MESSAGE = "entity_already_exists.tag_message";
+    private static final String GIFT_CERTIFICATE_ALREADY_EXISTS_MESSAGE = "entity_already_exists.gift_certificate_message";
 
     private static final String TAG_NAME_REQUIRED_MESSAGE = "invalid_entity.tag_name_required";
     private static final String GIFT_CERTIFICATE_NAME_REQUIRED_MESSAGE = "invalid_entity.gift_certificate_name_required";
@@ -73,14 +82,27 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     }
 
     @ExceptionHandler(EntityAlreadyExistsException.class)
-    public ResponseEntity<Object> handleEntityAlreadyExists() {
-        String errorMessage = getErrorMessage(ENTITY_ALREADY_EXISTS_MESSAGE);
+    public ResponseEntity<Object> handleEntityAlreadyExists(EntityAlreadyExistsException e) {
+        Class<?> entityClass = e.getCauseEntity();
+        String entityName = getEntityMessage(entityClass, ENTITY_PLACEHOLDER_MESSAGE);
+
+        String message = "";
+        if (TagDto.class.equals(entityClass)) {
+            message = " (" + getMessage(TAG_ALREADY_EXISTS_MESSAGE) + ")";
+        } else if (GiftCertificateDto.class.equals(entityClass)) {
+            message = " (" + getMessage(GIFT_CERTIFICATE_ALREADY_EXISTS_MESSAGE) + ")";
+        }
+
+        String errorMessage = String.format(getMessage(ENTITY_ALREADY_EXISTS_MESSAGE), entityName, message);
         return buildErrorResponseEntity(CONFLICT, errorMessage);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException e) {
-        String errorMessage = String.format(getErrorMessage(ENTITY_NOT_FOUND_MESSAGE), e.getEntityId());
+        Class<?> entityClass = e.getCauseEntity();
+        String entityName = getEntityMessage(entityClass, ENTITY_PLACEHOLDER_MESSAGE);
+
+        String errorMessage = String.format(getMessage(ENTITY_NOT_FOUND_MESSAGE), entityName, e.getEntityId());
         return buildErrorResponseEntity(NOT_FOUND, errorMessage);
     }
 
@@ -92,109 +114,109 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         for (ValidationError error: validationErrors) {
             switch (error) {
                 case TAG_NAME_REQUIRED: {
-                    errorLine.append(getErrorMessage(TAG_NAME_REQUIRED_MESSAGE));
+                    errorLine.append(getMessage(TAG_NAME_REQUIRED_MESSAGE));
                     break;
                 }
                 case GIFT_CERTIFICATE_NAME_REQUIRED: {
-                    errorLine.append(getErrorMessage(GIFT_CERTIFICATE_NAME_REQUIRED_MESSAGE));
+                    errorLine.append(getMessage(GIFT_CERTIFICATE_NAME_REQUIRED_MESSAGE));
                     break;
                 }
                 case GIFT_CERTIFICATE_DESCRIPTION_REQUIRED: {
-                    errorLine.append(getErrorMessage(GIFT_CERTIFICATE_DESCRIPTION_REQUIRED_MESSAGE));
+                    errorLine.append(getMessage(GIFT_CERTIFICATE_DESCRIPTION_REQUIRED_MESSAGE));
                     break;
                 }
                 case GIFT_CERTIFICATE_PRICE_REQUIRED: {
-                    errorLine.append(getErrorMessage(GIFT_CERTIFICATE_PRICE_REQUIRED_MESSAGE));
+                    errorLine.append(getMessage(GIFT_CERTIFICATE_PRICE_REQUIRED_MESSAGE));
                     break;
                 }
                 case GIFT_CERTIFICATE_DURATION_REQUIRED: {
-                    errorLine.append(getErrorMessage(GIFT_CERTIFICATE_DURATION_REQUIRED_MESSAGE));
+                    errorLine.append(getMessage(GIFT_CERTIFICATE_DURATION_REQUIRED_MESSAGE));
                     break;
                 }
 
                 case TOO_SHORT_TAG_NAME: {
-                    errorLine.append(getErrorMessage(TOO_SHORT_TAG_NAME_MESSAGE));
+                    errorLine.append(getMessage(TOO_SHORT_TAG_NAME_MESSAGE));
                     break;
                 }
                 case TOO_LONG_TAG_NAME: {
-                    errorLine.append(getErrorMessage(TOO_LONG_TAG_NAME_MESSAGE));
+                    errorLine.append(getMessage(TOO_LONG_TAG_NAME_MESSAGE));
                     break;
                 }
                 case INVALID_SYMBOLS_IN_TAG_NAME: {
-                    errorLine.append(getErrorMessage(INVALID_TAG_NAME_MESSAGE));
+                    errorLine.append(getMessage(INVALID_TAG_NAME_MESSAGE));
                     break;
                 }
                 case INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_TAG_NAME: {
-                    errorLine.append(getErrorMessage(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_TAG_NAME_MESSAGE));
+                    errorLine.append(getMessage(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_TAG_NAME_MESSAGE));
                     break;
                 }
 
                 case TOO_SHORT_GIFT_CERTIFICATE_NAME: {
-                    errorLine.append(getErrorMessage(TOO_SHORT_GIFT_CERTIFICATE_NAME_MESSAGE));
+                    errorLine.append(getMessage(TOO_SHORT_GIFT_CERTIFICATE_NAME_MESSAGE));
                     break;
                 }
                 case TOO_LONG_GIFT_CERTIFICATE_NAME: {
-                    errorLine.append(getErrorMessage(TOO_LONG_GIFT_CERTIFICATE_NAME_MESSAGE));
+                    errorLine.append(getMessage(TOO_LONG_GIFT_CERTIFICATE_NAME_MESSAGE));
                     break;
                 }
                 case INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_NAME: {
-                    errorLine.append(getErrorMessage(INVALID_GIFT_CERTIFICATE_NAME_MESSAGE));
+                    errorLine.append(getMessage(INVALID_GIFT_CERTIFICATE_NAME_MESSAGE));
                     break;
                 }
                 case INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_GIFT_CERTIFICATE_NAME: {
-                    errorLine.append(getErrorMessage(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_GIFT_CERTIFICATE_NAME_MESSAGE));
+                    errorLine.append(getMessage(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_GIFT_CERTIFICATE_NAME_MESSAGE));
                     break;
                 }
 
                 case TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION: {
-                    errorLine.append(getErrorMessage(TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION_MESSAGE));
+                    errorLine.append(getMessage(TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION_MESSAGE));
                     break;
                 }
                 case TOO_LONG_GIFT_CERTIFICATE_DESCRIPTION: {
-                    errorLine.append(getErrorMessage(TOO_LONG_GIFT_CERTIFICATE_DESCRIPTION_MESSAGE));
+                    errorLine.append(getMessage(TOO_LONG_GIFT_CERTIFICATE_DESCRIPTION_MESSAGE));
                     break;
                 }
                 case INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION: {
-                    errorLine.append(getErrorMessage(INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION_MESSAGE));
+                    errorLine.append(getMessage(INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION_MESSAGE));
                     break;
                 }
                 case INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION: {
-                    errorLine.append(getErrorMessage(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION_MESSAGE));
+                    errorLine.append(getMessage(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION_MESSAGE));
                     break;
                 }
 
                 case TOO_SMALL_GIFT_CERTIFICATE_PRICE: {
-                    errorLine.append(getErrorMessage(TOO_SMALL_GIFT_CERTIFICATE_PRICE_MESSAGE));
+                    errorLine.append(getMessage(TOO_SMALL_GIFT_CERTIFICATE_PRICE_MESSAGE));
                     break;
                 }
                 case TOO_BIG_GIFT_CERTIFICATE_PRICE: {
-                    errorLine.append(getErrorMessage(TOO_BIG_GIFT_CERTIFICATE_PRICE_MESSAGE));
+                    errorLine.append(getMessage(TOO_BIG_GIFT_CERTIFICATE_PRICE_MESSAGE));
                     break;
                 }
                 case INVALID_GIFT_CERTIFICATE_PRICE_FORMAT: {
-                    errorLine.append(getErrorMessage(INVALID_GIFT_CERTIFICATE_PRICE_FORMAT_MESSAGE));
+                    errorLine.append(getMessage(INVALID_GIFT_CERTIFICATE_PRICE_FORMAT_MESSAGE));
                     break;
                 }
 
                 case TOO_SHORT_GIFT_CERTIFICATE_DURATION: {
-                    errorLine.append(getErrorMessage(TOO_SHORT_GIFT_CERTIFICATE_DURATION_MESSAGE));
+                    errorLine.append(getMessage(TOO_SHORT_GIFT_CERTIFICATE_DURATION_MESSAGE));
                     break;
                 }
                 case TOO_LONG_GIFT_CERTIFICATE_DURATION: {
-                    errorLine.append(getErrorMessage(TOO_LONG_GIFT_CERTIFICATE_DURATION_MESSAGE));
+                    errorLine.append(getMessage(TOO_LONG_GIFT_CERTIFICATE_DURATION_MESSAGE));
                     break;
                 }
                 case INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DURATION: {
-                    errorLine.append(getErrorMessage(INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DURATION_MESSAGE));
+                    errorLine.append(getMessage(INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DURATION_MESSAGE));
                     break;
                 }
 
                 case INVALID_NAME_ORDERING_TYPE: {
-                    errorLine.append(getErrorMessage(INVALID_NAME_ORDERING_TYPE_MESSAGE));
+                    errorLine.append(getMessage(INVALID_NAME_ORDERING_TYPE_MESSAGE));
                     break;
                 }
                 case INVALID_CREATE_DATE_ORDERING_TYPE: {
-                    errorLine.append(getErrorMessage(INVALID_CREATE_DATE_ORDERING_TYPE_MESSAGE));
+                    errorLine.append(getMessage(INVALID_CREATE_DATE_ORDERING_TYPE_MESSAGE));
                     break;
                 }
             }
@@ -203,20 +225,30 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         int lastSeparatorPos = errorLine.length() - ERROR_SEPARATOR.length();
         errorLine.replace(lastSeparatorPos, errorLine.length(), "");
 
-        String errorMessage = String.format(getErrorMessage(INVALID_ENTITY_MESSAGE), errorLine);
+        String errorMessage = String.format(getMessage(INVALID_ENTITY_MESSAGE), errorLine);
         return buildErrorResponseEntity(BAD_REQUEST, errorMessage);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleDefault(Exception e) {
         logger.error("Exception appeared: ", e);
-        String errorMessage = getErrorMessage(INTERNAL_SERVER_ERROR_MESSAGE);
+        String errorMessage = getMessage(INTERNAL_SERVER_ERROR_MESSAGE);
         return buildErrorResponseEntity(INTERNAL_SERVER_ERROR, errorMessage);
     }
 
-    private String getErrorMessage(String errorMessageName) {
+    private String getMessage(String errorMessageName) {
         Locale locale = LocaleContextHolder.getLocale();
         return messageSource.getMessage(errorMessageName, null, locale);
+    }
+
+    private String getEntityMessage(Class<?> entity, String placeholderName) {
+        String entityName = getMessage(placeholderName);
+        if (TagDto.class.equals(entity)) {
+            entityName = getMessage(TAG_ENTITY_NAME_MESSAGE);
+        } else if (GiftCertificateDto.class.equals(entity)) {
+            entityName = getMessage(GIFT_CERTIFICATE_ENTITY_NAME_MESSAGE);
+        }
+        return entityName;
     }
 
     private ResponseEntity<Object> buildErrorResponseEntity(HttpStatus status, String errorMessage) {

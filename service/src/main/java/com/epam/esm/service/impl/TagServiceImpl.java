@@ -45,7 +45,7 @@ public class TagServiceImpl implements TagService {
             return tagMapper.toDto(tag.get());
         }
         else {
-            throw new EntityNotFoundException(id, Tag.class);
+            throw new EntityNotFoundException(id, TagDto.class);
         }
     }
 
@@ -56,7 +56,7 @@ public class TagServiceImpl implements TagService {
             return tagMapper.toDto(tag.get());
         }
         else {
-            throw new EntityNotFoundException(Tag.class);
+            throw new EntityNotFoundException(TagDto.class);
         }
     }
 
@@ -67,12 +67,12 @@ public class TagServiceImpl implements TagService {
         List<ValidationError> validationErrors = tagValidator.validateWithRequiredParams(tagDto);
 
         if (!validationErrors.isEmpty()) {
-            throw new InvalidEntityException(validationErrors, Tag.class);
+            throw new InvalidEntityException(validationErrors, TagDto.class);
         }
 
         String name = tag.getName();
         if (tagRepository.findByName(name).isPresent()) {
-            throw new EntityAlreadyExistsException();
+            throw new EntityAlreadyExistsException(TagDto.class);
         }
 
         long tagId = tagRepository.create(tag);
@@ -85,7 +85,7 @@ public class TagServiceImpl implements TagService {
     public void delete(long id) {
         Optional<Tag> tag = tagRepository.findById(id);
         if (!tag.isPresent()){
-            throw new EntityNotFoundException(id, Tag.class);
+            throw new EntityNotFoundException(id, TagDto.class);
         }
         tagRepository.delete(id);
     }

@@ -7,8 +7,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -100,8 +99,9 @@ public class GiftCertificateValidatorTest {
         certificate.setPrice(new BigDecimal("50.00"));
         certificate.setDuration(Duration.ofDays(90));
         certificate.setTagsDto(Collections.emptyList());
-        certificate.setCreateDate(LocalDateTime.of(2000, 1, 1, 11, 11, 11, 222000000));
-        certificate.setLastUpdateDate(LocalDateTime.of(2000, 1, 1, 11, 11, 11, 222000000));
+        Instant date = Instant.from(ZonedDateTime.of(2000, 1, 1, 11, 11, 11, 222000000, ZoneId.of("Europe/Minsk")));
+        certificate.setCreateDate(date);
+        certificate.setLastUpdateDate(date);
         return certificate;
     }
 }

@@ -4,7 +4,7 @@ import com.epam.esm.validator.ValidationError;
 
 import java.util.List;
 
-public class InvalidEntityException extends RuntimeException{
+public class InvalidEntityException extends RuntimeException {
     private final List<ValidationError> validationErrors;
     private final Class<?> causeEntity;
 
