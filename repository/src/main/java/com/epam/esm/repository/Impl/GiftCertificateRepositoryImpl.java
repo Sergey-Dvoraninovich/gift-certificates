@@ -3,6 +3,7 @@ package com.epam.esm.repository.Impl;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderingType;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -11,12 +12,12 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
 public class GiftCertificateRepositoryImpl implements GiftCertificateRepository {
     private static final String ID_PARAM = "id";
     private static final String NAME_PARAM = "name";
@@ -92,13 +93,8 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
             +       "gift_certificates_tags.id_tag = :idTag;";
 
 
-    private RowMapper<GiftCertificate> rowMapper;
-    private NamedParameterJdbcTemplate namedJdbcTemplate;
-
-    public GiftCertificateRepositoryImpl(DataSource dataSource, RowMapper<GiftCertificate> rowMapper) {
-        this.namedJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-        this.rowMapper = rowMapper;
-    }
+    private final RowMapper<GiftCertificate> rowMapper;
+    private final NamedParameterJdbcTemplate namedJdbcTemplate;
 
     @Override
     public List<GiftCertificate> findAll(String tagName, String certificateName, OrderingType orderingName,

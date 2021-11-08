@@ -1,6 +1,8 @@
 package com.epam.esm.repository.Impl;
 
 import com.epam.esm.repository.TagRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -16,6 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
 public class TagRepositoryImpl implements TagRepository {
     private static final String ID_PARAM = "id";
     private static final String NAME_PARAM = "name";
@@ -50,13 +53,8 @@ public class TagRepositoryImpl implements TagRepository {
             = "DELETE FROM tags "
             + "WHERE tags.id = :id;";
 
-    private RowMapper<Tag> rowMapper;
-    private NamedParameterJdbcTemplate namedJdbcTemplate;
-
-    public TagRepositoryImpl(DataSource dataSource, RowMapper<Tag> rowMapper) {
-        this.namedJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-        this.rowMapper = rowMapper;
-    }
+    private final RowMapper<Tag> rowMapper;
+    private final NamedParameterJdbcTemplate namedJdbcTemplate;
 
     @Override
     public List<Tag> findAll() {

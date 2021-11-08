@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.epam.esm.service.TagServiceTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2021-11-05T15:36:11" hostname="DESKTOP-NISJN62" time="0.01">
+<testsuite name="com.epam.esm.service.TagServiceTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2021-11-08T10:22:32" hostname="DESKTOP-NISJN62" time="0.012">
   <properties/>
-  <testcase name="testFindAll()" classname="com.epam.esm.service.TagServiceTest" time="0.002"/>
+  <testcase name="testFindAll()" classname="com.epam.esm.service.TagServiceTest" time="0.003"/>
   <testcase name="testFindByName()" classname="com.epam.esm.service.TagServiceTest" time="0.002"/>
   <testcase name="testFindById()" classname="com.epam.esm.service.TagServiceTest" time="0.001"/>
-  <testcase name="testCreate()" classname="com.epam.esm.service.TagServiceTest" time="0.001"/>
-  <testcase name="testDelete()" classname="com.epam.esm.service.TagServiceTest" time="0.001"/>
+  <testcase name="testCreate()" classname="com.epam.esm.service.TagServiceTest" time="0.002"/>
+  <testcase name="testDelete()" classname="com.epam.esm.service.TagServiceTest" time="0.002"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

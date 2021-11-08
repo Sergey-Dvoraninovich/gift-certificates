@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.epam.esm.service.GiftCertificateServiceTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2021-11-05T15:36:10" hostname="DESKTOP-NISJN62" time="0.433">
+<testsuite name="com.epam.esm.service.GiftCertificateServiceTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2021-11-08T10:22:32" hostname="DESKTOP-NISJN62" time="0.443">
   <properties/>
-  <testcase name="testFindAll()" classname="com.epam.esm.service.GiftCertificateServiceTest" time="0.415"/>
-  <testcase name="testFindById()" classname="com.epam.esm.service.GiftCertificateServiceTest" time="0.004"/>
-  <testcase name="testCreate()" classname="com.epam.esm.service.GiftCertificateServiceTest" time="0.008"/>
-  <testcase name="testDelete()" classname="com.epam.esm.service.GiftCertificateServiceTest" time="0.001"/>
+  <testcase name="testFindAll()" classname="com.epam.esm.service.GiftCertificateServiceTest" time="0.424"/>
+  <testcase name="testFindById()" classname="com.epam.esm.service.GiftCertificateServiceTest" time="0.003"/>
+  <testcase name="testCreate()" classname="com.epam.esm.service.GiftCertificateServiceTest" time="0.007"/>
+  <testcase name="testDelete()" classname="com.epam.esm.service.GiftCertificateServiceTest" time="0.002"/>
   <testcase name="testUpdate()" classname="com.epam.esm.service.GiftCertificateServiceTest" time="0.004"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.epam.esm.repository.GiftCertificateRepositoryTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2021-11-05T15:36:08" hostname="DESKTOP-NISJN62" time="0.432">
+<testsuite name="com.epam.esm.repository.GiftCertificateRepositoryTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2021-11-08T10:22:28" hostname="DESKTOP-NISJN62" time="0.499">
   <properties/>
-  <testcase name="testOrderByNameAsc()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.349"/>
-  <testcase name="testFindByName()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.009"/>
-  <testcase name="testFindById()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.003"/>
+  <testcase name="testOrderByNameAsc()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.401"/>
+  <testcase name="testFindByName()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.016"/>
+  <testcase name="testFindById()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.005"/>
   <testcase name="testOrderByCreationTimeDesc()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.003"/>
-  <testcase name="testFindByDescription()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.003"/>
-  <testcase name="findByAllParams()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.006"/>
-  <testcase name="testRemoveCertificateTag()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.005"/>
-  <testcase name="testCreate()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.024"/>
-  <testcase name="testDelete()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.007"/>
-  <testcase name="testFindSeveralByTagName()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.003"/>
-  <testcase name="testAddCertificateTag()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.002"/>
+  <testcase name="testFindByDescription()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.004"/>
+  <testcase name="findByAllParams()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.008"/>
+  <testcase name="testRemoveCertificateTag()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.007"/>
+  <testcase name="testCreate()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.023"/>
+  <testcase name="testDelete()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.004"/>
+  <testcase name="testFindSeveralByTagName()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.004"/>
+  <testcase name="testAddCertificateTag()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.003"/>
   <testcase name="testFindByTagName()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.004"/>
   <testcase name="testUpdate()" classname="com.epam.esm.repository.GiftCertificateRepositoryTest" time="0.004"/>
   <system-out><![CDATA[]]></system-out>

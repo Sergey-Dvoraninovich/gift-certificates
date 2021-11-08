@@ -6,6 +6,7 @@ import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
 import com.epam.esm.validator.ValidationError;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -21,10 +22,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
+    private final ResourceBundleMessageSource messageSource;
+
     private static final Logger logger = LogManager.getLogger();
 
     private static final String ERROR_MESSAGE = "errorMessage";
@@ -74,12 +81,6 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     private static final String INVALID_CREATE_DATE_ORDERING_TYPE_MESSAGE = "invalid_entity.invalid_create_date_ordering_type";
 
     private static final String ERROR_SEPARATOR = ", ";
-
-    private ResourceBundleMessageSource messageSource;
-
-    public ApplicationExceptionHandler(ResourceBundleMessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
 
     @ExceptionHandler(EntityAlreadyExistsException.class)
     public ResponseEntity<Object> handleEntityAlreadyExists(EntityAlreadyExistsException e) {

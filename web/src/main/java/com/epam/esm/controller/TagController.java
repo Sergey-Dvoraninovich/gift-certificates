@@ -2,6 +2,7 @@ package com.epam.esm.controller;
 
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.service.TagService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,12 +18,9 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/api/tags")
+@RequiredArgsConstructor
 public class TagController {
-    private TagService tagService;
-
-    public TagController(TagService tagService) {
-        this.tagService = tagService;
-    }
+    private final TagService tagService;
 
     @GetMapping
     public ResponseEntity<List<TagDto>> getTags() {
@@ -39,7 +37,7 @@ public class TagController {
     @PostMapping
     public ResponseEntity<TagDto> createTag(@RequestBody TagDto tagDto) {
         TagDto createdTag = tagService.create(tagDto);
-        return new ResponseEntity<>(createdTag, OK);
+        return new ResponseEntity<>(createdTag, CREATED);
     }
 
     @DeleteMapping("/{id}")

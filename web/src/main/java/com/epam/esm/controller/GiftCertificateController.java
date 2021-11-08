@@ -2,6 +2,7 @@ package com.epam.esm.controller;
 
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.service.GiftCertificateService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,20 +13,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PatchMapping;
 import javax.websocket.server.PathParam;
-import java.time.ZoneId;
 import java.util.List;
-import java.util.TimeZone;
 
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/api/giftCertificates")
+@RequiredArgsConstructor
 public class GiftCertificateController {
-    private GiftCertificateService giftCertificateService;
-
-    public GiftCertificateController(GiftCertificateService giftCertificateService) {
-        this.giftCertificateService = giftCertificateService;
-    }
+    private final GiftCertificateService giftCertificateService;
 
     @GetMapping
     public ResponseEntity<List<GiftCertificateDto>> getGiftCertificates(@PathParam("tagName") String tagName,
@@ -47,7 +43,7 @@ public class GiftCertificateController {
     @PostMapping
     public ResponseEntity<GiftCertificateDto> createGiftCertificate(@RequestBody GiftCertificateDto giftCertificateDto) {
         GiftCertificateDto createdGiftCertificate = giftCertificateService.create(giftCertificateDto);
-        return new ResponseEntity<>(createdGiftCertificate, OK);
+        return new ResponseEntity<>(createdGiftCertificate, CREATED);
     }
 
     @PatchMapping("/{id}")

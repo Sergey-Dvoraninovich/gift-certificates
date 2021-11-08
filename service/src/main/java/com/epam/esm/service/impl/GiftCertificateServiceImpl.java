@@ -17,6 +17,7 @@ import com.epam.esm.validator.GiftCertificateSearchParamsValidator;
 import com.epam.esm.validator.GiftCertificateValidator;
 import com.epam.esm.validator.TagValidator;
 import com.epam.esm.validator.ValidationError;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,30 +29,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class GiftCertificateServiceImpl implements GiftCertificateService {
-    private GiftCertificateRepository giftCertificateRepository;
-    private TagRepository tagRepository;
-    private GiftCertificateValidator giftCertificateValidator;
-    private TagValidator tagValidator;
-    private GiftCertificateSearchParamsValidator searchParamsValidator;
-    private GiftCertificateDtoMapper giftCertificateDtoMapper;
-    private TagDtoMapper tagDtoMapper;
-
-    public GiftCertificateServiceImpl(GiftCertificateRepository giftCertificateRepository,
-                                      TagRepository tagRepository,
-                                      GiftCertificateValidator giftCertificateValidator,
-                                      TagValidator tagValidator,
-                                      GiftCertificateSearchParamsValidator searchParamsValidator,
-                                      GiftCertificateDtoMapper giftCertificateDtoMapper,
-                                      TagDtoMapper tagDtoMapper) {
-        this.giftCertificateRepository = giftCertificateRepository;
-        this.tagRepository = tagRepository;
-        this.giftCertificateValidator = giftCertificateValidator;
-        this.tagValidator = tagValidator;
-        this.searchParamsValidator = searchParamsValidator;
-        this.giftCertificateDtoMapper = giftCertificateDtoMapper;
-        this.tagDtoMapper = tagDtoMapper;
-    }
+    private final GiftCertificateRepository giftCertificateRepository;
+    private final TagRepository tagRepository;
+    private final GiftCertificateValidator giftCertificateValidator;
+    private final TagValidator tagValidator;
+    private final GiftCertificateSearchParamsValidator searchParamsValidator;
+    private final GiftCertificateDtoMapper giftCertificateDtoMapper;
+    private final TagDtoMapper tagDtoMapper;
 
     @Override
     public List<GiftCertificateDto> findAll(String tagName, String certificateName, String orderingName,
@@ -164,7 +150,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (!giftCertificate.isPresent()){
             throw new EntityNotFoundException(id, GiftCertificateDto.class);
         }
-        tagRepository.delete(id);
+        giftCertificateRepository.delete(id);
     }
 
     private void updateFields(GiftCertificate storedCertificate, GiftCertificate certificate){

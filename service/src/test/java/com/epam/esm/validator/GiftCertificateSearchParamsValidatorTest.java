@@ -8,7 +8,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.epam.esm.validator.ValidationError.*;
+import static com.epam.esm.validator.ValidationError.INVALID_CREATE_DATE_ORDERING_TYPE;
+import static com.epam.esm.validator.ValidationError.INVALID_NAME_ORDERING_TYPE;
+import static com.epam.esm.validator.ValidationError.INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION;
+import static com.epam.esm.validator.ValidationError.INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_NAME;
+import static com.epam.esm.validator.ValidationError.INVALID_SYMBOLS_IN_TAG_NAME;
+import static com.epam.esm.validator.ValidationError.TOO_LONG_GIFT_CERTIFICATE_DESCRIPTION;
+import static com.epam.esm.validator.ValidationError.TOO_LONG_GIFT_CERTIFICATE_NAME;
+import static com.epam.esm.validator.ValidationError.TOO_LONG_TAG_NAME;
+import static com.epam.esm.validator.ValidationError.TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION;
+import static com.epam.esm.validator.ValidationError.TOO_SHORT_GIFT_CERTIFICATE_NAME;
+import static com.epam.esm.validator.ValidationError.TOO_SHORT_TAG_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GiftCertificateSearchParamsValidatorTest {

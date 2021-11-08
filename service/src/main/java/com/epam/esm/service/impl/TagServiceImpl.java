@@ -10,6 +10,7 @@ import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validator.TagValidator;
 import com.epam.esm.validator.ValidationError;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,16 +19,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class TagServiceImpl implements TagService {
-    private TagRepository tagRepository;
-    private TagValidator tagValidator;
-    private TagDtoMapper tagMapper;
-
-    public TagServiceImpl(TagRepository tagRepository, TagValidator tagValidator, TagDtoMapper tagMapper) {
-        this.tagRepository = tagRepository;
-        this.tagValidator = tagValidator;
-        this.tagMapper = tagMapper;
-    }
+    private final TagRepository tagRepository;
+    private final TagValidator tagValidator;
+    private final TagDtoMapper tagMapper;
 
     @Override
     public List<TagDto> findAll(){

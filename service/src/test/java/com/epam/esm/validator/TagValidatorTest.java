@@ -11,7 +11,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.epam.esm.validator.ValidationError.*;
+import static com.epam.esm.validator.ValidationError.INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_TAG_NAME;
+import static com.epam.esm.validator.ValidationError.INVALID_SYMBOLS_IN_TAG_NAME;
+import static com.epam.esm.validator.ValidationError.TAG_NAME_REQUIRED;
+import static com.epam.esm.validator.ValidationError.TOO_LONG_TAG_NAME;
+import static com.epam.esm.validator.ValidationError.TOO_SHORT_TAG_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TagValidatorTest {

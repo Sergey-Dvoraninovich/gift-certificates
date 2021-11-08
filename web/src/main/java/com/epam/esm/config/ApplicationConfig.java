@@ -8,15 +8,11 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.springframework.core.env.AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME;
-
 @Configuration
 @ComponentScan("com.epam.esm")
 @EnableWebMvc
 public class ApplicationConfig {
     private static final String ERROR_MESSAGES_BUNDLE_NAME = "internationalization/error_messages";
-    private static final String DEVELOPMENT_PROFILE = "development";
-    private static final String PRODUCTION_PROFILE = "production";
 
     @Bean
     public ResourceBundleMessageSource messageSource() {
