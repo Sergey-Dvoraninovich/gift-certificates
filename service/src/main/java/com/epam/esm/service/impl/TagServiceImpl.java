@@ -6,11 +6,13 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
+import com.epam.esm.handler.PaginationHandler;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validator.TagValidator;
 import com.epam.esm.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,11 +26,14 @@ public class TagServiceImpl implements TagService {
     private final TagRepository tagRepository;
     private final TagValidator tagValidator;
     private final TagDtoMapper tagMapper;
+    private final PaginationHandler paginationHandler;
 
     @Override
-    public List<TagDto> findAll(){
-        List<Tag> tags = tagRepository.findAll();
-        return tagRepository.findAll()
+    public List<TagDto> findAll(Integer pageNumber, Integer pageSize){
+        paginationHandler.handle(pageNumber, pageSize);
+        int minPos = paginationHandler.getMinPos();
+        int maxPos = paginationHandler.getMaxPos();
+        return tagRepository.findAll(minPos, maxPos)
                 .stream()
                 .map(tagMapper::toDto)
                 .collect(Collectors.toList());
@@ -71,8 +76,7 @@ public class TagServiceImpl implements TagService {
             throw new EntityAlreadyExistsException(TagDto.class);
         }
 
-        long tagId = tagRepository.create(tag);
-        tag.setId(tagId);
+        tag = tagRepository.create(tag);
         return tagMapper.toDto(tag);
     }
 
@@ -83,6 +87,6 @@ public class TagServiceImpl implements TagService {
         if (!tag.isPresent()){
             throw new EntityNotFoundException(id, TagDto.class);
         }
-        tagRepository.delete(id);
+        tagRepository.delete(tag.get());
     }
 }

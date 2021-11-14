@@ -1,230 +1,76 @@
 package com.epam.esm.repository.Impl;
 
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderingType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.time.Instant;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
 public class GiftCertificateRepositoryImpl implements GiftCertificateRepository {
-    private static final String ID_PARAM = "id";
-    private static final String NAME_PARAM = "name";
-    private static final String DESCRIPTION_PARAM = "description";
-    private static final String PRICE_PARAM = "price";
-    private static final String DURATION_PARAM = "duration";
+    private static final String GIFT_CERTIFICATE_NAME_PARAM = "giftCertificateName";
 
-    private static final String TAG_NAME_PARAM = "tagName";
-    private static final String ID_GIFT_CERTIFICATE_PARAM = "idGiftCertificate";
-    private static final String ID_TAG_PARAM = "idTag";
-    private static final String CERTIFICATE_NAME_PARAM = "certificateName";
-    private static final String CERTIFICATE_DESCRIPTION_PARAM = "certificateDescription";
+    private static final String ALL_GIFT_CERTIFICATES
+            = "SELECT c FROM GiftCertificate c";
 
-    private static final String PARTIAL_REQUEST_BEGINNING
-            = "SELECT gift_certificates.id, gift_certificates.name, gift_certificates.description, gift_certificates.price, "
-            +        "gift_certificates.duration, gift_certificates.create_date, gift_certificates.last_update_date "
-            + "FROM gift_certificates ";
+    private static final String GIFT_CERTIFICATE_BY_NAME
+            = "SELECT c FROM GiftCertificate c WHERE c.name = :giftCertificateName";
 
-    private static final String PARTIAL_REQUEST_TAGS_JOIN
-            = "SELECT gift_certificates.id, gift_certificates.name, gift_certificates.description, gift_certificates.price, "
-            +        "gift_certificates.duration, gift_certificates.create_date, gift_certificates.last_update_date "
-            + "FROM gift_certificates_tags "
-            + "INNER JOIN gift_certificates "
-            + "ON gift_certificates.id = gift_certificates_tags.id_gift_certificate "
-            + "INNER JOIN tags "
-            + "ON tags.id = gift_certificates_tags.id_tag ";
+    @PersistenceContext
+    private final EntityManager entityManager;
 
-    private static final String WHERE = "WHERE ";
-    private static final String ORDER_BY = "ORDER BY ";
-    private static final String WHERE_DELIMITER = " AND ";
-    private static final String ORDERING_DELIMITER = ", ";
-    private static final String PARAMETERS_LINE_APPENDER = " ";
-    private static final String REQUEST_APPENDER = ";";
-    private static final String TAG_NAME_SEARCH = "tags.name LIKE :tagName";
-    private static final String CERTIFICATE_NAME_SEARCH = "gift_certificates.name LIKE :certificateName";
-    private static final String CERTIFICATE_DESCRIPTION_SEARCH = "gift_certificates.description LIKE :certificateDescription";
-    private static final String CERTIFICATE_NAME_ORDERING = "gift_certificates.name ";
-    private static final String CERTIFICATE_DATE_ORDERING = "gift_certificates.create_date ";
-
-    private static final String SELECT_GIFT_CERTIFICATE_BY_ID
-            = "SELECT gift_certificates.id, gift_certificates.name, gift_certificates.description, gift_certificates.price, "
-            +        "gift_certificates.duration, gift_certificates.create_date, gift_certificates.last_update_date "
-            + "FROM gift_certificates "
-            + "WHERE gift_certificates.id = :id;";
-
-    private static final String SELECT_GIFT_CERTIFICATE_BY_NAME
-            = "SELECT gift_certificates.id, gift_certificates.name, gift_certificates.description, gift_certificates.price, "
-            +        "gift_certificates.duration, gift_certificates.create_date, gift_certificates.last_update_date "
-            + "FROM gift_certificates "
-            + "WHERE gift_certificates.name = :name;";
-
-    private static final String INSERT_GIFT_CERTIFICATE
-            = "INSERT INTO gift_certificates(name, description, price, duration, create_date, last_update_date) "
-            + "VALUES (:name, :description, :price, :duration, CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3));";
-
-    private static final String UPDATE_GIFT_CERTIFICATE
-            = "UPDATE gift_certificates SET gift_certificates.name = :name, gift_certificates.description = :description, "
-            +        "gift_certificates.price = :price, gift_certificates.duration = :duration, "
-            +        "gift_certificates.last_update_date = CURRENT_TIMESTAMP(3) "
-            + "WHERE gift_certificates.id = :id;";
-
-    private static final String DELETE_GIFT_CERTIFICATE
-            = "DELETE FROM gift_certificates "
-            + "WHERE gift_certificates.id = :id;";
-
-    private static final String ADD_GIFT_CERTIFICATE_TAG
-            = "INSERT INTO gift_certificates_tags(id_gift_certificate, id_tag) "
-            + "VALUES(:idGiftCertificate, :idTag);";
-
-    private static final String DELETE_GIFT_CERTIFICATE_TAG
-            = "DELETE FROM gift_certificates_tags "
-            + "WHERE gift_certificates_tags.id_gift_certificate = :idGiftCertificate AND "
-            +       "gift_certificates_tags.id_tag = :idTag;";
-
-
-    private final RowMapper<GiftCertificate> rowMapper;
-    private final NamedParameterJdbcTemplate namedJdbcTemplate;
-
+    //TODO implement findAll
     @Override
     public List<GiftCertificate> findAll(String tagName, String certificateName, OrderingType orderingName,
                                          String certificateDescription, OrderingType orderingCreateDate) {
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-        if (tagName != null) {
-            parameters.addValue(TAG_NAME_PARAM, "%" + tagName + "%");
-        }
-        if (certificateName != null) {
-            parameters.addValue(CERTIFICATE_NAME_PARAM, "%" + certificateName + "%");
-        }
-        if (certificateDescription != null) {
-            parameters.addValue(CERTIFICATE_DESCRIPTION_PARAM, "%" + certificateDescription + "%");
-        }
-
-        String request = buildRequest(tagName, certificateName, orderingName, certificateDescription, orderingCreateDate);
-
-        List<GiftCertificate> giftCertificates = namedJdbcTemplate.query(request, parameters, rowMapper);
-        return giftCertificates;
+        return entityManager.createQuery(ALL_GIFT_CERTIFICATES, GiftCertificate.class)
+                .getResultList();
     }
 
     @Override
     public Optional<GiftCertificate> findById(long id) {
-        SqlParameterSource parameters = new MapSqlParameterSource().addValue(ID_PARAM, id);
-
-        List<GiftCertificate> giftCertificates = namedJdbcTemplate.query(SELECT_GIFT_CERTIFICATE_BY_ID, parameters, rowMapper);
-        return Optional.ofNullable(giftCertificates.size() == 1 ? giftCertificates.get(0) : null);
+        GiftCertificate giftCertificate = entityManager.find(GiftCertificate.class, id);
+        return Optional.ofNullable(giftCertificate);
     }
 
     @Override
     public Optional<GiftCertificate> findByName(String name) {
-        SqlParameterSource parameters = new MapSqlParameterSource().addValue(NAME_PARAM, name);
+        List<GiftCertificate> certificates = entityManager.createQuery(GIFT_CERTIFICATE_BY_NAME, GiftCertificate.class)
+                .setParameter(GIFT_CERTIFICATE_NAME_PARAM, name)
+                .getResultList();
 
-        List<GiftCertificate> giftCertificates = namedJdbcTemplate.query(SELECT_GIFT_CERTIFICATE_BY_NAME, parameters, rowMapper);
-        return Optional.ofNullable(giftCertificates.size() == 1 ? giftCertificates.get(0) : null);
+        return certificates.size() == 0
+                ? Optional.empty()
+                : Optional.of(certificates.get(0));
     }
 
     @Override
-    public boolean addCertificateTag(long certificateId, long tagId){
-        MapSqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue(ID_GIFT_CERTIFICATE_PARAM, certificateId)
-                .addValue(ID_TAG_PARAM, tagId);
+    public GiftCertificate create(GiftCertificate certificate) {
+        certificate.setCreateDate(Instant.now());
+        certificate.setLastUpdateDate(Instant.now());
 
-        int result = namedJdbcTemplate.update(ADD_GIFT_CERTIFICATE_TAG, parameters);
-        return result > 0;
+        entityManager.persist(certificate);
+        return certificate;
     }
 
     @Override
-    public boolean removeCertificateTag(long certificateId, long tagId){
-        MapSqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue(ID_GIFT_CERTIFICATE_PARAM, certificateId)
-                .addValue(ID_TAG_PARAM, tagId);
-
-        int result = namedJdbcTemplate.update(DELETE_GIFT_CERTIFICATE_TAG, parameters);
-        return result > 0;
+    public GiftCertificate update(GiftCertificate certificate) {
+        certificate.setLastUpdateDate(Instant.now());
+        entityManager.merge(certificate);
+        return certificate;
     }
 
     @Override
-    public long create(GiftCertificate certificate) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        MapSqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue(NAME_PARAM, certificate.getName())
-                .addValue(DESCRIPTION_PARAM, certificate.getDescription())
-                .addValue(PRICE_PARAM, certificate.getPrice())
-                .addValue(DURATION_PARAM, certificate.getDuration().toDays());
-
-        namedJdbcTemplate.update(INSERT_GIFT_CERTIFICATE, parameters, keyHolder);
-
-        Number generatedKey = Objects.requireNonNull(keyHolder).getKey();
-        return Objects.requireNonNull(generatedKey).longValue();
+    public boolean delete(GiftCertificate certificate) {
+        entityManager.remove(certificate);
+        return entityManager.find(Tag.class, certificate.getId()) == null;
     }
 
-    @Override
-    public boolean update(GiftCertificate certificate) {
-        MapSqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue(NAME_PARAM, certificate.getName())
-                .addValue(DESCRIPTION_PARAM, certificate.getDescription())
-                .addValue(PRICE_PARAM, certificate.getPrice())
-                .addValue(DURATION_PARAM, certificate.getDuration().toDays())
-                .addValue(ID_PARAM, certificate.getId());
-
-        int result = namedJdbcTemplate.update(UPDATE_GIFT_CERTIFICATE, parameters);
-        return result > 0;
-    }
-
-    @Override
-    public boolean delete(long id) {
-        SqlParameterSource parameters = new MapSqlParameterSource().addValue(ID_PARAM, id);
-        int result = namedJdbcTemplate.update(DELETE_GIFT_CERTIFICATE, parameters);
-        return result > 0;
-    }
-
-    private String buildRequest(String tagName, String certificateName, OrderingType orderingName, String certificateDescription, OrderingType orderingCreateDate){
-        String request = PARTIAL_REQUEST_BEGINNING;
-        request = addWhereToRequest(request, tagName, certificateName, certificateDescription);
-        request = addOrderByToRequest(request, orderingName, orderingCreateDate);
-        return request + REQUEST_APPENDER;
-    }
-
-    private String addWhereToRequest(String request, String tagName, String certificateName, String certificateDescription) {
-        String lineWhere = "";
-        if (tagName != null) {
-            lineWhere = WHERE;
-            lineWhere += TAG_NAME_SEARCH;
-            request = PARTIAL_REQUEST_TAGS_JOIN;
-        }
-
-        if (certificateName != null){
-            lineWhere = lineWhere.equals("") ? WHERE : lineWhere + WHERE_DELIMITER;
-            lineWhere += CERTIFICATE_NAME_SEARCH;
-        }
-
-        if (certificateDescription != null){
-            lineWhere = lineWhere.equals("") ? WHERE : lineWhere + WHERE_DELIMITER;
-            lineWhere += CERTIFICATE_DESCRIPTION_SEARCH;
-        }
-        return request + lineWhere + PARAMETERS_LINE_APPENDER;
-    }
-
-    private String addOrderByToRequest(String request, OrderingType orderingName, OrderingType orderingCreateDate) {
-        String lineOrderBy = "";
-        if (orderingName != null){
-            lineOrderBy = ORDER_BY;
-            lineOrderBy += CERTIFICATE_NAME_ORDERING + orderingName;
-        }
-
-        if (orderingCreateDate != null){
-            lineOrderBy = lineOrderBy.equals("") ? ORDER_BY : lineOrderBy + ORDERING_DELIMITER;
-            lineOrderBy += CERTIFICATE_DATE_ORDERING + orderingCreateDate;
-        }
-        return request + lineOrderBy + PARAMETERS_LINE_APPENDER;
-    }
 }

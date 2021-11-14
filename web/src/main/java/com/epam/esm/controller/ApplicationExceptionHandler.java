@@ -5,6 +5,7 @@ import com.epam.esm.dto.TagDto;
 import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
+import com.epam.esm.exception.InvalidPaginationException;
 import com.epam.esm.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -53,6 +54,13 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     private static final String GIFT_CERTIFICATE_DESCRIPTION_REQUIRED_MESSAGE = "invalid_entity.gift_certificate_description_required";
     private static final String GIFT_CERTIFICATE_PRICE_REQUIRED_MESSAGE = "invalid_entity.gift_certificate_price_required";
     private static final String GIFT_CERTIFICATE_DURATION_REQUIRED_MESSAGE = "invalid_entity.gift_certificate_duration_required";
+    private static final String ORDER_USER_REQUIRED_MESSAGE = "invalid_entity.order_user_required";
+    private static final String ORDER_GIFT_CERTIFICATES_REQUIRED_MESSAGE = "invalid_entity.order_gift_certificates_required";
+
+    private static final String IMPOSSIBLE_TO_UPDATE_SEVERAL_GIFT_CERTIFICATE_FIELDS_MESSAGE = "invalid_entity.impossible_to_update_several_gift_certificate_fields";
+    private static final String NO_GIFT_CERTIFICATE_FIELDS_TO_UPDATE_MESSAGE = "invalid_entity.no_gift_certificate_fields_to_update";
+
+    private static final String INVALID_ORDER_GIFT_CERTIFICATES_AMOUNT_MESSAGE = "invalid_entity.invalid_order_gift_certificates_amount";
 
     private static final String TOO_LONG_TAG_NAME_MESSAGE = "invalid_entity.tag_too_long_name";
     private static final String TOO_SHORT_TAG_NAME_MESSAGE = "invalid_entity.tag_too_short_name";
@@ -107,6 +115,12 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         return buildErrorResponseEntity(NOT_FOUND, errorMessage);
     }
 
+    @ExceptionHandler(InvalidPaginationException.class)
+    public ResponseEntity<Object> handleEntityNotFound(InvalidPaginationException e) {
+        String errorMessage = e.getPaginationError().toString();
+        return buildErrorResponseEntity(BAD_REQUEST, errorMessage);
+    }
+
     @ExceptionHandler(InvalidEntityException.class)
     public ResponseEntity<Object> handleInvalidEntity(InvalidEntityException e) {
         List<ValidationError> validationErrors = e.getValidationErrors();
@@ -132,6 +146,28 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
                 }
                 case GIFT_CERTIFICATE_DURATION_REQUIRED: {
                     errorLine.append(getMessage(GIFT_CERTIFICATE_DURATION_REQUIRED_MESSAGE));
+                    break;
+                }
+                case ORDER_USER_REQUIRED: {
+                    errorLine.append(getMessage(ORDER_USER_REQUIRED_MESSAGE));
+                    break;
+                }
+                case ORDER_GIFT_CERTIFICATES_REQUIRED: {
+                    errorLine.append(getMessage(ORDER_GIFT_CERTIFICATES_REQUIRED_MESSAGE));
+                    break;
+                }
+
+                case IMPOSSIBLE_TO_UPDATE_SEVERAL_GIFT_CERTIFICATE_FIELDS: {
+                    errorLine.append(getMessage(IMPOSSIBLE_TO_UPDATE_SEVERAL_GIFT_CERTIFICATE_FIELDS_MESSAGE));
+                    break;
+                }
+                case NO_GIFT_CERTIFICATE_FIELDS_TO_UPDATE: {
+                    errorLine.append(getMessage(NO_GIFT_CERTIFICATE_FIELDS_TO_UPDATE_MESSAGE));
+                    break;
+                }
+
+                case INVALID_ORDER_GIFT_CERTIFICATES_AMOUNT: {
+                    errorLine.append(getMessage(INVALID_ORDER_GIFT_CERTIFICATES_AMOUNT_MESSAGE));
                     break;
                 }
 

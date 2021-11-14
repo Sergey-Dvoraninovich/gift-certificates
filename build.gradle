@@ -18,6 +18,13 @@ allprojects {
         compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
         annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
+//        implementation 'io.springfox:springfox-swagger2:3.0.0'
+//        implementation 'io.springfox:springfox-data-rest:3.0.0'
+//        implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+
+        implementation 'io.springfox:springfox-swagger2:3.0.0'
+        implementation 'io.springfox:springfox-boot-starter:3.0.0'
+
         testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion
         testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junitVersion
         testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: junitVersion

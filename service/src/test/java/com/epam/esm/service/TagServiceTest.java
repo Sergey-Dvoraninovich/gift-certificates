@@ -84,7 +84,7 @@ public class TagServiceTest {
     void testCreate() {
         Tag tag = provideTag();
         when(tagRepository.findByName(tag.getName())).thenReturn(Optional.empty());
-        when(tagRepository.create(tag)).thenReturn(tag.getId());
+        when(tagRepository.create(tag)).thenReturn(tag);
         TagDto tagDto = provideTagDto();
         when(tagDtoMapper.toDto(tag)).thenReturn(tagDto);
         when(tagDtoMapper.toEntity(tagDto)).thenReturn(tag);
@@ -99,7 +99,7 @@ public class TagServiceTest {
     void testDelete() {
         Tag tag = provideTag();
         when(tagRepository.findById(tag.getId())).thenReturn(Optional.of(tag));
-        when(tagRepository.delete(tag.getId())).thenReturn(true);
+        when(tagRepository.delete(tag)).thenReturn(true);
 
         tagService.delete(tag.getId());
     }
