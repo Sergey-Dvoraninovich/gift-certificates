@@ -1,16 +1,12 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.OrderDto;
-import com.epam.esm.dto.TagDto;
 import com.epam.esm.service.OrderService;
-import com.epam.esm.service.TagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
 

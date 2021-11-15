@@ -18,8 +18,9 @@ public interface GiftCertificateService {
      * @param orderingCreateDate     the ordering type for create date
      * @return the list of GiftCertificateDto
      */
-    List<GiftCertificateDto> findAll(String tagName, String certificateName, String orderingName,
-                                     String certificateDescription, String orderingCreateDate);
+    List<GiftCertificateDto> findAll(String[] tagNames, String certificateName, String orderingName,
+                                     String certificateDescription, String orderingCreateDate,
+                                     Integer pageNumber, Integer pageSize);
 
     /**
      * Find by GiftCertificateDto id.

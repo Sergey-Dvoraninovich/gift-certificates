@@ -34,19 +34,25 @@ public class GiftCertificateSearchParamsValidator {
     private static final int DESCRIPTION_MIN_LENGTH = 2;
     private static final int DESCRIPTION_MAX_LENGTH = 500;
 
-    public List<ValidationError> validate(String tagName, String certificateName, String orderingName,
+    public List<ValidationError> validate(List<String> tagNames, String certificateName, String orderingName,
                                           String certificateDescription, String orderingCreateDate) {
         List<ValidationError> validationErrors = new ArrayList<>();
 
-        if (tagName != null) {
-            if (tagName.length() < TAG_NAME_MIN_LENGTH) {
-                validationErrors.add(TOO_SHORT_TAG_NAME);
-            }
-            else if (tagName.length() > TAG_NAME_MAX_LENGTH) {
-                validationErrors.add(TOO_LONG_TAG_NAME);
-            }
-            else if (!Pattern.matches(TAG_NAME_REGEXP, tagName)) {
-                validationErrors.add(INVALID_SYMBOLS_IN_TAG_NAME);
+        if (tagNames != null) {
+            for (String tagName: tagNames) {
+                if (tagName.length() < TAG_NAME_MIN_LENGTH) {
+                    if (!validationErrors.contains(TOO_SHORT_TAG_NAME)) {
+                        validationErrors.add(TOO_SHORT_TAG_NAME);
+                    }
+                } else if (tagName.length() > TAG_NAME_MAX_LENGTH) {
+                    if (!validationErrors.contains(TOO_LONG_TAG_NAME)) {
+                        validationErrors.add(TOO_LONG_TAG_NAME);
+                    }
+                } else if (!Pattern.matches(TAG_NAME_REGEXP, tagName)) {
+                    if (!validationErrors.contains(INVALID_SYMBOLS_IN_TAG_NAME)) {
+                        validationErrors.add(INVALID_SYMBOLS_IN_TAG_NAME);
+                    }
+                }
             }
         }
 

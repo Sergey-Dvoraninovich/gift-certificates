@@ -1,12 +1,10 @@
 package com.epam.esm.handler;
 
-import com.epam.esm.exception.InvalidEntityException;
 import com.epam.esm.exception.InvalidPaginationException;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import static com.epam.esm.exception.InvalidPaginationException.*;
+import static com.epam.esm.exception.InvalidPaginationException.PaginationError;
 
 @Component
 @NoArgsConstructor
@@ -14,7 +12,7 @@ public class PaginationHandler {
     private static final int MIN_PAGE_NUMBER = 1;
     private static final int MIN_PAGE_SIZE = 1;
     private static final int MAX_PAGE_SIZE = 100;
-    private static final int DEFAULT_PAGE_SIZE = 1;
+    private static final int DEFAULT_PAGE_SIZE = 10;
 
     private Integer pageNumber = MIN_PAGE_NUMBER;
     private Integer pageSize = DEFAULT_PAGE_SIZE;

@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PatchMapping;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.websocket.server.PathParam;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
@@ -26,13 +28,16 @@ public class GiftCertificateController {
     private final GiftCertificateService giftCertificateService;
 
     @GetMapping
-    public ResponseEntity<List<GiftCertificateDto>> getGiftCertificates(@PathParam("tagName") String tagName,
+    public ResponseEntity<List<GiftCertificateDto>> getGiftCertificates(@PathParam("tagName") String[] tagNames,
                                                                         @PathParam("certificateName") String certificateName,
                                                                         @PathParam("orderingName") String orderingName,
                                                                         @PathParam("certificateDescription") String certificateDescription,
-                                                                        @PathParam("orderingDate") String orderingDate) {
-        List<GiftCertificateDto> giftCertificatesDto = giftCertificateService.findAll(tagName, certificateName, orderingName,
-                                                                                      certificateDescription, orderingDate);
+                                                                        @PathParam("orderingDate") String orderingDate,
+                                                                        @PathParam("pageNumber") Integer pageNumber,
+                                                                        @PathParam("pageSize") Integer pageSize) {
+        List<GiftCertificateDto> giftCertificatesDto = giftCertificateService.findAll(tagNames, certificateName, orderingName,
+                                                                                      certificateDescription, orderingDate,
+                                                                                      pageNumber, pageSize);
         return new ResponseEntity<>(giftCertificatesDto, OK);
     }
 

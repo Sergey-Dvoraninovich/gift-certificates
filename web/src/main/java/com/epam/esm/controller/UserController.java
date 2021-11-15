@@ -1,9 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.OrderDto;
-import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.UserDto;
-import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

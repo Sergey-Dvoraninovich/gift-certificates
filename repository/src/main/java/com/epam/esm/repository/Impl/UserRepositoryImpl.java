@@ -1,7 +1,6 @@
 package com.epam.esm.repository.Impl;
 
 import com.epam.esm.entity.Order;
-import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import com.epam.esm.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

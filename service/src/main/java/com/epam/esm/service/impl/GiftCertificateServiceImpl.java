@@ -9,6 +9,7 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
+import com.epam.esm.handler.PaginationHandler;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderingType;
 import com.epam.esm.repository.TagRepository;
@@ -23,10 +24,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.epam.esm.validator.ValidationError.*;
+import static com.epam.esm.validator.ValidationError.IMPOSSIBLE_TO_UPDATE_SEVERAL_GIFT_CERTIFICATE_FIELDS;
+import static com.epam.esm.validator.ValidationError.NO_GIFT_CERTIFICATE_FIELDS_TO_UPDATE;
 
 @Service
 @RequiredArgsConstructor
@@ -38,11 +44,18 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final GiftCertificateSearchParamsValidator searchParamsValidator;
     private final GiftCertificateDtoMapper giftCertificateDtoMapper;
     private final TagDtoMapper tagDtoMapper;
+    private final PaginationHandler paginationHandler;
 
     @Override
-    public List<GiftCertificateDto> findAll(String tagName, String certificateName, String orderingName,
-                                            String certificateDescription, String orderingCreateDate) {
-        List<ValidationError> validationErrors = searchParamsValidator.validate(tagName, certificateName, orderingName,
+    public List<GiftCertificateDto> findAll(String[] tagNames, String certificateName, String orderingName,
+                                            String certificateDescription, String orderingCreateDate,
+                                            Integer pageNumber, Integer pageSize) {
+        paginationHandler.handle(pageNumber, pageSize);
+        int minPos = paginationHandler.getMinPos();
+        int maxPos = paginationHandler.getMaxPos();
+
+        List<String> tagNamesArray = tagNames == null ? null : Arrays.asList(tagNames);
+        List<ValidationError> validationErrors = searchParamsValidator.validate(tagNamesArray, certificateName, orderingName,
                                                                                 certificateDescription, orderingCreateDate);
         if (!validationErrors.isEmpty()) {
             throw new InvalidEntityException(validationErrors, String.class);
@@ -50,8 +63,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         OrderingType orderingNameType = orderingName == null ? null : OrderingType.valueOf(orderingName);
         OrderingType orderingCreateDateType = orderingCreateDate == null ? null : OrderingType.valueOf(orderingCreateDate);
-        List<GiftCertificate> certificates = giftCertificateRepository.findAll(tagName, certificateName, orderingNameType,
-                                                                                   certificateDescription, orderingCreateDateType);
+        List<GiftCertificate> certificates = giftCertificateRepository.findAll(tagNamesArray, certificateName, orderingNameType,
+                                                                                   certificateDescription, orderingCreateDateType,
+                                                                                   minPos, maxPos);
         List<GiftCertificateDto> certificatesDto = certificates.stream()
                 .map(giftCertificateDtoMapper::toDto)
                 .collect(Collectors.toList());

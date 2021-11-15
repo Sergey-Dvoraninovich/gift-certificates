@@ -2,14 +2,12 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.OrderDto;
-import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.mapping.GiftCertificateDtoMapper;
 import com.epam.esm.dto.mapping.OrderDtoMapper;
 import com.epam.esm.dto.mapping.UserDtoMapper;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
-import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
