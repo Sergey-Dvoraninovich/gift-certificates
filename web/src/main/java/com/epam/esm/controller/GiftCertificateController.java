@@ -1,8 +1,10 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.TagDto;
 import com.epam.esm.service.GiftCertificateService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -44,6 +47,14 @@ public class GiftCertificateController {
     @GetMapping("/{id}")
     public ResponseEntity<GiftCertificateDto> getGiftCertificate(@PathVariable("id") long id) {
         GiftCertificateDto giftCertificateDto = giftCertificateService.findById(id);
+        Link selfLink = linkTo(GiftCertificateController.class).slash(giftCertificateDto.getId()).withSelfRel();
+        giftCertificateDto.add(selfLink);
+
+        List<TagDto> certificateTags = giftCertificateDto.getTagsDto();
+        for (TagDto tag : certificateTags) {
+            Link tagSelfLink = linkTo(TagController.class).slash(tag.getId()).withSelfRel();
+            tag.add(tagSelfLink);
+        }
         return new ResponseEntity<>(giftCertificateDto, OK);
     }
 

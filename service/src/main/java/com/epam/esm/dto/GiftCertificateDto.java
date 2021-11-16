@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class GiftCertificateDto {
+public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> {
     private long id;
     private String name;
     private String description;
