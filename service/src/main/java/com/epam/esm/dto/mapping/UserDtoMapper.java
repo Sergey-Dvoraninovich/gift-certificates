@@ -1,8 +1,6 @@
 package com.epam.esm.dto.mapping;
 
-import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.UserDto;
-import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

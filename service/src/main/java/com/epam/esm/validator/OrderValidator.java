@@ -1,7 +1,7 @@
 package com.epam.esm.validator;
 
-import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.OrderDto;
+import com.epam.esm.dto.OrderItemDto;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -17,21 +17,21 @@ public class OrderValidator {
         if (orderDto.getUser() == null){
             validationErrors.add(ORDER_USER_REQUIRED);
         }
-        if (orderDto.getOrderGiftCertificates() == null){
-            validationErrors.add(ORDER_GIFT_CERTIFICATES_REQUIRED);
+        if (orderDto.getOrderItems() == null){
+            validationErrors.add(ORDER_ITEMS_REQUIRED);
         }
         if (validationErrors.size() == 0) {
-            validationErrors.addAll(validateParams(orderDto.getOrderGiftCertificates()));
+            validationErrors.addAll(validateParams(orderDto.getOrderItems()));
         }
         return validationErrors;
     }
 
-    public List<ValidationError> validateParams(List<GiftCertificateDto> certificatesDto) {
+    public List<ValidationError> validateParams(List<OrderItemDto> orderItemsDto) {
         List<ValidationError> validationErrors = new ArrayList<>();
 
-        if (certificatesDto != null) {
-            if (certificatesDto.size() == 0){
-                validationErrors.add(INVALID_ORDER_GIFT_CERTIFICATES_AMOUNT);
+        if (orderItemsDto != null) {
+            if (orderItemsDto.size() == 0){
+                validationErrors.add(INVALID_ORDER_ITEMS_AMOUNT);
             }
         }
 

@@ -6,13 +6,13 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
-import com.epam.esm.handler.PaginationHandler;
+import com.epam.esm.exception.InvalidPaginationException;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
+import com.epam.esm.validator.PaginationValidator;
 import com.epam.esm.validator.TagValidator;
 import com.epam.esm.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,14 +26,16 @@ public class TagServiceImpl implements TagService {
     private final TagRepository tagRepository;
     private final TagValidator tagValidator;
     private final TagDtoMapper tagMapper;
-    private final PaginationHandler paginationHandler;
+    private final PaginationValidator paginationValidator;
+
+    @Override
+    public Long countAll() {
+        return tagRepository.countAll();
+    }
 
     @Override
     public List<TagDto> findAll(Integer pageNumber, Integer pageSize){
-        paginationHandler.handle(pageNumber, pageSize);
-        int minPos = paginationHandler.getMinPos();
-        int maxPos = paginationHandler.getMaxPos();
-        return tagRepository.findAll(minPos, maxPos)
+        return tagRepository.findAll(pageNumber, pageSize)
                 .stream()
                 .map(tagMapper::toDto)
                 .collect(Collectors.toList());

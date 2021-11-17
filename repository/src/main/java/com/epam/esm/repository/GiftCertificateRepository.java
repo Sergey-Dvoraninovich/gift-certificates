@@ -9,7 +9,7 @@ public interface GiftCertificateRepository {
 
     List<GiftCertificate> findAll(List<String> tagNames, String certificateName, OrderingType orderingName,
                                   String certificateDescription, OrderingType orderingCreateDate,
-                                  int minPos, int maxPos);
+                                  int pageNumber, int pageSize);
     Optional<GiftCertificate> findById(long id);
     Optional<GiftCertificate> findByName(String name);
 

@@ -5,13 +5,16 @@ import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.mapping.GiftCertificateDtoMapper;
 import com.epam.esm.dto.mapping.OrderDtoMapper;
+import com.epam.esm.dto.mapping.OrderItemDtoMapper;
 import com.epam.esm.dto.mapping.UserDtoMapper;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
+import com.epam.esm.entity.OrderItem;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
 import com.epam.esm.repository.GiftCertificateRepository;
+import com.epam.esm.repository.OrderItemRepository;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.OrderService;
@@ -31,10 +34,10 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final GiftCertificateRepository giftCertificateRepository;
     private final UserRepository userRepository;
+    private final OrderItemRepository orderItemRepository;
 
     private final OrderDtoMapper orderDtoMapper;
-    private final GiftCertificateDtoMapper giftCertificateDtoMapper;
-    private final UserDtoMapper userDtoMapper;
+    private final OrderItemDtoMapper oderItemDtoMapper;
 
     private final OrderValidator orderValidator;
 
@@ -65,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
             throw new InvalidEntityException(validationErrors, OrderDto.class);
         }
 
-        List<GiftCertificate> orderCertificates = processGistCertificates(orderDto);
+        List<OrderItem> orderItems = processOrderItems(orderDto);
 
         long userId = orderDto.getUser().getId();
         Optional<User> optionalUser = userRepository.findById(userId);
@@ -74,13 +77,13 @@ public class OrderServiceImpl implements OrderService {
         }
 
         Order order = orderDtoMapper.toEntity(orderDto);
-        order.setOrderGiftCertificates(orderCertificates);
+        order.setOrderItems(orderItems);
         order.setUser(optionalUser.get());
         order = orderRepository.create(order);
+
         return orderDtoMapper.toDto(order);
     }
 
-    //TODO test order updating
     @Override
     @Transactional
     public OrderDto update(OrderDto orderDto) {
@@ -94,15 +97,8 @@ public class OrderServiceImpl implements OrderService {
             order = optionalOrder.get();
         }
 
-        long userId = orderDto.getUser().getId();
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (!optionalUser.isPresent()) {
-            throw new EntityNotFoundException(userId, UserDto.class);
-        }
-
-        List<GiftCertificate> orderCertificates = processGistCertificates(orderDto);
-        order.setOrderGiftCertificates(orderCertificates);
-        order.setUser(optionalUser.get());
+        List<OrderItem> orderItems = processOrderItems(orderDto);
+        order.setOrderItems(orderItems);
         order = orderRepository.update(order);
         return orderDtoMapper.toDto(order);
     }
@@ -117,16 +113,26 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.delete(optionalOrder.get());
     }
 
-    private List<GiftCertificate> processGistCertificates(OrderDto orderDto) {
-        return orderDto.getOrderGiftCertificates().stream()
-                .map(giftCertificateDtoMapper::toEntity)
-                .map((certificate -> {
-                    Optional<GiftCertificate> optionalCertificate;
-                    optionalCertificate = giftCertificateRepository.findById(certificate.getId());
-                    if (!optionalCertificate.isPresent()) {
-                        throw new EntityNotFoundException(certificate.getId(), GiftCertificateDto.class);
+    private List<OrderItem> processOrderItems(OrderDto orderDto) {
+        return orderDto.getOrderItems().stream()
+                .map(oderItemDtoMapper::toEntity)
+                .map(orderItem -> {
+                    Optional<OrderItem> optionalOrderItem;
+                    optionalOrderItem = orderItemRepository.findById(orderItem.getId());
+                    if (!optionalOrderItem.isPresent()) {
+                        Optional<GiftCertificate> optionalCertificate;
+                        optionalCertificate = giftCertificateRepository.findById(orderItem.getGiftCertificate().getId());
+                        if (!optionalCertificate.isPresent()) {
+                            throw new EntityNotFoundException(orderItem.getGiftCertificate().getId(), GiftCertificateDto.class);
+                        }
+                        orderItem.setGiftCertificate(optionalCertificate.get());
+                        orderItem.setPrice(optionalCertificate.get().getPrice());
                     }
-                    return optionalCertificate.get();
-                })).collect(Collectors.toList());
+                    else {
+                        orderItem = optionalOrderItem.get();
+                    }
+                    return orderItem;
+                })
+                .collect(Collectors.toList());
     }
 }

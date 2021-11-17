@@ -37,7 +37,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     @Override
     public List<GiftCertificate> findAll(List<String> tagNames, String certificateName, OrderingType orderingName,
                                          String certificateDescription, OrderingType orderingCreateDate,
-                                         int minPos, int maxPos) {
+                                         int pageNumber, int pageSize) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> query = criteriaBuilder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> certificateRoot = query.from(GiftCertificate.class);
@@ -69,8 +69,8 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         }
 
         return entityManager.createQuery(query)
-                .setFirstResult(minPos)
-                .setMaxResults(maxPos)
+                .setFirstResult((pageNumber - 1) * pageSize)
+                .setMaxResults(pageSize)
                 .getResultList();
     }
 

@@ -18,5 +18,5 @@ public class OrderDto {
 
     private BigDecimal price;
     private UserDto user;
-    private List<GiftCertificateDto> orderGiftCertificates;
+    private List<OrderItemDto> orderItems;
 }

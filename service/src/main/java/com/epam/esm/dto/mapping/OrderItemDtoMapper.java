@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
-public class OrderItemMapper {
+public class OrderItemDtoMapper {
     private final ModelMapper mapper;
     private final GiftCertificateDtoMapper giftCertificateDtoMapper;
 

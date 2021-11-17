@@ -15,6 +15,9 @@ import java.util.Optional;
 public class TagRepositoryImpl implements TagRepository {
     private static final String TAG_NAME_PARAM = "tagName";
 
+    private static final String COUNT_ALL_TAGS
+            = "SELECT COUNT(t) FROM Tag t";
+
     private static final String ALL_TAGS
             = "SELECT t FROM Tag t";
 
@@ -25,10 +28,16 @@ public class TagRepositoryImpl implements TagRepository {
     private final EntityManager entityManager;
 
     @Override
-    public List<Tag> findAll(int minPos, int maxPos) {
+    public Long countAll() {
+        return (Long) entityManager.createQuery(COUNT_ALL_TAGS)
+                .getSingleResult();
+    }
+
+    @Override
+    public List<Tag> findAll(int pageNumber, int pageSize) {
         return entityManager.createQuery(ALL_TAGS, Tag.class)
-                .setFirstResult(minPos)
-                .setMaxResults(maxPos)
+                .setFirstResult((pageNumber - 1) * pageSize)
+                .setMaxResults(pageSize)
                 .getResultList();
     }
 

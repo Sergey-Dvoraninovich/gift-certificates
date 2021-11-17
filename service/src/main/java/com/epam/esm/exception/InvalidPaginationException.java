@@ -1,14 +1,18 @@
 package com.epam.esm.exception;
 
+import com.epam.esm.validator.ValidationError;
+
+import java.util.List;
+
 public class InvalidPaginationException extends RuntimeException {
     private final Integer pageNumber;
     private final Integer pageSize;
-    private final PaginationError paginationError;
+    private final List<ValidationError> paginationErrors;
 
-    public InvalidPaginationException(Integer pageNumber, Integer pageSize, PaginationError paginationError) {
+    public InvalidPaginationException(Integer pageNumber, Integer pageSize, List<ValidationError> paginationErrors) {
         this.pageNumber = pageNumber;
         this.pageSize = pageSize;
-        this.paginationError = paginationError;
+        this.paginationErrors = paginationErrors;
     }
 
     public Integer getPageNumber() {
@@ -19,14 +23,7 @@ public class InvalidPaginationException extends RuntimeException {
         return pageSize;
     }
 
-    public PaginationError getPaginationError() {
-        return paginationError;
-    }
-
-    public enum PaginationError {
-        TOO_SMALL_PAGE_NUMBER,
-
-        TOO_SMALL_PAGE_SIZE,
-        TOO_BIG_PAGE_SIZE,
+    public List<ValidationError> getPaginationErrors() {
+        return paginationErrors;
     }
 }

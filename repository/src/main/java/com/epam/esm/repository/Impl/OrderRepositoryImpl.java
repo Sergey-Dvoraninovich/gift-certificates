@@ -2,6 +2,7 @@ package com.epam.esm.repository.Impl;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
+import com.epam.esm.entity.OrderItem;
 import com.epam.esm.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -37,11 +38,6 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public Order create(Order order) {
         order.setOrderTime(Instant.now());
-        BigDecimal totalPrice = new BigDecimal("0.00");
-        for (GiftCertificate certificate: order.getOrderGiftCertificates()) {
-            totalPrice = totalPrice.add(certificate.getPrice());
-        }
-        order.setPrice(totalPrice);
 
         entityManager.persist(order);
         return order;
@@ -49,13 +45,6 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Order update(Order order) {
-        order.setOrderTime(Instant.now());
-        BigDecimal totalPrice = new BigDecimal("0.00");
-        for (GiftCertificate certificate: order.getOrderGiftCertificates()) {
-            totalPrice = totalPrice.add(certificate.getPrice());
-        }
-        order.setPrice(totalPrice);
-
         entityManager.merge(order);
         return order;
     }

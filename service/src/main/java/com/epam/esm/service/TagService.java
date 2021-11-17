@@ -1,7 +1,6 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dto.TagDto;
-import com.epam.esm.handler.PaginationHandler;
 
 import java.util.List;
 
@@ -9,6 +8,8 @@ import java.util.List;
  * The interface Tag service.
  */
 public interface TagService {
+
+    Long countAll();
 
     List<TagDto> findAll(Integer pageNumber, Integer pageSize);
 

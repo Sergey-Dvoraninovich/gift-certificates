@@ -9,13 +9,14 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
-import com.epam.esm.handler.PaginationHandler;
+import com.epam.esm.exception.InvalidPaginationException;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderingType;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.validator.GiftCertificateSearchParamsValidator;
 import com.epam.esm.validator.GiftCertificateValidator;
+import com.epam.esm.validator.PaginationValidator;
 import com.epam.esm.validator.TagValidator;
 import com.epam.esm.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
@@ -44,15 +45,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final GiftCertificateSearchParamsValidator searchParamsValidator;
     private final GiftCertificateDtoMapper giftCertificateDtoMapper;
     private final TagDtoMapper tagDtoMapper;
-    private final PaginationHandler paginationHandler;
+    private final PaginationValidator paginationValidator;
 
     @Override
     public List<GiftCertificateDto> findAll(String[] tagNames, String certificateName, String orderingName,
                                             String certificateDescription, String orderingCreateDate,
                                             Integer pageNumber, Integer pageSize) {
-        paginationHandler.handle(pageNumber, pageSize);
-        int minPos = paginationHandler.getMinPos();
-        int maxPos = paginationHandler.getMaxPos();
 
         List<String> tagNamesArray = tagNames == null ? null : Arrays.asList(tagNames);
         List<ValidationError> validationErrors = searchParamsValidator.validate(tagNamesArray, certificateName, orderingName,
@@ -65,11 +63,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         OrderingType orderingCreateDateType = orderingCreateDate == null ? null : OrderingType.valueOf(orderingCreateDate);
         List<GiftCertificate> certificates = giftCertificateRepository.findAll(tagNamesArray, certificateName, orderingNameType,
                                                                                    certificateDescription, orderingCreateDateType,
-                                                                                   minPos, maxPos);
-        List<GiftCertificateDto> certificatesDto = certificates.stream()
+                                                                                   pageNumber, pageSize);
+        return certificates.stream()
                 .map(giftCertificateDtoMapper::toDto)
                 .collect(Collectors.toList());
-        return certificatesDto;
     }
 
     @Override

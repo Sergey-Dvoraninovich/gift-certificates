@@ -28,6 +28,9 @@ import static org.springframework.http.HttpStatus.*;
 @RequestMapping("/api/giftCertificates")
 @RequiredArgsConstructor
 public class GiftCertificateController {
+    private static final int DEFAULT_PAGE_NUMBER = 1;
+    private static final int DEFAULT_PAGE_SIZE = 10;
+
     private final GiftCertificateService giftCertificateService;
 
     @GetMapping
@@ -38,6 +41,8 @@ public class GiftCertificateController {
                                                                         @PathParam("orderingDate") String orderingDate,
                                                                         @PathParam("pageNumber") Integer pageNumber,
                                                                         @PathParam("pageSize") Integer pageSize) {
+        pageNumber = pageNumber == null ? DEFAULT_PAGE_NUMBER : pageNumber;
+        pageSize = pageSize == null ? DEFAULT_PAGE_SIZE : pageSize;
         List<GiftCertificateDto> giftCertificatesDto = giftCertificateService.findAll(tagNames, certificateName, orderingName,
                                                                                       certificateDescription, orderingDate,
                                                                                       pageNumber, pageSize);

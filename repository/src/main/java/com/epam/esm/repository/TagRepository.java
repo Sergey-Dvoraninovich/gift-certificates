@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TagRepository {
+    Long countAll();
 
-    List<Tag> findAll(int minPos, int maxPos);
+    List<Tag> findAll(int pageNumber, int pageSize);
     Optional<Tag> findById(long id);
     Optional<Tag> findByName(String name);
 

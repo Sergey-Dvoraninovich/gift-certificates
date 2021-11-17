@@ -1,57 +1,77 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.TagDto;
-import com.epam.esm.handler.PaginationHandler;
+import com.epam.esm.exception.InvalidPaginationException;
+import com.epam.esm.hateos.TagHateoas;
+import com.epam.esm.hateos.provider.impl.TagHateoasProvider;
+import com.epam.esm.hateos.TagListHateoas;
 import com.epam.esm.service.TagService;
+import com.epam.esm.validator.PaginationValidator;
+import com.epam.esm.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
+import static com.epam.esm.validator.ValidationError.*;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/api/tags")
 @RequiredArgsConstructor
 public class TagController {
+
     private final TagService tagService;
+    private final TagHateoasProvider tagHateoasProvider;
+    private final PaginationValidator paginationValidator;
 
     @GetMapping
-    public ResponseEntity<List<TagDto>> getTags(@PathParam("pageNumber") Integer pageNumber,
-                              @PathParam("pageSize") Integer pageSize) {
-        List<TagDto> tagsDto = tagService.findAll(pageNumber, pageSize);
-        for (TagDto tag : tagsDto) {
-            Link selfLink = linkTo(TagController.class).slash(tag.getId()).withSelfRel();
-            tag.add(selfLink);
+    public ResponseEntity<TagListHateoas> getTags(@RequestParam(value = "pageNumber", defaultValue = "1") Integer pageNumber,
+                                                  @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        List<ValidationError> validationErrors = paginationValidator.validateParams(pageNumber, pageSize);
+        if (!validationErrors.isEmpty()) {
+            throw new InvalidPaginationException(pageNumber, pageSize, validationErrors);
         }
-        return new ResponseEntity<>(tagsDto, OK);
+
+        Long tagsDtoAmount = tagService.countAll();
+        if (tagsDtoAmount <= (pageNumber - 1) * pageSize) {
+            throw new InvalidPaginationException(pageNumber, pageSize, Collections.singletonList(PAGE_IS_OUT_OF_RANGE));
+        }
+
+        List<TagDto> tagsDto = tagService.findAll(pageNumber, pageSize);
+        TagListHateoas tagListHateoas = TagListHateoas.build(tagsDto, tagHateoasProvider);
+        if (pageNumber > 1) {
+            Link prevLink = linkTo(methodOn(TagController.class).getTags(pageNumber - 1, pageSize)).withRel("prevPage");
+            tagListHateoas.add(prevLink);
+        }
+        if (tagsDtoAmount > pageNumber * pageSize) {
+            Link nextLink = linkTo(methodOn(TagController.class).getTags(pageNumber + 1, pageSize)).withRel("nextPage");
+            tagListHateoas.add(nextLink);
+        }
+        return new ResponseEntity<>(tagListHateoas, OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TagDto> getTag(@PathVariable("id") long id) {
+    public ResponseEntity<TagHateoas> getTag(@PathVariable("id") long id) {
         TagDto tagDto = tagService.findById(id);
-        Link selfLink = linkTo(TagController.class).slash(tagDto.getId()).withSelfRel();
-        tagDto.add(selfLink);
-        return new ResponseEntity<>(tagDto, OK);
+        TagHateoas tagHateoas = TagHateoas.build(tagDto, tagHateoasProvider);
+        return new ResponseEntity<>(tagHateoas, OK);
     }
 
     @PostMapping
-    public ResponseEntity<TagDto> createTag(@RequestBody TagDto tagDto) {
+    public ResponseEntity<TagHateoas> createTag(@RequestBody TagDto tagDto) {
         TagDto createdTag = tagService.create(tagDto);
-        Link selfLink = linkTo(TagController.class).slash(createdTag.getId()).withSelfRel();
-        createdTag.add(selfLink);
-        return new ResponseEntity<>(createdTag, CREATED);
+        TagHateoas tagHateoas = TagHateoas.build(createdTag, tagHateoasProvider);
+        return new ResponseEntity<>(tagHateoas, CREATED);
     }
 
     @DeleteMapping("/{id}")

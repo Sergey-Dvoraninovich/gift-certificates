@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.epam.esm.validator.ValidationError.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -40,6 +41,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     private static final String ENTITY_ALREADY_EXISTS_MESSAGE = "entity_already_exists";
     private static final String ENTITY_NOT_FOUND_MESSAGE = "entity_not_found";
     private static final String INVALID_ENTITY_MESSAGE = "invalid_entity";
+    private static final String INVALID_PAGINATION_MESSAGE = "invalid_pagination";
     private static final String INTERNAL_SERVER_ERROR_MESSAGE = "internal_server_error";
 
     private static final String TAG_ENTITY_NAME_MESSAGE = "entities.tag";
@@ -55,12 +57,12 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     private static final String GIFT_CERTIFICATE_PRICE_REQUIRED_MESSAGE = "invalid_entity.gift_certificate_price_required";
     private static final String GIFT_CERTIFICATE_DURATION_REQUIRED_MESSAGE = "invalid_entity.gift_certificate_duration_required";
     private static final String ORDER_USER_REQUIRED_MESSAGE = "invalid_entity.order_user_required";
-    private static final String ORDER_GIFT_CERTIFICATES_REQUIRED_MESSAGE = "invalid_entity.order_gift_certificates_required";
+    private static final String ORDER_ITEMS_REQUIRED_MESSAGE = "invalid_entity.order_items_required";
 
     private static final String IMPOSSIBLE_TO_UPDATE_SEVERAL_GIFT_CERTIFICATE_FIELDS_MESSAGE = "invalid_entity.impossible_to_update_several_gift_certificate_fields";
     private static final String NO_GIFT_CERTIFICATE_FIELDS_TO_UPDATE_MESSAGE = "invalid_entity.no_gift_certificate_fields_to_update";
 
-    private static final String INVALID_ORDER_GIFT_CERTIFICATES_AMOUNT_MESSAGE = "invalid_entity.invalid_order_gift_certificates_amount";
+    private static final String INVALID_ORDER_ITEMS_AMOUNT_MESSAGE = "invalid_entity.invalid_order_items_amount";
 
     private static final String TOO_LONG_TAG_NAME_MESSAGE = "invalid_entity.tag_too_long_name";
     private static final String TOO_SHORT_TAG_NAME_MESSAGE = "invalid_entity.tag_too_short_name";
@@ -117,7 +119,36 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 
     @ExceptionHandler(InvalidPaginationException.class)
     public ResponseEntity<Object> handleEntityNotFound(InvalidPaginationException e) {
-        String errorMessage = e.getPaginationError().toString();
+        List<ValidationError> validationErrors = e.getPaginationErrors();
+        StringBuilder errorLine = new StringBuilder();
+        for (ValidationError error: validationErrors) {
+            switch (error) {
+                case TOO_SMALL_PAGE_NUMBER: {
+                    errorLine.append(TOO_SMALL_PAGE_NUMBER.name());
+                    break;
+                }
+
+                case TOO_SMALL_PAGE_SIZE: {
+                    errorLine.append(TOO_SMALL_PAGE_SIZE.name());
+                    break;
+                }
+                case TOO_BIG_PAGE_SIZE: {
+                    errorLine.append(TOO_BIG_PAGE_SIZE.name());
+                    break;
+                }
+
+                case PAGE_IS_OUT_OF_RANGE: {
+                    errorLine.append(PAGE_IS_OUT_OF_RANGE.name());
+                    break;
+                }
+            }
+            errorLine.append(ERROR_SEPARATOR);
+        }
+        int lastSeparatorPos = errorLine.length() - ERROR_SEPARATOR.length();
+        errorLine.replace(lastSeparatorPos, errorLine.length(), "");
+
+        String errorMessage = String.format(getMessage(INVALID_PAGINATION_MESSAGE),
+                e.getPageNumber(), e.getPageSize(), errorLine);
         return buildErrorResponseEntity(BAD_REQUEST, errorMessage);
     }
 
@@ -152,8 +183,8 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
                     errorLine.append(getMessage(ORDER_USER_REQUIRED_MESSAGE));
                     break;
                 }
-                case ORDER_GIFT_CERTIFICATES_REQUIRED: {
-                    errorLine.append(getMessage(ORDER_GIFT_CERTIFICATES_REQUIRED_MESSAGE));
+                case ORDER_ITEMS_REQUIRED: {
+                    errorLine.append(getMessage(ORDER_ITEMS_REQUIRED_MESSAGE));
                     break;
                 }
 
@@ -166,8 +197,8 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
                     break;
                 }
 
-                case INVALID_ORDER_GIFT_CERTIFICATES_AMOUNT: {
-                    errorLine.append(getMessage(INVALID_ORDER_GIFT_CERTIFICATES_AMOUNT_MESSAGE));
+                case INVALID_ORDER_ITEMS_AMOUNT: {
+                    errorLine.append(getMessage(INVALID_ORDER_ITEMS_AMOUNT_MESSAGE));
                     break;
                 }
 
