@@ -1,16 +1,28 @@
 package com.epam.esm.dto;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.*;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class UserDto {
+    @ApiModelProperty(notes = "The user ID")
     private long id;
+
+    @ApiModelProperty(notes = "The user login")
     private String login;
+
+    @ApiModelProperty(notes = "The user's first name")
     private String name;
+
+    @ApiModelProperty(notes = "The user's last name")
     private String surname;
+
+    @ApiModelProperty(notes = "The user's email")
     private String email;
 }

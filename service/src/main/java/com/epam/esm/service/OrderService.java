@@ -1,15 +1,16 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dto.OrderDto;
-import com.sun.org.apache.xpath.internal.operations.Or;
+import com.epam.esm.dto.OrderCreateRequestDto;
+import com.epam.esm.dto.OrderResponseDto;
+import com.epam.esm.dto.OrderUpdateRequestDto;
 
 import java.util.List;
 
 public interface OrderService {
-    List<OrderDto> findAll();
-    OrderDto findById(long id);
+    List<OrderResponseDto> findAll();
+    OrderResponseDto findById(long id);
 
-    OrderDto create(OrderDto orderDto);
-    OrderDto update(OrderDto orderDto);
+    OrderResponseDto create(OrderCreateRequestDto orderCreateRequestDto);
+    OrderResponseDto update(long id, OrderUpdateRequestDto orderUpdateRequestDto);
     void delete(long id);
 }

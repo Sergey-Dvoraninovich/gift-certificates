@@ -1,7 +1,6 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.dto.GiftCertificateDto;
-import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.*;
 import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
@@ -47,8 +46,14 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     private static final String INVALID_PAGINATION_MESSAGE = "invalid_pagination";
     private static final String INTERNAL_SERVER_ERROR_MESSAGE = "internal_server_error";
 
-    private static final String TAG_ENTITY_NAME_MESSAGE = "entities.tag";
-    private static final String GIFT_CERTIFICATE_ENTITY_NAME_MESSAGE = "entities.gift_certificate";
+    private static final String TAG_MESSAGE = "entities.tag";
+    private static final String GIFT_CERTIFICATE_MESSAGE = "entities.gift_certificate";
+    private static final String ORDER_CREATE_REQUEST_MESSAGE = "entities.order_create_request";
+    private static final String ORDER_ITEM_MESSAGE = "entities.order_item";
+    private static final String ORDER_RESPONSE_MESSAGE = "entities.order_response";
+    private static final String ORDER_UPDATE_REQUEST_MESSAGE = "entities.order_update_request";
+    private static final String USER_MESSAGE = "entities.user";
+    private static final String USER_ORDER_RESPONSE_MESSAGE = "entities.user_order_response";
     private static final String ENTITY_PLACEHOLDER_MESSAGE = "entities.placeholder";
 
     private static final String TAG_ALREADY_EXISTS_MESSAGE = "entity_already_exists.tag_message";
@@ -66,6 +71,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     private static final String NO_GIFT_CERTIFICATE_FIELDS_TO_UPDATE_MESSAGE = "invalid_entity.no_gift_certificate_fields_to_update";
 
     private static final String INVALID_ORDER_ITEMS_AMOUNT_MESSAGE = "invalid_entity.invalid_order_items_amount";
+    private static final String NOT_UNIQUE_GIFT_CERTIFICATES_IN_ORDER_MESSAGE = "invalid_entity.not_unique_gift_certificates_in_order";
 
     private static final String TOO_LONG_TAG_NAME_MESSAGE = "invalid_entity.tag_too_long_name";
     private static final String TOO_SHORT_TAG_NAME_MESSAGE = "invalid_entity.tag_too_short_name";
@@ -92,6 +98,13 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 
     private static final String INVALID_NAME_ORDERING_TYPE_MESSAGE = "invalid_entity.invalid_name_ordering_type";
     private static final String INVALID_CREATE_DATE_ORDERING_TYPE_MESSAGE = "invalid_entity.invalid_create_date_ordering_type";
+
+    private static final String TOO_SMALL_PAGE_NUMBER_MESSAGE = "invalid_entity.too_small_page_number";
+
+    private static final String TOO_SMALL_PAGE_SIZE_MESSAGE = "invalid_entity.too_small_page_size";
+    private static final String TOO_BIG_PAGE_SIZE_MESSAGE = "invalid_entity.too_big_page_size";
+
+    private static final String PAGE_IS_OUT_OF_RANGE_MESSAGE = "invalid_entity.page_is_out_of_range";
 
     private static final String ERROR_SEPARATOR = ", ";
 
@@ -127,21 +140,21 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         for (ValidationError error: validationErrors) {
             switch (error) {
                 case TOO_SMALL_PAGE_NUMBER: {
-                    errorLine.append(TOO_SMALL_PAGE_NUMBER.name());
+                    errorLine.append(getMessage(TOO_SMALL_PAGE_NUMBER_MESSAGE));
                     break;
                 }
 
                 case TOO_SMALL_PAGE_SIZE: {
-                    errorLine.append(TOO_SMALL_PAGE_SIZE.name());
+                    errorLine.append(getMessage(TOO_SMALL_PAGE_SIZE_MESSAGE));
                     break;
                 }
                 case TOO_BIG_PAGE_SIZE: {
-                    errorLine.append(TOO_BIG_PAGE_SIZE.name());
+                    errorLine.append(getMessage(TOO_BIG_PAGE_SIZE_MESSAGE));
                     break;
                 }
 
                 case PAGE_IS_OUT_OF_RANGE: {
-                    errorLine.append(PAGE_IS_OUT_OF_RANGE.name());
+                    errorLine.append(getMessage(PAGE_IS_OUT_OF_RANGE_MESSAGE));
                     break;
                 }
             }
@@ -202,6 +215,10 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 
                 case INVALID_ORDER_ITEMS_AMOUNT: {
                     errorLine.append(getMessage(INVALID_ORDER_ITEMS_AMOUNT_MESSAGE));
+                    break;
+                }
+                case NOT_UNIQUE_GIFT_CERTIFICATES_IN_ORDER: {
+                    errorLine.append(getMessage(NOT_UNIQUE_GIFT_CERTIFICATES_IN_ORDER_MESSAGE));
                     break;
                 }
 
@@ -315,9 +332,28 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     private String getEntityMessage(Class<?> entity, String placeholderName) {
         String entityName = getMessage(placeholderName);
         if (TagDto.class.equals(entity)) {
-            entityName = getMessage(TAG_ENTITY_NAME_MESSAGE);
-        } else if (GiftCertificateDto.class.equals(entity)) {
-            entityName = getMessage(GIFT_CERTIFICATE_ENTITY_NAME_MESSAGE);
+            entityName = getMessage(TAG_MESSAGE);
+        }
+        else if (GiftCertificateDto.class.equals(entity)) {
+            entityName = getMessage(GIFT_CERTIFICATE_MESSAGE);
+        }
+        else if (OrderCreateRequestDto.class.equals(entity)) {
+            entityName = getMessage(ORDER_CREATE_REQUEST_MESSAGE);
+        }
+        else if (OrderItemDto.class.equals(entity)) {
+            entityName = getMessage(ORDER_ITEM_MESSAGE);
+        }
+        else if (OrderResponseDto.class.equals(entity)) {
+            entityName = getMessage(ORDER_RESPONSE_MESSAGE);
+        }
+        else if (OrderUpdateRequestDto.class.equals(entity)) {
+            entityName = getMessage(ORDER_UPDATE_REQUEST_MESSAGE);
+        }
+        else if (UserDto.class.equals(entity)) {
+            entityName = getMessage(USER_MESSAGE);
+        }
+        else if (UserOrderResponseDto.class.equals(entity)) {
+            entityName = getMessage(USER_ORDER_RESPONSE_MESSAGE);
         }
         return entityName;
     }

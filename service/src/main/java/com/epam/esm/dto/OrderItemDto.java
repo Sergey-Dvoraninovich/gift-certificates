@@ -1,14 +1,19 @@
 package com.epam.esm.dto;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.*;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class OrderItemDto {
-    private long id;
-    private BigDecimal price;
-    private GiftCertificateDto giftCertificate;
+    @ApiModelProperty(notes = "The GiftCertificate ID")
+    long id;
+
+    @ApiModelProperty(notes = "The price of a GiftCertificate")
+    BigDecimal price;
 }

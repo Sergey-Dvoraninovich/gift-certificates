@@ -1,6 +1,5 @@
 package com.epam.esm.repository.Impl;
 
-import com.epam.esm.entity.Order;
 import com.epam.esm.entity.OrderItem;
 import com.epam.esm.repository.OrderItemRepository;
 import lombok.RequiredArgsConstructor;

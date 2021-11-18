@@ -1,16 +1,12 @@
 package com.epam.esm.repository.Impl;
 
-import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
-import com.epam.esm.entity.OrderItem;
 import com.epam.esm.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,8 +33,6 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Order create(Order order) {
-        order.setOrderTime(Instant.now());
-
         entityManager.persist(order);
         return order;
     }

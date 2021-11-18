@@ -1,9 +1,11 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dto.OrderDto;
+import com.epam.esm.dto.OrderResponseDto;
 import com.epam.esm.dto.UserDto;
-import com.epam.esm.dto.mapping.OrderDtoMapper;
+import com.epam.esm.dto.UserOrderResponseDto;
+import com.epam.esm.dto.mapping.OrderResponseDtoMapper;
 import com.epam.esm.dto.mapping.UserDtoMapper;
+import com.epam.esm.dto.mapping.UserOrderResponseDtoMapper;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.EntityNotFoundException;
@@ -21,7 +23,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserDtoMapper userMapper;
-    private final OrderDtoMapper orderMapper;
+    private final OrderResponseDtoMapper orderResponseDtoMapper;
+    private final UserOrderResponseDtoMapper userOrderResponseDtoMapper;
 
     @Override
     public List<UserDto> findAll(){
@@ -43,14 +46,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<OrderDto> findUserOrders(long id) {
+    public List<UserOrderResponseDto> findUserOrders(long id) {
         Optional<User> user = userRepository.findById(id);
         if (!user.isPresent()) {
             throw new EntityNotFoundException(id, UserDto.class);
         }
         List<Order> orders = userRepository.findUserOrders(id);
         return orders.stream()
-                .map(orderMapper::toDto)
+                .map(userOrderResponseDtoMapper::toDto)
                 .collect(Collectors.toList());
     }
 }

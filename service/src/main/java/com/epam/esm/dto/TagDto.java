@@ -1,12 +1,18 @@
 package com.epam.esm.dto;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 
-@Data
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class TagDto extends RepresentationModel<TagDto> {
+    @ApiModelProperty(notes = "The tag ID")
     private long id;
+
+    @ApiModelProperty(notes = "The tag name")
     private String name;
 }

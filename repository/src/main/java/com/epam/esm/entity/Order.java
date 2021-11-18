@@ -17,8 +17,11 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "order_time", nullable = false)
-    private Instant orderTime;
+    @Column(name = "create_order_time", nullable = false)
+    private Instant createOrderTime;
+
+    @Column(name = "update_order_time", nullable = false)
+    private Instant updateOrderTime;
 
     @ManyToOne
     @JoinColumn(name = "id_user")
