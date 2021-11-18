@@ -35,9 +35,8 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     private final EntityManager entityManager;
 
     @Override
-    public List<GiftCertificate> findAll(List<String> tagNames, String certificateName, OrderingType orderingName,
-                                         String certificateDescription, OrderingType orderingCreateDate,
-                                         int pageNumber, int pageSize) {
+    public Long countAll(List<String> tagNames, String certificateName, OrderingType orderingName,
+                         String certificateDescription, OrderingType orderingCreateDate) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> query = criteriaBuilder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> certificateRoot = query.from(GiftCertificate.class);
@@ -47,10 +46,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
 
         List<Predicate> predicates = new ArrayList<>();
         Optional<Predicate> tagsOptionalPredicate = createTagsPredicate(criteriaBuilder, tags, tagNames);
-        if (tagsOptionalPredicate.isPresent()) {
-            predicates.add(tagsOptionalPredicate.get());
-            query.distinct(true);
-        }
+        tagsOptionalPredicate.ifPresent(predicates::add);
 
         predicates.addAll(createCertificatePredicate(criteriaBuilder, certificateRoot,
                 certificateName, certificateDescription));
@@ -67,6 +63,45 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         for (Order order: orders) {
             query.orderBy(order);
         }
+        query.distinct(true);
+
+        List<GiftCertificate> certificates =  entityManager.createQuery(query)
+                .getResultList();
+        //TODO work with optimization
+        return certificates.stream().count();
+    }
+
+    @Override
+    public List<GiftCertificate> findAll(List<String> tagNames, String certificateName, OrderingType orderingName,
+                                         String certificateDescription, OrderingType orderingCreateDate,
+                                         int pageNumber, int pageSize) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<GiftCertificate> query = criteriaBuilder.createQuery(GiftCertificate.class);
+        Root<GiftCertificate> certificateRoot = query.from(GiftCertificate.class);
+        Join<GiftCertificate, Tag> tags = certificateRoot.join(GIFT_CERTIFICATE_TAGS);
+
+        query.select(certificateRoot);
+
+        List<Predicate> predicates = new ArrayList<>();
+        Optional<Predicate> tagsOptionalPredicate = createTagsPredicate(criteriaBuilder, tags, tagNames);
+        tagsOptionalPredicate.ifPresent(predicates::add);
+
+        predicates.addAll(createCertificatePredicate(criteriaBuilder, certificateRoot,
+                certificateName, certificateDescription));
+        if (predicates.size() != 0) {
+            Predicate resultPredicate = predicates.get(0);
+            for (Predicate predicate : predicates) {
+                resultPredicate = criteriaBuilder.and(resultPredicate, predicate);
+            }
+            query.where(resultPredicate);
+        }
+
+        List<Order> orders = createOrderingPredicate(criteriaBuilder, certificateRoot,
+                orderingName, orderingCreateDate);
+        for (Order order: orders) {
+            query.orderBy(order);
+        }
+        query.distinct(true);
 
         return entityManager.createQuery(query)
                 .setFirstResult((pageNumber - 1) * pageSize)
@@ -140,7 +175,6 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         if (certificateDescription != null){
             predicates.add(criteriaBuilder.like(certificateRoot.get(DESCRIPTION), "%" + certificateDescription + "%"));
         }
-        System.out.println(predicates);
         return predicates;
     }
 

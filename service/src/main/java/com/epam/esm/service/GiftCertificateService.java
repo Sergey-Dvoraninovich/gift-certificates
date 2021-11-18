@@ -9,6 +9,8 @@ import java.util.List;
  * The interface Gift certificate service.
  */
 public interface GiftCertificateService {
+    Long countAll(String[] tagNames, String certificateName, String orderingName,
+                  String certificateDescription, String orderingCreateDate);
     /**
      * Find all.
      *

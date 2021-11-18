@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface GiftCertificateRepository {
+    Long countAll(List<String> tagNames, String certificateName, OrderingType orderingName,
+                  String certificateDescription, OrderingType orderingCreateDate);
 
     List<GiftCertificate> findAll(List<String> tagNames, String certificateName, OrderingType orderingName,
                                   String certificateDescription, OrderingType orderingCreateDate,

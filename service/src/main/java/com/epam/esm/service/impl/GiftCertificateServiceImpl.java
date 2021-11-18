@@ -9,27 +9,18 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
-import com.epam.esm.exception.InvalidPaginationException;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderingType;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.validator.GiftCertificateSearchParamsValidator;
-import com.epam.esm.validator.GiftCertificateValidator;
-import com.epam.esm.validator.PaginationValidator;
-import com.epam.esm.validator.TagValidator;
-import com.epam.esm.validator.ValidationError;
+import com.epam.esm.validator.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.epam.esm.validator.ValidationError.IMPOSSIBLE_TO_UPDATE_SEVERAL_GIFT_CERTIFICATE_FIELDS;
@@ -46,6 +37,22 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final GiftCertificateDtoMapper giftCertificateDtoMapper;
     private final TagDtoMapper tagDtoMapper;
     private final PaginationValidator paginationValidator;
+
+    @Override
+    public Long countAll(String[] tagNames, String certificateName, String orderingName, String certificateDescription, String orderingCreateDate) {
+        List<String> tagNamesArray = tagNames == null ? null : Arrays.asList(tagNames);
+        List<ValidationError> validationErrors = searchParamsValidator.validate(tagNamesArray, certificateName, orderingName,
+                certificateDescription, orderingCreateDate);
+        if (!validationErrors.isEmpty()) {
+            throw new InvalidEntityException(validationErrors, String.class);
+        }
+
+        OrderingType orderingNameType = orderingName == null ? null : OrderingType.valueOf(orderingName);
+        OrderingType orderingCreateDateType = orderingCreateDate == null ? null : OrderingType.valueOf(orderingCreateDate);
+
+        return giftCertificateRepository.countAll(tagNamesArray, certificateName, orderingNameType,
+                certificateDescription, orderingCreateDateType);
+    }
 
     @Override
     public List<GiftCertificateDto> findAll(String[] tagNames, String certificateName, String orderingName,

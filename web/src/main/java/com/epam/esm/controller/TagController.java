@@ -9,18 +9,13 @@ import com.epam.esm.service.TagService;
 import com.epam.esm.validator.PaginationValidator;
 import com.epam.esm.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
-import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
-import static com.epam.esm.validator.ValidationError.*;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static com.epam.esm.validator.ValidationError.PAGE_IS_OUT_OF_RANGE;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
@@ -48,15 +43,8 @@ public class TagController {
         }
 
         List<TagDto> tagsDto = tagService.findAll(pageNumber, pageSize);
-        TagListHateoas tagListHateoas = TagListHateoas.build(tagsDto, tagHateoasProvider);
-        if (pageNumber > 1) {
-            Link prevLink = linkTo(methodOn(TagController.class).getTags(pageNumber - 1, pageSize)).withRel("prevPage");
-            tagListHateoas.add(prevLink);
-        }
-        if (tagsDtoAmount > pageNumber * pageSize) {
-            Link nextLink = linkTo(methodOn(TagController.class).getTags(pageNumber + 1, pageSize)).withRel("nextPage");
-            tagListHateoas.add(nextLink);
-        }
+        TagListHateoas tagListHateoas = TagListHateoas.build(tagsDto, tagHateoasProvider,
+                tagsDtoAmount, pageNumber, pageSize);
         return new ResponseEntity<>(tagListHateoas, OK);
     }
 

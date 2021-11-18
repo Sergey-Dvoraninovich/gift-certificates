@@ -23,7 +23,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.epam.esm.validator.ValidationError.*;
+import static com.epam.esm.validator.ValidationError.PAGE_IS_OUT_OF_RANGE;
+import static com.epam.esm.validator.ValidationError.TOO_BIG_PAGE_SIZE;
+import static com.epam.esm.validator.ValidationError.TOO_SMALL_PAGE_NUMBER;
+import static com.epam.esm.validator.ValidationError.TOO_SMALL_PAGE_SIZE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
