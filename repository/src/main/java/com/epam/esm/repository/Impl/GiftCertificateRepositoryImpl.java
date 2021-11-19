@@ -159,7 +159,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
                 }
                 resultPredicate = tagPredicates.get(0);
                 for (Predicate predicate: tagPredicates) {
-                    resultPredicate = criteriaBuilder.or(resultPredicate, predicate);
+                    resultPredicate = criteriaBuilder.and(resultPredicate, predicate);
                 }
             }
         }

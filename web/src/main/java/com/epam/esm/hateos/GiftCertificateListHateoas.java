@@ -17,8 +17,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Data
 @AllArgsConstructor
-public class GiftCertificateListHateoas extends RepresentationModel<TagDto> {
-    private List<GiftCertificateHateoas> data;
+public class GiftCertificateListHateoas extends RepresentationModel<GiftCertificateHateoas> {
+    private List<GiftCertificateHateoas> giftCertificatesDto;
 
     public static GiftCertificateListHateoas build(List<GiftCertificateDto> certificatesDto, HateoasProvider<GiftCertificateDto> hateoasProvider,
                                        String[] tagNames, String certificateName, String orderingName,

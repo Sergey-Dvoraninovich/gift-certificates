@@ -19,7 +19,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> {
+public class GiftCertificateDto {
     @ApiModelProperty(notes = "The database generated GiftCertificate ID")
     private long id;
 

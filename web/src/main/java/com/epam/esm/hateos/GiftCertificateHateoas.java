@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class GiftCertificateHateoas extends RepresentationModel<GiftCertificateDto> {
+public class GiftCertificateHateoas extends RepresentationModel<GiftCertificateHateoas> {
     private GiftCertificateDto giftCertificateDto;
 
     public static GiftCertificateHateoas build(GiftCertificateDto certificateDto, HateoasProvider<GiftCertificateDto> hateoasProvider) {

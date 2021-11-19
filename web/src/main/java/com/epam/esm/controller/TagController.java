@@ -1,10 +1,7 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.dto.GiftCertificateDto;
-import com.epam.esm.dto.OrderResponseDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.exception.InvalidPaginationException;
-import com.epam.esm.hateos.GiftCertificateHateoas;
 import com.epam.esm.hateos.TagHateoas;
 import com.epam.esm.hateos.provider.impl.TagHateoasProvider;
 import com.epam.esm.hateos.TagListHateoas;

@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class TagHateoas extends RepresentationModel<TagDto> {
+public class TagHateoas extends RepresentationModel<TagHateoas> {
     private TagDto tagDto;
 
     public static TagHateoas build(TagDto tagDto, HateoasProvider<TagDto> hateoasProvider) {

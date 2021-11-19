@@ -16,7 +16,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Data
 @AllArgsConstructor
-public class TagListHateoas extends RepresentationModel<TagDto> {
+public class TagListHateoas extends RepresentationModel<TagListHateoas> {
     private List<TagHateoas> tagsDto;
 
     public static TagListHateoas build(List<TagDto> tagsDto, HateoasProvider<TagDto> hateoasProvider,

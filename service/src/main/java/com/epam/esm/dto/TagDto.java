@@ -9,7 +9,7 @@ import org.springframework.hateoas.RepresentationModel;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TagDto extends RepresentationModel<TagDto> {
+public class TagDto {
     @ApiModelProperty(notes = "The tag ID")
     private long id;
 

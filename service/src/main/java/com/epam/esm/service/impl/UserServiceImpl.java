@@ -1,12 +1,13 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dto.OrderResponseDto;
+import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.UserOrderResponseDto;
-import com.epam.esm.dto.mapping.OrderResponseDtoMapper;
+import com.epam.esm.dto.mapping.TagDtoMapper;
 import com.epam.esm.dto.mapping.UserDtoMapper;
 import com.epam.esm.dto.mapping.UserOrderResponseDtoMapper;
 import com.epam.esm.entity.Order;
+import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.repository.UserRepository;
@@ -23,12 +24,17 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserDtoMapper userMapper;
-    private final OrderResponseDtoMapper orderResponseDtoMapper;
     private final UserOrderResponseDtoMapper userOrderResponseDtoMapper;
+    private final TagDtoMapper tagDtoMapper;
 
     @Override
-    public List<UserDto> findAll(){
-        return userRepository.findAll()
+    public Long countAll() {
+        return userRepository.countAll();
+    }
+
+    @Override
+    public List<UserDto> findAll(Integer pageNumber, Integer pageSize) {
+        return userRepository.findAll(pageNumber, pageSize)
                 .stream()
                 .map(userMapper::toDto)
                 .collect(Collectors.toList());
@@ -55,5 +61,14 @@ public class UserServiceImpl implements UserService {
         return orders.stream()
                 .map(userOrderResponseDtoMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public TagDto findMostWidelyUsedTag(long userId) {
+        Optional<Tag> optionalTag = userRepository.findMostWidelyUsedTag(userId);
+        if (!optionalTag.isPresent()) {
+            throw new EntityNotFoundException(TagDto.class);
+        }
+        return tagDtoMapper.toDto(optionalTag.get());
     }
 }
