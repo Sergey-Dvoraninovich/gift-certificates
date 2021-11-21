@@ -11,6 +11,6 @@ public interface UserService {
     List<UserDto> findAll(Integer pageNumber, Integer pageSize);
     UserDto findById(long id);
 
-    List<UserOrderResponseDto> findUserOrders(long id);
-    TagDto findMostWidelyUsedTag(long userId);
+    Long countAllUserOrders(long id);
+    List<UserOrderResponseDto> findUserOrders(long id, Integer pageNumber, Integer pageSize);
 }

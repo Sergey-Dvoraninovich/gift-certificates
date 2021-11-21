@@ -101,4 +101,18 @@ public class TagController {
         tagService.delete(id);
         return new ResponseEntity<>(NO_CONTENT);
     }
+
+    @ApiOperation(value = "Get most widely used tag for user with highest order price", response = TagHateoas.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved tag"),
+            @ApiResponse(code = 400, message = "The tag can't be fetched due to bad request"),
+            @ApiResponse(code = 404, message = "The tag you were trying to reach is not found")
+    }
+    )
+    @GetMapping("/mostWidelyUsedTag")
+    public ResponseEntity<TagHateoas> getMostWidelyUsedTag() {
+        TagDto tagDto = tagService.findMostWidelyUsedTag();
+        TagHateoas tagHateoas = TagHateoas.build(tagDto, tagHateoasProvider);
+        return new ResponseEntity<>(tagHateoas, OK);
+    }
 }

@@ -15,9 +15,11 @@ import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderRepository;
+import com.epam.esm.repository.OrderingType;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.validator.OrderCreateValidator;
+import com.epam.esm.validator.OrderSearchParamsValidator;
 import com.epam.esm.validator.OrderUpdateValidator;
 import com.epam.esm.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
@@ -40,10 +42,22 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderCreateValidator orderCreateValidator;
     private final OrderUpdateValidator orderUpdateValidator;
+    private final OrderSearchParamsValidator orderSearchParamsValidator;
 
     @Override
-    public List<OrderResponseDto> findAll(){
-        return orderRepository.findAll()
+    public Long countAll() {
+        return orderRepository.countAll();
+    }
+
+    @Override
+    public List<OrderResponseDto> findAll(String sortOrder, Integer pageNumber, Integer pageSize){
+        List<ValidationError> validationErrors = orderSearchParamsValidator.validate(sortOrder);
+        if (!validationErrors.isEmpty()) {
+            throw new InvalidEntityException(validationErrors, String.class);
+        }
+        OrderingType sortOrderType = OrderingType.valueOf(sortOrder);
+
+        return orderRepository.findAll(sortOrderType, pageNumber, pageSize)
                 .stream()
                 .map(orderDtoMapper::toDto)
                 .collect(Collectors.toList());

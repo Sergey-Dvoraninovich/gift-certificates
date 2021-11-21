@@ -52,23 +52,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserOrderResponseDto> findUserOrders(long id) {
+    public Long countAllUserOrders(long id) {
+        return userRepository.countAllUserOrders(id);
+    }
+
+    @Override
+    public List<UserOrderResponseDto> findUserOrders(long id, Integer pageNumber, Integer pageSize) {
         Optional<User> user = userRepository.findById(id);
         if (!user.isPresent()) {
             throw new EntityNotFoundException(id, UserDto.class);
         }
-        List<Order> orders = userRepository.findUserOrders(id);
+        List<Order> orders = userRepository.findUserOrders(id, pageNumber, pageSize);
         return orders.stream()
                 .map(userOrderResponseDtoMapper::toDto)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public TagDto findMostWidelyUsedTag(long userId) {
-        Optional<Tag> optionalTag = userRepository.findMostWidelyUsedTag(userId);
-        if (!optionalTag.isPresent()) {
-            throw new EntityNotFoundException(TagDto.class);
-        }
-        return tagDtoMapper.toDto(optionalTag.get());
     }
 }

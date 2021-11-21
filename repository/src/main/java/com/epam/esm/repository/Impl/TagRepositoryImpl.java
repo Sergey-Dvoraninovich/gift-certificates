@@ -1,5 +1,6 @@
 package com.epam.esm.repository.Impl;
 
+import com.epam.esm.entity.Order;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,23 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TagRepositoryImpl implements TagRepository {
     private static final String TAG_NAME_PARAM = "tagName";
+    private static final String USER_ID_PARAM = "userId";
+
+    private static final String FIND_MOST_WIDELY_USED_USER_TAG
+            = "SELECT t FROM Order o "
+            + "JOIN o.user u "
+            + "JOIN o.orderItems i "
+            + "JOIN i.giftCertificate c "
+            + "JOIN c.giftCertificateTags t "
+            + "WHERE u.id = :userId "
+            + "GROUP BY t";
+
+    private static final String FIND_USER_WITH_HIGHEST_ORDERS_COAST
+            = "SELECT o FROM Order o "
+            + "JOIN o.user u "
+            + "JOIN o.orderItems i "
+            + "GROUP BY o "
+            + "ORDER BY SUM(i.price) DESC";
 
     private static final String COUNT_ALL_TAGS
             = "SELECT COUNT(t) FROM Tag t";
@@ -65,5 +83,28 @@ public class TagRepositoryImpl implements TagRepository {
     public boolean delete(Tag tag) {
         entityManager.remove(tag);
         return entityManager.find(Tag.class, tag.getId()) == null;
+    }
+
+    @Override
+    public Optional<Tag> findMostWidelyUsedTag() {
+        Optional<Tag> mostWidelyUsedTag = Optional.empty();
+
+        List<Order> orders = entityManager.createQuery(FIND_USER_WITH_HIGHEST_ORDERS_COAST, Order.class)
+                .setFirstResult(0)
+                .setMaxResults(1)
+                .getResultList();
+
+        if (orders.size() != 0) {
+            Long userId = orders.get(0).getUser().getId();
+
+            List<Tag> tags = entityManager.createQuery(FIND_MOST_WIDELY_USED_USER_TAG, Tag.class)
+                    .setParameter(USER_ID_PARAM, userId)
+                    .getResultList();
+            if (tags.size() != 0) {
+                mostWidelyUsedTag = Optional.of(tags.get(0));
+            }
+        }
+
+        return mostWidelyUsedTag;
     }
 }

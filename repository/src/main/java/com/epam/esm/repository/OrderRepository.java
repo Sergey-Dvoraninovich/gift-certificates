@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderRepository {
+    Long countAll();
 
-    List<Order> findAll();
+    List<Order> findAll(OrderingType sortOrder, int pageNumber, int pageSize);
     Optional<Order> findById(long id);
 
     Order create(Order order);

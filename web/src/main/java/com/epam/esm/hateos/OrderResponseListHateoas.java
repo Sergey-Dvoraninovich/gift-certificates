@@ -19,7 +19,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Data
 @AllArgsConstructor
 public class OrderResponseListHateoas extends RepresentationModel<OrderResponseListHateoas> {
-    private List<OrderResponseHateoas> tagsDto;
+    private List<OrderResponseHateoas> orderResponsesDto;
 
     public static OrderResponseListHateoas build(List<OrderResponseDto> orderResponsesDto, HateoasProvider<OrderResponseDto> hateoasProvider,
                                                  Long ordersDtoAmount, Integer pageNumber, Integer pageSize, String sortOrder) {

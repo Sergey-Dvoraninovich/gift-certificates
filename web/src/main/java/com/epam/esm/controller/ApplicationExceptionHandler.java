@@ -98,6 +98,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 
     private static final String INVALID_NAME_ORDERING_TYPE_MESSAGE = "invalid_entity.invalid_name_ordering_type";
     private static final String INVALID_CREATE_DATE_ORDERING_TYPE_MESSAGE = "invalid_entity.invalid_create_date_ordering_type";
+    private static final String INVALID_ORDER_ORDERING_TYPE_MESSAGE = "invalid_entity.invalid_order_ordering_type";
 
     private static final String TOO_SMALL_PAGE_NUMBER_MESSAGE = "invalid_entity.too_small_page_number";
 
@@ -305,6 +306,10 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
                 }
                 case INVALID_CREATE_DATE_ORDERING_TYPE: {
                     errorLine.append(getMessage(INVALID_CREATE_DATE_ORDERING_TYPE_MESSAGE));
+                    break;
+                }
+                case INVALID_ORDER_ORDERING_TYPE: {
+                    errorLine.append(getMessage(INVALID_ORDER_ORDERING_TYPE_MESSAGE));
                     break;
                 }
             }

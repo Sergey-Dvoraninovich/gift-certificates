@@ -3,7 +3,13 @@ package com.epam.esm.controller;
 import com.epam.esm.dto.OrderCreateRequestDto;
 import com.epam.esm.dto.OrderResponseDto;
 import com.epam.esm.dto.OrderUpdateRequestDto;
+import com.epam.esm.exception.InvalidPaginationException;
+import com.epam.esm.hateos.OrderResponseHateoas;
+import com.epam.esm.hateos.OrderResponseListHateoas;
+import com.epam.esm.hateos.provider.impl.OrderResponseHateoasProvider;
 import com.epam.esm.service.OrderService;
+import com.epam.esm.validator.PaginationValidator;
+import com.epam.esm.validator.ValidationError;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -22,8 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.List;
 
+import static com.epam.esm.validator.ValidationError.PAGE_IS_OUT_OF_RANGE;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
@@ -33,6 +41,8 @@ import static org.springframework.http.HttpStatus.OK;
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
+    private final PaginationValidator paginationValidator;
+    private final OrderResponseHateoasProvider orderResponseHateoasProvider;
 
     @ApiOperation(value = "Get list of All GiftCertificate orders", response = Iterable.class)
     @ApiResponses(value = {
@@ -42,11 +52,23 @@ public class OrderController {
     }
     )
     @GetMapping
-    public ResponseEntity<List<OrderResponseDto>> getOrders(@ApiParam(value = "pageNumber", required = false) @RequestParam(value = "pageNumber", defaultValue = "1") @Min(1) Integer pageNumber,
-                                                    @ApiParam(value = "pageNumber", required = false) @RequestParam(value = "pageNumber", defaultValue = "10") @Min(1) Integer pageSize,
-                                                    @ApiParam(value = "sortOrder", required = false) @RequestParam(value = "sortOrder", defaultValue = "ASC") String sortOrder) {
-        List<OrderResponseDto> ordersDto = orderService.findAll();
-        return new ResponseEntity<>(ordersDto, OK);
+    public ResponseEntity<OrderResponseListHateoas> getOrders(@ApiParam(value = "pageNumber", required = false) @RequestParam(value = "pageNumber", defaultValue = "1") @Min(1) Integer pageNumber,
+                                                              @ApiParam(value = "pageSize", required = false) @RequestParam(value = "pageSize", defaultValue = "10") @Min(1) Integer pageSize,
+                                                              @ApiParam(value = "sortOrder", required = false) @RequestParam(value = "sortOrder", defaultValue = "ASC") String sortOrder) {
+        List<ValidationError> validationErrors = paginationValidator.validateParams(pageNumber, pageSize);
+        if (!validationErrors.isEmpty()) {
+            throw new InvalidPaginationException(pageNumber, pageSize, validationErrors);
+        }
+
+        Long ordersDtoAmount = orderService.countAll();
+        if (ordersDtoAmount <= (pageNumber - 1) * pageSize) {
+            throw new InvalidPaginationException(pageNumber, pageSize, Collections.singletonList(PAGE_IS_OUT_OF_RANGE));
+        }
+
+        List<OrderResponseDto> ordersDto = orderService.findAll(sortOrder, pageNumber, pageSize);
+        OrderResponseListHateoas ordersHateoas = OrderResponseListHateoas.build(ordersDto, orderResponseHateoasProvider,
+                ordersDtoAmount, pageNumber, pageSize, sortOrder);
+        return new ResponseEntity<>(ordersHateoas, OK);
     }
 
     @ApiOperation(value = "Get GiftCertificate order", response = OrderResponseDto.class)
@@ -57,9 +79,10 @@ public class OrderController {
     }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<OrderResponseDto> getOrder(@ApiParam(value = "The Order ID") @PathVariable("id") @Min(1) long id) {
+    public ResponseEntity<OrderResponseHateoas> getOrder(@ApiParam(value = "The Order ID") @PathVariable("id") @Min(1) long id) {
         OrderResponseDto orderDto = orderService.findById(id);
-        return new ResponseEntity<>(orderDto, OK);
+        OrderResponseHateoas orderResponseHateoas = OrderResponseHateoas.build(orderDto, orderResponseHateoasProvider);
+        return new ResponseEntity<>(orderResponseHateoas, OK);
     }
 
     @ApiOperation(value = "Create GiftCertificate order", response = OrderResponseDto.class)
@@ -70,9 +93,10 @@ public class OrderController {
     }
     )
     @PostMapping
-    public ResponseEntity<OrderResponseDto> createOrder(@ApiParam(value = "The Order create request dto") @RequestBody @NotNull OrderCreateRequestDto orderCreateRequestDto) {
-        OrderResponseDto insertedOrderDto = orderService.create(orderCreateRequestDto);
-        return new ResponseEntity<>(insertedOrderDto, CREATED);
+    public ResponseEntity<OrderResponseHateoas> createOrder(@ApiParam(value = "The Order create request dto") @RequestBody @NotNull OrderCreateRequestDto orderCreateRequestDto) {
+        OrderResponseDto createdOrderDto = orderService.create(orderCreateRequestDto);
+        OrderResponseHateoas orderResponseHateoas = OrderResponseHateoas.build(createdOrderDto, orderResponseHateoasProvider);
+        return new ResponseEntity<>(orderResponseHateoas, CREATED);
     }
 
     @ApiOperation(value = "Update GiftCertificate order", response = OrderResponseDto.class)
@@ -83,10 +107,11 @@ public class OrderController {
     }
     )
     @PatchMapping("/{id}")
-    public ResponseEntity<OrderResponseDto> updateOrder(@ApiParam(value = "The Order ID") @PathVariable("id") @Min(1) long id,
+    public ResponseEntity<OrderResponseHateoas> updateOrder(@ApiParam(value = "The Order ID") @PathVariable("id") @Min(1) long id,
                                                         @ApiParam(value = "The Order update request dto") @RequestBody @NotNull OrderUpdateRequestDto orderUpdateRequestDto) {
         OrderResponseDto updatedOrderDto = orderService.update(id, orderUpdateRequestDto);
-        return new ResponseEntity<>(updatedOrderDto, OK);
+        OrderResponseHateoas orderResponseHateoas = OrderResponseHateoas.build(updatedOrderDto, orderResponseHateoasProvider);
+        return new ResponseEntity<>(orderResponseHateoas, OK);
     }
 
     @ApiOperation(value = "Delete GiftCertificate order")

@@ -22,14 +22,10 @@ import static com.epam.esm.repository.OrderingType.DESC;
 @RequiredArgsConstructor
 public class GiftCertificateRepositoryImpl implements GiftCertificateRepository {
     private static final String GIFT_CERTIFICATE_TAGS = "giftCertificateTags";
+    private static final String ID = "id";
     private static final String NAME = "name";
     private static final String DESCRIPTION = "description";
     private static final String CREATE_DATE = "createDate";
-
-    private static final String GIFT_CERTIFICATE_NAME_PARAM = "giftCertificateName";
-
-    private static final String GIFT_CERTIFICATE_BY_NAME
-            = "SELECT c FROM GiftCertificate c WHERE c.name = :giftCertificateName";
 
     @PersistenceContext
     private final EntityManager entityManager;
@@ -38,11 +34,12 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     public Long countAll(List<String> tagNames, String certificateName, OrderingType orderingName,
                          String certificateDescription, OrderingType orderingCreateDate) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<GiftCertificate> query = criteriaBuilder.createQuery(GiftCertificate.class);
+        CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
         Root<GiftCertificate> certificateRoot = query.from(GiftCertificate.class);
+        query.select(criteriaBuilder.count(query.from(GiftCertificate.class)));
         Join<GiftCertificate, Tag> tags = certificateRoot.join(GIFT_CERTIFICATE_TAGS);
 
-        query.select(certificateRoot);
+        query.select(criteriaBuilder.count(query.from(GiftCertificate.class)));
 
         List<Predicate> predicates = new ArrayList<>();
         Optional<Predicate> tagsOptionalPredicate = createTagsPredicate(criteriaBuilder, tags, tagNames);
@@ -63,12 +60,9 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         for (Order order: orders) {
             query.orderBy(order);
         }
-        query.distinct(true);
+        query.groupBy(certificateRoot.get(ID));
 
-        List<GiftCertificate> certificates =  entityManager.createQuery(query)
-                .getResultList();
-        //TODO work with optimization
-        return certificates.stream().count();
+        return (long) entityManager.createQuery(query).getResultList().size();
     }
 
     @Override
@@ -101,7 +95,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         for (Order order: orders) {
             query.orderBy(order);
         }
-        query.distinct(true);
+        query.groupBy(certificateRoot.get(ID));
 
         return entityManager.createQuery(query)
                 .setFirstResult((pageNumber - 1) * pageSize)
@@ -117,9 +111,14 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
 
     @Override
     public Optional<GiftCertificate> findByName(String name) {
-        List<GiftCertificate> certificates = entityManager.createQuery(GIFT_CERTIFICATE_BY_NAME, GiftCertificate.class)
-                .setParameter(GIFT_CERTIFICATE_NAME_PARAM, name)
-                .getResultList();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<GiftCertificate> query = criteriaBuilder.createQuery(GiftCertificate.class);
+        Root<GiftCertificate> certificateRoot = query.from(GiftCertificate.class);
+
+        query.select(certificateRoot);
+        query.where(criteriaBuilder.equal(certificateRoot.get(NAME), name));
+
+        List<GiftCertificate> certificates = entityManager.createQuery(query).getResultList();
 
         return certificates.size() == 0
                 ? Optional.empty()

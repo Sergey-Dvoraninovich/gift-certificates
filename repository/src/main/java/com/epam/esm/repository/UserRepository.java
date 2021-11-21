@@ -13,6 +13,6 @@ public interface UserRepository {
     List<User> findAll(int pageNumber, int pageSize);
     Optional<User> findById(long id);
 
-    List<Order> findUserOrders(long id);
-    Optional<Tag> findMostWidelyUsedTag(long userId);
+    Long countAllUserOrders(long id);
+    List<Order> findUserOrders(long id, int pageNumber, int pageSize);
 }

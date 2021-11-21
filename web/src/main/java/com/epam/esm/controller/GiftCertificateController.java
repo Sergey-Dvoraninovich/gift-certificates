@@ -61,7 +61,7 @@ public class GiftCertificateController {
                                                                           @ApiParam(value = "certificateDescription", required = false) @RequestParam(value ="certificateDescription", required = false) String certificateDescription,
                                                                           @ApiParam(value = "orderingDate", required = false) @RequestParam(value = "orderingDate", required = false) String orderingDate,
                                                                           @ApiParam(value = "pageNumber", required = false) @RequestParam(value = "pageNumber", defaultValue = "1") @Min(1) Integer pageNumber,
-                                                                          @ApiParam(value = "pageNumber", required = false) @RequestParam(value = "pageNumber", defaultValue = "10") @Min(1) Integer pageSize) {
+                                                                          @ApiParam(value = "pageSize", required = false) @RequestParam(value = "pageSize", defaultValue = "10") @Min(1) Integer pageSize) {
 
         List<ValidationError> validationErrors = paginationValidator.validateParams(pageNumber, pageSize);
         if (!validationErrors.isEmpty()) {

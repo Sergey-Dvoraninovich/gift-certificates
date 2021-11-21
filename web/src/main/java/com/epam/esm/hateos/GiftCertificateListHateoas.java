@@ -2,8 +2,8 @@ package com.epam.esm.hateos;
 
 import com.epam.esm.controller.GiftCertificateController;
 import com.epam.esm.dto.GiftCertificateDto;
-import com.epam.esm.dto.TagDto;
 import com.epam.esm.hateos.provider.HateoasProvider;
+import com.epam.esm.hateos.util.LinkProcessor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.hateoas.Link;
@@ -11,6 +11,7 @@ import org.springframework.hateoas.RepresentationModel;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -33,25 +34,28 @@ public class GiftCertificateListHateoas extends RepresentationModel<GiftCertific
 
         List<Link> certificateLinks = new ArrayList<>();
         if (pageNumber > 1) {
-        Link prevLink = linkTo(methodOn(GiftCertificateController.class)
-                .getGiftCertificates(tagNames, certificateName, orderingName, certificateDescription, orderingDate,
-                        pageNumber - 1, pageSize))
-                .withRel("prevPage");
-            certificateLinks.add(prevLink);
+            String prevLinkLine = LinkProcessor.process(
+                    linkTo(methodOn(GiftCertificateController.class)
+                            .getGiftCertificates(tagNames, certificateName, orderingName, certificateDescription,
+                                    orderingDate, pageNumber - 1, pageSize)
+            ));
+            certificateLinks.add(new Link(prevLinkLine).withRel("prevPage"));
         }
 
-        Link selfLink = linkTo(methodOn(GiftCertificateController.class)
-                .getGiftCertificates(tagNames, certificateName, orderingName, certificateDescription, orderingDate,
-                        pageNumber, pageSize))
-                .withSelfRel();
-        certificateLinks.add(selfLink);
+        String selfLinkLine = LinkProcessor.process(
+                linkTo(methodOn(GiftCertificateController.class)
+                        .getGiftCertificates(tagNames, certificateName, orderingName, certificateDescription,
+                                orderingDate, pageNumber, pageSize)
+                ));
+        certificateLinks.add(new Link(selfLinkLine).withSelfRel());
 
         if (tagsDtoAmount > pageNumber * pageSize) {
-        Link nextLink = linkTo(methodOn(GiftCertificateController.class)
-                .getGiftCertificates(tagNames, certificateName, orderingName, certificateDescription, orderingDate,
-                        pageNumber + 1, pageSize))
-                .withRel("nextPage");
-            certificateLinks.add(nextLink);
+            String nextLinkLine = LinkProcessor.process(
+                    linkTo(methodOn(GiftCertificateController.class)
+                            .getGiftCertificates(tagNames, certificateName, orderingName, certificateDescription,
+                                    orderingDate, pageNumber + 1, pageSize)
+                    ));
+            certificateLinks.add(new Link(nextLinkLine).withRel("nextPage"));
         }
 
         hateoasListModel.add(certificateLinks);

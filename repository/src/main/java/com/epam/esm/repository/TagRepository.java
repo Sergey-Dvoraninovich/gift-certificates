@@ -14,4 +14,6 @@ public interface TagRepository {
 
     Tag create(Tag tag);
     boolean delete(Tag tag);
+
+    Optional<Tag> findMostWidelyUsedTag();
 }

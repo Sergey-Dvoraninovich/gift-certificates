@@ -19,30 +19,24 @@ import java.util.Optional;
 public class UserRepositoryImpl implements UserRepository {
     private static final String USER_ID_PARAM = "userId";
 
-    private static final String COUNT_USERS
+    private static final String COUNT_ALL_USERS
             = "SELECT COUNT(u) FROM User u";
 
     private static final String ALL_USERS
             = "SELECT u FROM User u";
 
+    private static final String COUNT_USER_ORDERS
+            = "SELECT COUNT(o) FROM Order o WHERE o.user.id = :userId";
+
     private static final String USER_ORDERS
             = "SELECT o FROM Order o WHERE o.user.id = :userId";
-
-    private static final String FIND_MOST_WIDELY_USED_USER_TAG
-            = "SELECT t FROM Order o "
-            + "JOIN o.user u "
-            + "JOIN o.orderItems i "
-            + "JOIN i.giftCertificate c "
-            + "JOIN c.giftCertificateTags t "
-            + "WHERE u.id = :userId "
-            + "GROUP BY t";
 
     @PersistenceContext
     private final EntityManager entityManager;
 
     @Override
     public Long countAll() {
-        return (Long) entityManager.createQuery(COUNT_USERS)
+        return (Long) entityManager.createQuery(COUNT_ALL_USERS)
                 .getSingleResult();
     }
 
@@ -61,44 +55,18 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<Order> findUserOrders(long id) {
-        return entityManager.createQuery(USER_ORDERS, Order.class)
+    public Long countAllUserOrders(long id) {
+        return (Long) entityManager.createQuery(COUNT_USER_ORDERS)
                 .setParameter(USER_ID_PARAM, id)
-                .getResultList();
+                .getSingleResult();
     }
 
     @Override
-    public Optional<Tag> findMostWidelyUsedTag(long userId) {
-        List<Tag> tags = entityManager.createQuery(FIND_MOST_WIDELY_USED_USER_TAG, Tag.class)
-                .setParameter(USER_ID_PARAM, userId)
+    public List<Order> findUserOrders(long id, int pageNumber, int pageSize) {
+        return entityManager.createQuery(USER_ORDERS, Order.class)
+                .setParameter(USER_ID_PARAM, id)
+                .setFirstResult((pageNumber - 1) * pageSize)
+                .setMaxResults(pageSize)
                 .getResultList();
-        for (Tag tag: tags) {
-            System.out.println(tag);
-        }
-
-        return Optional.empty();
-//        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-//        CriteriaQuery<Tag> query = criteriaBuilder.createQuery(Tag.class);
-//
-//        Root<User> userRoot = query.from(User.class);
-//        Root<Order> orderRoot = query.from(Order.class);
-//        Root<OrderItem> orderItemRoot = query.from(OrderItem.class);
-//        Root<GiftCertificate> certificateRoot = query.from(GiftCertificate.class);
-//        Root<Tag> tagRoot = query.from(Tag.class);
-//
-//        Join<Order, User> orderUserJoin = orderRoot.join();
-//        Join<Order, OrderItem> orderOrderItemJoin = orderRoot.join("orderItems");
-//        Join<OrderItem, GiftCertificate> orderItemGiftCertificateJoin = orderItemRoot.join("giftCertificate");
-//        Join<GiftCertificate, Tag> giftCertificateTagJoin = certificateRoot.join("giftCertificateTags");
-//
-//        query.select(tagRoot).where(criteriaBuilder.equal(
-//                ., userId));
-//
-//        List<Tag> tags = entityManager.createQuery(query).getResultList();
-//        for (Tag tag: tags) {
-//            System.out.println(tag);
-//        }
-//
-//        return Optional.empty();
     }
 }

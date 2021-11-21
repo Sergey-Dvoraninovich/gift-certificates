@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class TagServiceImpl implements TagService {
     private final TagRepository tagRepository;
     private final TagValidator tagValidator;
-    private final TagDtoMapper tagMapper;
+    private final TagDtoMapper tagDtoMapper;
     private final PaginationValidator paginationValidator;
 
     @Override
@@ -37,7 +37,7 @@ public class TagServiceImpl implements TagService {
     public List<TagDto> findAll(Integer pageNumber, Integer pageSize){
         return tagRepository.findAll(pageNumber, pageSize)
                 .stream()
-                .map(tagMapper::toDto)
+                .map(tagDtoMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -45,7 +45,7 @@ public class TagServiceImpl implements TagService {
     public TagDto findById(long id){
         Optional<Tag> tag = tagRepository.findById(id);
         if (tag.isPresent()) {
-            return tagMapper.toDto(tag.get());
+            return tagDtoMapper.toDto(tag.get());
         }
         else {
             throw new EntityNotFoundException(id, TagDto.class);
@@ -56,7 +56,7 @@ public class TagServiceImpl implements TagService {
     public TagDto findByName(String name){
         Optional<Tag> tag = tagRepository.findByName(name);
         if (tag.isPresent()) {
-            return tagMapper.toDto(tag.get());
+            return tagDtoMapper.toDto(tag.get());
         }
         else {
             throw new EntityNotFoundException(TagDto.class);
@@ -66,7 +66,7 @@ public class TagServiceImpl implements TagService {
     @Transactional
     @Override
     public TagDto create(TagDto tagDto){
-        Tag tag = tagMapper.toEntity(tagDto);
+        Tag tag = tagDtoMapper.toEntity(tagDto);
         List<ValidationError> validationErrors = tagValidator.validateWithRequiredParams(tagDto);
 
         if (!validationErrors.isEmpty()) {
@@ -79,7 +79,7 @@ public class TagServiceImpl implements TagService {
         }
 
         tag = tagRepository.create(tag);
-        return tagMapper.toDto(tag);
+        return tagDtoMapper.toDto(tag);
     }
 
     @Transactional
@@ -90,5 +90,14 @@ public class TagServiceImpl implements TagService {
             throw new EntityNotFoundException(id, TagDto.class);
         }
         tagRepository.delete(tag.get());
+    }
+
+    @Override
+    public TagDto findMostWidelyUsedTag() {
+        Optional<Tag> optionalTag = tagRepository.findMostWidelyUsedTag();
+        if (!optionalTag.isPresent()) {
+            throw new EntityNotFoundException(TagDto.class);
+        }
+        return tagDtoMapper.toDto(optionalTag.get());
     }
 }

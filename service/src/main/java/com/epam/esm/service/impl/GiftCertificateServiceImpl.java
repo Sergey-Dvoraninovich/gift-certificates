@@ -102,7 +102,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             throw new EntityAlreadyExistsException(GiftCertificateDto.class);
         }
 
-        List<Tag> certificateTags = processTags(certificateDto.getTagsDto());
+        List<Tag> certificateTags = new ArrayList<>();
+        if(certificateDto.getTagsDto() != null) {
+            certificateTags = processTags(certificateDto.getTagsDto());
+        }
+
         certificate.setGiftCertificateTags(certificateTags);
         certificate = giftCertificateRepository.create(certificate);
         return giftCertificateDtoMapper.toDto(certificate);
@@ -146,7 +150,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
 
         updateFields(storedCertificate, certificate);
-        System.out.println(storedCertificate);
         storedCertificate = giftCertificateRepository.update(storedCertificate);
         return giftCertificateDtoMapper.toDto(storedCertificate);
     }

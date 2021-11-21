@@ -5,6 +5,7 @@ import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.UserOrderResponseDto;
 import com.epam.esm.exception.InvalidPaginationException;
 import com.epam.esm.hateos.TagHateoas;
+import com.epam.esm.hateos.UserHateoas;
 import com.epam.esm.hateos.UserListHateoas;
 import com.epam.esm.hateos.provider.impl.TagHateoasProvider;
 import com.epam.esm.hateos.provider.impl.UserHateoasProvider;
@@ -45,7 +46,7 @@ public class UserController {
     )
     @GetMapping
     public ResponseEntity<UserListHateoas> getUsers(@ApiParam(value = "pageNumber", required = false) @RequestParam(value = "pageNumber", defaultValue = "1") @Min(1) Integer pageNumber,
-                                                    @ApiParam(value = "pageNumber", required = false) @RequestParam(value = "pageNumber", defaultValue = "10") @Min(1) Integer pageSize) {
+                                                    @ApiParam(value = "pageSize", required = false) @RequestParam(value = "pageSize", defaultValue = "10") @Min(1) Integer pageSize) {
         List<ValidationError> validationErrors = paginationValidator.validateParams(pageNumber, pageSize);
         if (!validationErrors.isEmpty()) {
             throw new InvalidPaginationException(pageNumber, pageSize, validationErrors);
@@ -70,9 +71,10 @@ public class UserController {
     }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUser(@ApiParam(value = "The User ID") @PathVariable("id") @Min(1) long id) {
+    public ResponseEntity<UserHateoas> getUser(@ApiParam(value = "The User ID") @PathVariable("id") @Min(1) long id) {
         UserDto userDto = userService.findById(id);
-        return new ResponseEntity<>(userDto, OK);
+        UserHateoas userHateoas = UserHateoas.build(userDto, userHateoasProvider);
+        return new ResponseEntity<>(userHateoas, OK);
     }
 
     @ApiOperation(value = "Get list of Orders of user with specified ID", response = Iterable.class)
@@ -85,22 +87,8 @@ public class UserController {
     @GetMapping("/{id}/orders")
     public ResponseEntity<List<UserOrderResponseDto>> getUserOrders(@ApiParam(value = "The User ID") @PathVariable("id") @Min(1) long id,
                                                                     @ApiParam(value = "pageNumber", required = false) @RequestParam(value = "pageNumber", defaultValue = "1") @Min(1) Integer pageNumber,
-                                                                    @ApiParam(value = "pageNumber", required = false) @RequestParam(value = "pageNumber", defaultValue = "10") @Min(1) Integer pageSize) {
-        List<UserOrderResponseDto> ordersDto = userService.findUserOrders(id);
+                                                                    @ApiParam(value = "pageSize", required = false) @RequestParam(value = "pageSize", defaultValue = "10") @Min(1) Integer pageSize) {
+        List<UserOrderResponseDto> ordersDto = userService.findUserOrders(id, pageNumber, pageSize);
         return new ResponseEntity<>(ordersDto, OK);
-    }
-
-    @ApiOperation(value = "Get most widely used User tag with highest price", response = Iterable.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved list of user Orders"),
-            @ApiResponse(code = 400, message = "The user Orders can't be fetched due to bad request"),
-            @ApiResponse(code = 404, message = "The user Orders you were trying to reach is not found")
-    }
-    )
-    @GetMapping("/{id}/mostWidelyUsedTag")
-    public ResponseEntity<TagHateoas> getUserOrders(@ApiParam(value = "The User ID") @PathVariable("id") @Min(1) long id) {
-        TagDto tagDto = userService.findMostWidelyUsedTag(id);
-        TagHateoas tagHateoas = TagHateoas.build(tagDto, tagHateoasProvider);
-        return new ResponseEntity<>(tagHateoas, OK);
     }
 }
