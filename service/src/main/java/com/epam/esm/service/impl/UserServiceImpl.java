@@ -10,6 +10,7 @@ import com.epam.esm.entity.Order;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.EntityNotFoundException;
+import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
     private final UserDtoMapper userMapper;
     private final UserOrderResponseDtoMapper userOrderResponseDtoMapper;
     private final TagDtoMapper tagDtoMapper;
@@ -66,5 +68,17 @@ public class UserServiceImpl implements UserService {
         return orders.stream()
                 .map(userOrderResponseDtoMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public UserOrderResponseDto findUserOrder(long userId, long orderId){
+        Optional<Order> order = orderRepository.findById(orderId);
+        if (!order.isPresent()) {
+            throw new EntityNotFoundException(orderId, UserOrderResponseDto.class);
+        }
+        if (order.get().getUser().getId() == orderId) {
+            throw new EntityNotFoundException(orderId, UserOrderResponseDto.class);
+        }
+        return userOrderResponseDtoMapper.toDto(order.get());
     }
 }

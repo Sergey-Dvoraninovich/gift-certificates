@@ -34,10 +34,10 @@ public class UserListHateoas extends RepresentationModel<UserListHateoas> {
             Link prevLink = linkTo(methodOn(UserController.class).getUsers(pageNumber - 1, pageSize)).withRel("prevPage");
             userLinks.add(prevLink);
         }
-        Link selfLink = linkTo(methodOn(TagController.class).getTags(pageNumber, pageSize)).withSelfRel();
+        Link selfLink = linkTo(methodOn(UserController.class).getUsers(pageNumber, pageSize)).withSelfRel();
         userLinks.add(selfLink);
         if (usersDtoAmount > pageNumber * pageSize) {
-            Link nextLink = linkTo(methodOn(TagController.class).getTags(pageNumber + 1, pageSize)).withRel("nextPage");
+            Link nextLink = linkTo(methodOn(UserController.class).getUsers(pageNumber + 1, pageSize)).withRel("nextPage");
             userLinks.add(nextLink);
         }
 

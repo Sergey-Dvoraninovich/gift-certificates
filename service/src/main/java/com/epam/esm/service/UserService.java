@@ -1,6 +1,5 @@
 package com.epam.esm.service;
-;
-import com.epam.esm.dto.TagDto;
+
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.UserOrderResponseDto;
 
@@ -13,4 +12,5 @@ public interface UserService {
 
     Long countAllUserOrders(long id);
     List<UserOrderResponseDto> findUserOrders(long id, Integer pageNumber, Integer pageSize);
+    UserOrderResponseDto findUserOrder(long userId, long orderId);
 }

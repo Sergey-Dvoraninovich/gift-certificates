@@ -4,11 +4,10 @@ import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.UserOrderResponseDto;
 import com.epam.esm.exception.InvalidPaginationException;
-import com.epam.esm.hateos.TagHateoas;
-import com.epam.esm.hateos.UserHateoas;
-import com.epam.esm.hateos.UserListHateoas;
+import com.epam.esm.hateos.*;
 import com.epam.esm.hateos.provider.impl.TagHateoasProvider;
 import com.epam.esm.hateos.provider.impl.UserHateoasProvider;
+import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.validator.PaginationValidator;
 import com.epam.esm.validator.ValidationError;
@@ -33,7 +32,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class UserController {
 
     private final UserService userService;
-    private final TagHateoasProvider tagHateoasProvider;
+    private final OrderService orderService;
     private final UserHateoasProvider userHateoasProvider;
     private final PaginationValidator paginationValidator;
 
@@ -85,10 +84,36 @@ public class UserController {
     }
     )
     @GetMapping("/{id}/orders")
-    public ResponseEntity<List<UserOrderResponseDto>> getUserOrders(@ApiParam(value = "The User ID") @PathVariable("id") @Min(1) long id,
-                                                                    @ApiParam(value = "pageNumber", required = false) @RequestParam(value = "pageNumber", defaultValue = "1") @Min(1) Integer pageNumber,
-                                                                    @ApiParam(value = "pageSize", required = false) @RequestParam(value = "pageSize", defaultValue = "10") @Min(1) Integer pageSize) {
+    public ResponseEntity<UserOrderResponseListHateoas> getUserOrders(@ApiParam(value = "The User ID") @PathVariable("id") @Min(1) long id,
+                                                                      @ApiParam(value = "pageNumber", required = false) @RequestParam(value = "pageNumber", defaultValue = "1") @Min(1) Integer pageNumber,
+                                                                      @ApiParam(value = "pageSize", required = false) @RequestParam(value = "pageSize", defaultValue = "10") @Min(1) Integer pageSize) {
+        List<ValidationError> validationErrors = paginationValidator.validateParams(pageNumber, pageSize);
+        if (!validationErrors.isEmpty()) {
+            throw new InvalidPaginationException(pageNumber, pageSize, validationErrors);
+        }
+
+        Long ordersDtoAmount = userService.countAllUserOrders(id);
+        if (ordersDtoAmount <= (pageNumber - 1) * pageSize) {
+            throw new InvalidPaginationException(pageNumber, pageSize, Collections.singletonList(PAGE_IS_OUT_OF_RANGE));
+        }
+
         List<UserOrderResponseDto> ordersDto = userService.findUserOrders(id, pageNumber, pageSize);
-        return new ResponseEntity<>(ordersDto, OK);
+        UserOrderResponseListHateoas listHateoas = UserOrderResponseListHateoas.build(id, ordersDto, ordersDtoAmount, pageNumber, pageSize);
+        return new ResponseEntity<>(listHateoas, OK);
+    }
+
+    @ApiOperation(value = "Get list of Orders of user with specified ID", response = Iterable.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved list of user Orders"),
+            @ApiResponse(code = 400, message = "The user Orders can't be fetched due to bad request"),
+            @ApiResponse(code = 404, message = "The user Orders you were trying to reach is not found")
+    }
+    )
+    @GetMapping("/{userId}/orders/{orderId}")
+    public ResponseEntity<UserOrderResponseHateoas> getUserOrder(@ApiParam(value = "The User ID") @PathVariable("userId") @Min(1) long userId,
+                                                              @ApiParam(value = "The Order ID") @PathVariable("orderId") @Min(1) long orderId) {
+        UserOrderResponseDto order = userService.findUserOrder(userId, orderId);
+        UserOrderResponseHateoas userOrderResponseHateoas = UserOrderResponseHateoas.build(userId, order);
+        return new ResponseEntity<>(userOrderResponseHateoas, OK);
     }
 }
