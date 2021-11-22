@@ -1,58 +1,22 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dto.GiftCertificateDto;
-import io.swagger.models.auth.In;
+import com.epam.esm.dto.GiftCertificateRequestDto;
+import com.epam.esm.dto.GiftCertificateResponseDto;
 
 import java.util.List;
 
-/**
- * The interface Gift certificate service.
- */
 public interface GiftCertificateService {
     Long countAll(String[] tagNames, String certificateName, String orderingName,
                   String certificateDescription, String orderingCreateDate);
-    /**
-     * Find all.
-     *
-     * @param tagName                the name of connected tag
-     * @param certificateName        the certificate name
-     * @param orderingName           the ordering type for name
-     * @param certificateDescription the certificate description
-     * @param orderingCreateDate     the ordering type for create date
-     * @return the list of GiftCertificateDto
-     */
-    List<GiftCertificateDto> findAll(String[] tagNames, String certificateName, String orderingName,
-                                     String certificateDescription, String orderingCreateDate,
-                                     Integer pageNumber, Integer pageSize);
+    List<GiftCertificateResponseDto> findAll(String[] tagNames, String certificateName, String orderingName,
+                                             String certificateDescription, String orderingCreateDate,
+                                             Integer pageNumber, Integer pageSize);
 
-    /**
-     * Find by GiftCertificateDto id.
-     *
-     * @param id the id of GiftCertificateDto
-     * @return the stored GiftCertificateDto
-     */
-    GiftCertificateDto findById(long id);
+    GiftCertificateResponseDto findById(long id);
 
-    /**
-     * Create GiftCertificateDto.
-     *
-     * @param certificate the GiftCertificateDto
-     * @return the created GiftCertificateDto
-     */
-    GiftCertificateDto create(GiftCertificateDto certificate);
+    GiftCertificateResponseDto create(GiftCertificateRequestDto certificate);
 
-    /**
-     * Update GiftCertificateDto.
-     *
-     * @param certificate the GiftCertificateDto for partial
-     * @return the patched GiftCertificateDto
-     */
-    GiftCertificateDto update(GiftCertificateDto certificate);
+    GiftCertificateResponseDto update(long id, GiftCertificateRequestDto certificateDto);
 
-    /**
-     * Delete GiftCertificateDto.
-     *
-     * @param id the GiftCertificateDto id
-     */
     void delete(long id);
 }

@@ -1,7 +1,11 @@
 package com.epam.esm.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -12,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderCreateRequestDto {
     @ApiModelProperty(notes = "The Buyer of GiftCertificates")
-    private UserDto user;
+    private long userId;
     @ApiModelProperty(notes = "The Ordered GiftCertificates")
     private List<OrderItemDto> orderGiftCertificates;
 }

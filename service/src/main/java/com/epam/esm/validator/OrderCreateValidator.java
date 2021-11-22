@@ -15,7 +15,7 @@ public class OrderCreateValidator {
     public List<ValidationError> validateWithRequiredParams(OrderCreateRequestDto orderCreateRequestDto) {
         List<ValidationError> validationErrors = new ArrayList<>();
 
-        if (orderCreateRequestDto.getUser() == null){
+        if (orderCreateRequestDto.getUserId() == 0){
             validationErrors.add(ORDER_USER_REQUIRED);
         }
         if (orderCreateRequestDto.getOrderGiftCertificates() == null){

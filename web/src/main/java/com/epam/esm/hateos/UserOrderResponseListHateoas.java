@@ -1,10 +1,7 @@
 package com.epam.esm.hateos;
 
-import com.epam.esm.controller.TagController;
 import com.epam.esm.controller.UserController;
-import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.UserOrderResponseDto;
-import com.epam.esm.hateos.provider.HateoasProvider;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.hateoas.Link;

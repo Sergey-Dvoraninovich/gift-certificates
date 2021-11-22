@@ -1,7 +1,7 @@
 package com.epam.esm.hateos;
 
 import com.epam.esm.controller.GiftCertificateController;
-import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.GiftCertificateResponseDto;
 import com.epam.esm.hateos.provider.HateoasProvider;
 import com.epam.esm.hateos.util.LinkProcessor;
 import lombok.AllArgsConstructor;
@@ -18,19 +18,19 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Data
 @AllArgsConstructor
-public class GiftCertificateListHateoas extends RepresentationModel<GiftCertificateHateoas> {
-    private List<GiftCertificateHateoas> giftCertificatesDto;
+public class GiftCertificateResponseListHateoas extends RepresentationModel<GiftCertificateResponseHateoas> {
+    private List<GiftCertificateResponseHateoas> giftCertificatesDto;
 
-    public static GiftCertificateListHateoas build(List<GiftCertificateDto> certificatesDto, HateoasProvider<GiftCertificateDto> hateoasProvider,
-                                       String[] tagNames, String certificateName, String orderingName,
-                                       String certificateDescription, String orderingDate,
-                                       Long tagsDtoAmount, Integer pageNumber, Integer pageSize) {
-        List<GiftCertificateHateoas> certificateListHateoas = new ArrayList<>();
-        for (GiftCertificateDto certificateDto: certificatesDto) {
-            certificateListHateoas.add(GiftCertificateHateoas.build(certificateDto, hateoasProvider));
+    public static GiftCertificateResponseListHateoas build(List<GiftCertificateResponseDto> certificatesDto, HateoasProvider<GiftCertificateResponseDto> hateoasProvider,
+                                                           String[] tagNames, String certificateName, String orderingName,
+                                                           String certificateDescription, String orderingDate,
+                                                           Long tagsDtoAmount, Integer pageNumber, Integer pageSize) {
+        List<GiftCertificateResponseHateoas> certificateListHateoas = new ArrayList<>();
+        for (GiftCertificateResponseDto certificateDto: certificatesDto) {
+            certificateListHateoas.add(GiftCertificateResponseHateoas.build(certificateDto, hateoasProvider));
         }
 
-        GiftCertificateListHateoas hateoasListModel = new GiftCertificateListHateoas(certificateListHateoas);
+        GiftCertificateResponseListHateoas hateoasListModel = new GiftCertificateResponseListHateoas(certificateListHateoas);
 
         List<Link> certificateLinks = new ArrayList<>();
         if (pageNumber > 1) {

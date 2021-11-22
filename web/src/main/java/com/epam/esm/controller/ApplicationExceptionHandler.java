@@ -117,7 +117,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         String message = "";
         if (TagDto.class.equals(entityClass)) {
             message = " (" + getMessage(TAG_ALREADY_EXISTS_MESSAGE) + ")";
-        } else if (GiftCertificateDto.class.equals(entityClass)) {
+        } else if (GiftCertificateResponseDto.class.equals(entityClass)) {
             message = " (" + getMessage(GIFT_CERTIFICATE_ALREADY_EXISTS_MESSAGE) + ")";
         }
 
@@ -339,7 +339,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         if (TagDto.class.equals(entity)) {
             entityName = getMessage(TAG_MESSAGE);
         }
-        else if (GiftCertificateDto.class.equals(entity)) {
+        else if (GiftCertificateResponseDto.class.equals(entity)) {
             entityName = getMessage(GIFT_CERTIFICATE_MESSAGE);
         }
         else if (OrderCreateRequestDto.class.equals(entity)) {

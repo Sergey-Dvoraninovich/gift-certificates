@@ -2,7 +2,7 @@ package com.epam.esm.hateos.provider.impl;
 
 import com.epam.esm.controller.GiftCertificateController;
 import com.epam.esm.controller.TagController;
-import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.GiftCertificateResponseDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.hateos.provider.HateoasProvider;
 import org.springframework.hateoas.Link;
@@ -14,9 +14,9 @@ import java.util.List;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @Component
-public class GiftCertificateHateoasProvider implements HateoasProvider<GiftCertificateDto> {
+public class GiftCertificateHateoasProvider implements HateoasProvider<GiftCertificateResponseDto> {
     @Override
-    public List<Link> provide(GiftCertificateDto certificateDto) {
+    public List<Link> provide(GiftCertificateResponseDto certificateDto) {
         List<Link> certificateLinks = new ArrayList<>();
         Link selfLink = linkTo(GiftCertificateController.class).slash(certificateDto.getId()).withSelfRel();
         certificateLinks.add(selfLink);

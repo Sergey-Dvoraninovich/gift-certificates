@@ -1,6 +1,6 @@
 package com.epam.esm.validator;
 
-import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.GiftCertificateRequestDto;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -49,7 +49,7 @@ public class GiftCertificateValidator {
     private static final BigDecimal MIN_PRICE = new BigDecimal("9.99");
     private static final BigDecimal MAX_PRICE = new BigDecimal("10000");
 
-    public List<ValidationError> validateWithRequiredParams(GiftCertificateDto certificateDto) {
+    public List<ValidationError> validateWithRequiredParams(GiftCertificateRequestDto certificateDto) {
         List<ValidationError> validationErrors = new ArrayList<>();
         if (certificateDto.getName() == null){
             validationErrors.add(GIFT_CERTIFICATE_NAME_REQUIRED);

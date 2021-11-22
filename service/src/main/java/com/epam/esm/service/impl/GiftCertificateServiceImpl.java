@@ -1,8 +1,8 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dto.GiftCertificateDto;
-import com.epam.esm.dto.TagDto;
-import com.epam.esm.dto.mapping.GiftCertificateDtoMapper;
+import com.epam.esm.dto.*;
+import com.epam.esm.dto.mapping.GiftCertificateRequestDtoMapper;
+import com.epam.esm.dto.mapping.GiftCertificateResponseDtoMapper;
 import com.epam.esm.dto.mapping.TagDtoMapper;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
@@ -34,9 +34,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final GiftCertificateValidator giftCertificateValidator;
     private final TagValidator tagValidator;
     private final GiftCertificateSearchParamsValidator searchParamsValidator;
-    private final GiftCertificateDtoMapper giftCertificateDtoMapper;
+    private final GiftCertificateRequestDtoMapper giftCertificateRequestDtoMapper;
+    private final GiftCertificateResponseDtoMapper giftCertificateResponseDtoMapper;
     private final TagDtoMapper tagDtoMapper;
-    private final PaginationValidator paginationValidator;
 
     @Override
     public Long countAll(String[] tagNames, String certificateName, String orderingName, String certificateDescription, String orderingCreateDate) {
@@ -55,9 +55,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificateDto> findAll(String[] tagNames, String certificateName, String orderingName,
-                                            String certificateDescription, String orderingCreateDate,
-                                            Integer pageNumber, Integer pageSize) {
+    public List<GiftCertificateResponseDto> findAll(String[] tagNames, String certificateName, String orderingName,
+                                                    String certificateDescription, String orderingCreateDate,
+                                                    Integer pageNumber, Integer pageSize) {
 
         List<String> tagNamesArray = tagNames == null ? null : Arrays.asList(tagNames);
         List<ValidationError> validationErrors = searchParamsValidator.validate(tagNamesArray, certificateName, orderingName,
@@ -72,86 +72,85 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                                                                                    certificateDescription, orderingCreateDateType,
                                                                                    pageNumber, pageSize);
         return certificates.stream()
-                .map(giftCertificateDtoMapper::toDto)
+                .map(giftCertificateResponseDtoMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public GiftCertificateDto findById(long id) {
+    public GiftCertificateResponseDto findById(long id) {
         Optional<GiftCertificate> certificateOptional = giftCertificateRepository.findById(id);
         if (certificateOptional.isPresent()) {
-            return giftCertificateDtoMapper.toDto(certificateOptional.get());
+            return giftCertificateResponseDtoMapper.toDto(certificateOptional.get());
         }
         else {
-            throw new EntityNotFoundException(id, GiftCertificateDto.class);
+            throw new EntityNotFoundException(id, GiftCertificateRequestDto.class);
         }
     }
 
     @Override
     @Transactional
-    public GiftCertificateDto create(GiftCertificateDto certificateDto) {
+    public GiftCertificateResponseDto create(GiftCertificateRequestDto certificateDto) {
         List<ValidationError> validationErrors = giftCertificateValidator.validateWithRequiredParams(certificateDto);
 
         if (!validationErrors.isEmpty()) {
-            throw new InvalidEntityException(validationErrors, GiftCertificateDto.class);
+            throw new InvalidEntityException(validationErrors, GiftCertificateRequestDto.class);
         }
 
-        GiftCertificate certificate = giftCertificateDtoMapper.toEntity(certificateDto);
-        String name = certificate.getName();
+        String name = certificateDto.getName();
         if (giftCertificateRepository.findByName(name).isPresent()) {
-            throw new EntityAlreadyExistsException(GiftCertificateDto.class);
+            throw new EntityAlreadyExistsException(GiftCertificateRequestDto.class);
         }
 
         List<Tag> certificateTags = new ArrayList<>();
-        if(certificateDto.getTagsDto() != null) {
-            certificateTags = processTags(certificateDto.getTagsDto());
+        if(certificateDto.getTagIdsDto() != null) {
+            certificateTags = processTagIds(certificateDto.getTagIdsDto());
         }
 
+        GiftCertificate certificate = giftCertificateRequestDtoMapper.toEntity(certificateDto);
         certificate.setGiftCertificateTags(certificateTags);
+
         certificate = giftCertificateRepository.create(certificate);
-        return giftCertificateDtoMapper.toDto(certificate);
+        return giftCertificateResponseDtoMapper.toDto(certificate);
     }
 
     @Override
     @Transactional
-    public GiftCertificateDto update(GiftCertificateDto certificateDto) {
-        GiftCertificate certificate = giftCertificateDtoMapper.toEntity(certificateDto);
+    public GiftCertificateResponseDto update(long id, GiftCertificateRequestDto certificateDto) {
 
         int updatedFieldsAmount = countFieldsToUpdate(certificateDto);
         if (updatedFieldsAmount == 0) {
-            throw new InvalidEntityException(Collections.singletonList(NO_GIFT_CERTIFICATE_FIELDS_TO_UPDATE), GiftCertificateDto.class);
+            throw new InvalidEntityException(Collections.singletonList(NO_GIFT_CERTIFICATE_FIELDS_TO_UPDATE), GiftCertificateRequestDto.class);
         }
         if (updatedFieldsAmount > 1) {
-            throw new InvalidEntityException(Collections.singletonList(IMPOSSIBLE_TO_UPDATE_SEVERAL_GIFT_CERTIFICATE_FIELDS), GiftCertificateDto.class);
+            throw new InvalidEntityException(Collections.singletonList(IMPOSSIBLE_TO_UPDATE_SEVERAL_GIFT_CERTIFICATE_FIELDS), GiftCertificateRequestDto.class);
         }
 
-        String priceString = certificate.getPrice() == null ? null : certificate.getPrice().toString();
-        String durationString = certificate.getDuration() == null ? null : String.valueOf(certificate.getDuration().toDays());
-        List<ValidationError> validationErrors = giftCertificateValidator.validateParams(certificate.getName(), certificate.getDescription(),
+        String priceString = certificateDto.getPrice() == null ? null : certificateDto.getPrice().toString();
+        String durationString = certificateDto.getDuration() == null ? null : String.valueOf(certificateDto.getDuration().toDays());
+        List<ValidationError> validationErrors = giftCertificateValidator.validateParams(certificateDto.getName(), certificateDto.getDescription(),
                 priceString, durationString);
 
         if (!validationErrors.isEmpty()) {
-            throw new InvalidEntityException(validationErrors, GiftCertificateDto.class);
+            throw new InvalidEntityException(validationErrors, GiftCertificateRequestDto.class);
         }
 
         GiftCertificate storedCertificate;
-        long id = certificate.getId();
         Optional<GiftCertificate> optionalCertificate = giftCertificateRepository.findById(id);
         if (!optionalCertificate.isPresent()) {
-            throw new EntityNotFoundException(id, GiftCertificateDto.class);
+            throw new EntityNotFoundException(id, GiftCertificateRequestDto.class);
         }
         else {
             storedCertificate = optionalCertificate.get();
         }
 
-        if (certificateDto.getTagsDto() != null) {
-            List<Tag> certificateTags = processTags(certificateDto.getTagsDto());
-            certificate.setGiftCertificateTags(certificateTags);
+        if (certificateDto.getTagIdsDto() != null) {
+            List<Tag> certificateTags = processTagIds(certificateDto.getTagIdsDto());
+            storedCertificate.setGiftCertificateTags(certificateTags);
         }
 
-        updateFields(storedCertificate, certificate);
+        updateFieldsWithoutTags(storedCertificate, certificateDto);
         storedCertificate = giftCertificateRepository.update(storedCertificate);
-        return giftCertificateDtoMapper.toDto(storedCertificate);
+        return giftCertificateResponseDtoMapper.toDto(storedCertificate);
     }
 
     @Override
@@ -159,32 +158,30 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public void delete(long id) {
         Optional<GiftCertificate> giftCertificate = giftCertificateRepository.findById(id);
         if (!giftCertificate.isPresent()){
-            throw new EntityNotFoundException(id, GiftCertificateDto.class);
+            throw new EntityNotFoundException(id, GiftCertificateRequestDto.class);
         }
         giftCertificateRepository.delete(giftCertificate.get());
     }
 
-    private void updateFields(GiftCertificate storedCertificate, GiftCertificate certificate){
+    private void updateFieldsWithoutTags(GiftCertificate storedCertificate, GiftCertificateRequestDto certificate){
         String name = certificate.getName();
         String description = certificate.getDescription();
         BigDecimal price = certificate.getPrice();
         Duration duration = certificate.getDuration();
-        List<Tag> certificateTags = certificate.getGiftCertificateTags();
 
         storedCertificate.setName(name == null ? storedCertificate.getName() : name);
         storedCertificate.setDescription(description == null ? storedCertificate.getDescription() : description);
         storedCertificate.setPrice(price == null ? storedCertificate.getPrice() : price);
         storedCertificate.setDuration(duration == null ? storedCertificate.getDuration() : duration);
-        storedCertificate.setGiftCertificateTags(certificateTags == null ? storedCertificate.getGiftCertificateTags() : certificateTags);
     }
 
-    private int countFieldsToUpdate(GiftCertificateDto certificateDto) {
+    private int countFieldsToUpdate(GiftCertificateRequestDto certificateDto) {
         int changedFieldsAmount = 0;
         changedFieldsAmount += certificateDto.getName() == null ? 0 : 1;
         changedFieldsAmount += certificateDto.getDescription() == null ? 0 : 1;
         changedFieldsAmount += certificateDto.getDuration() == null ? 0 : 1;
         changedFieldsAmount += certificateDto.getPrice() == null ? 0 : 1;
-        changedFieldsAmount += certificateDto.getTagsDto() == null ? 0 : 1;
+        changedFieldsAmount += certificateDto.getTagIdsDto() == null ? 0 : 1;
         return changedFieldsAmount;
     }
 
@@ -209,6 +206,20 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 tag = tagOptional.get();
             }
             resultCertificateTags.add(tag);
+        }
+        return resultCertificateTags;
+    }
+
+    private List<Tag> processTagIds(List<Long> certificateTagIds){
+        List<Tag> resultCertificateTags = new ArrayList<>();
+        for (Long tagId: certificateTagIds) {
+            Optional<Tag> tagOptional = tagRepository.findById(tagId);
+
+            if (!tagOptional.isPresent()) {
+                resultCertificateTags.add(tagOptional.get());
+            } else {
+                throw new EntityNotFoundException(tagId, TagDto.class);
+            }
         }
         return resultCertificateTags;
     }
