@@ -1,6 +1,13 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.dto.*;
+import com.epam.esm.dto.GiftCertificateResponseDto;
+import com.epam.esm.dto.OrderCreateRequestDto;
+import com.epam.esm.dto.OrderItemDto;
+import com.epam.esm.dto.OrderResponseDto;
+import com.epam.esm.dto.OrderUpdateRequestDto;
+import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.UserOrderResponseDto;
 import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
@@ -22,10 +29,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.epam.esm.validator.ValidationError.PAGE_IS_OUT_OF_RANGE;
-import static com.epam.esm.validator.ValidationError.TOO_BIG_PAGE_SIZE;
-import static com.epam.esm.validator.ValidationError.TOO_SMALL_PAGE_NUMBER;
-import static com.epam.esm.validator.ValidationError.TOO_SMALL_PAGE_SIZE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;

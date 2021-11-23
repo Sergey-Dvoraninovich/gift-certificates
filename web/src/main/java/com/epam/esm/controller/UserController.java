@@ -1,13 +1,13 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.UserOrderResponseDto;
 import com.epam.esm.exception.InvalidPaginationException;
-import com.epam.esm.hateos.*;
-import com.epam.esm.hateos.provider.impl.TagHateoasProvider;
+import com.epam.esm.hateos.UserHateoas;
+import com.epam.esm.hateos.UserListHateoas;
+import com.epam.esm.hateos.UserOrderResponseHateoas;
+import com.epam.esm.hateos.UserOrderResponseListHateoas;
 import com.epam.esm.hateos.provider.impl.UserHateoasProvider;
-import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.validator.PaginationValidator;
 import com.epam.esm.validator.ValidationError;
@@ -17,7 +17,11 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.Min;
 import java.util.Collections;
@@ -27,12 +31,11 @@ import static com.epam.esm.validator.ValidationError.PAGE_IS_OUT_OF_RANGE;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-    private final OrderService orderService;
     private final UserHateoasProvider userHateoasProvider;
     private final PaginationValidator paginationValidator;
 

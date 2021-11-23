@@ -37,7 +37,7 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/api/giftCertificates")
+@RequestMapping("/api/v1/giftCertificates")
 @RequiredArgsConstructor
 @Validated
 public class GiftCertificateController {

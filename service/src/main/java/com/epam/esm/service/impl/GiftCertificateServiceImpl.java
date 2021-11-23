@@ -185,31 +185,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return changedFieldsAmount;
     }
 
-    private List<Tag> processTags(List<TagDto> certificateTagsDto){
-        List<Tag> certificateTags = certificateTagsDto
-                .stream()
-                .map(tagDtoMapper::toEntity)
-                .collect(Collectors.toList());
-        List<Tag> resultCertificateTags = new ArrayList<>();
-        for (Tag tag: certificateTags) {
-            Optional<Tag> tagOptional = tagRepository.findByName(tag.getName());
-
-            if (!tagOptional.isPresent()) {
-                List<ValidationError> validationErrors = tagValidator.validateParams(tag.getName());
-
-                if (!validationErrors.isEmpty()) {
-                    throw new InvalidEntityException(validationErrors, TagDto.class);
-                }
-
-                tag = tagRepository.create(tag);
-            } else {
-                tag = tagOptional.get();
-            }
-            resultCertificateTags.add(tag);
-        }
-        return resultCertificateTags;
-    }
-
     private List<Tag> processTagIds(List<Long> certificateTagIds){
         List<Tag> resultCertificateTags = new ArrayList<>();
         for (Long tagId: certificateTagIds) {
