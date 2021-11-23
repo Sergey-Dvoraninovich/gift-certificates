@@ -27,7 +27,6 @@ public class UserServiceImpl implements UserService {
     private final OrderRepository orderRepository;
     private final UserDtoMapper userMapper;
     private final UserOrderResponseDtoMapper userOrderResponseDtoMapper;
-    private final TagDtoMapper tagDtoMapper;
 
     @Override
     public Long countAll() {
@@ -76,7 +75,7 @@ public class UserServiceImpl implements UserService {
         if (!order.isPresent()) {
             throw new EntityNotFoundException(orderId, UserOrderResponseDto.class);
         }
-        if (order.get().getUser().getId() != orderId) {
+        if (order.get().getUser().getId() != userId) {
             throw new EntityNotFoundException(orderId, UserOrderResponseDto.class);
         }
         return userOrderResponseDtoMapper.toDto(order.get());

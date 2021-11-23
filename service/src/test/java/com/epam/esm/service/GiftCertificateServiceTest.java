@@ -49,9 +49,8 @@ public class GiftCertificateServiceTest {
 
     @Mock
     private GiftCertificateRepository giftCertificateRepository;
-
     @Mock
-    private GiftCertificateRequestValidator giftCertificateRequestValidator;
+    private TagRepository tagRepository;
 
     @Mock
     private GiftCertificateRequestDtoMapper giftCertificateRequestDtoMapper;
@@ -59,14 +58,7 @@ public class GiftCertificateServiceTest {
     private GiftCertificateResponseDtoMapper giftCertificateResponseDtoMapper;
 
     @Mock
-    private TagRepository tagRepository;
-
-    @Mock
-    private TagValidator tagValidator;
-
-    @Mock
-    private TagDtoMapper tagDtoMapper;
-
+    private GiftCertificateRequestValidator giftCertificateRequestValidator;
     @Mock
     private GiftCertificateSearchParamsValidator searchParamsValidator;
 
