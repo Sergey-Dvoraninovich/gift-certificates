@@ -19,6 +19,7 @@ import static com.epam.esm.validator.ValidationError.TOO_LONG_TAG_NAME;
 import static com.epam.esm.validator.ValidationError.TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION;
 import static com.epam.esm.validator.ValidationError.TOO_SHORT_GIFT_CERTIFICATE_NAME;
 import static com.epam.esm.validator.ValidationError.TOO_SHORT_TAG_NAME;
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GiftCertificateSearchParamsValidatorTest {
@@ -26,11 +27,11 @@ public class GiftCertificateSearchParamsValidatorTest {
 
     @ParameterizedTest
     @MethodSource("provideSearchParams")
-    void testFindByParams(String tagName, String certificateName, String orderingName,
+    void testFindByParams(List<String> tagNames, String certificateName, String orderingName,
                           String certificateDescription, String orderingCreateDate,
                           List<ValidationError> expected) {
 
-        List<ValidationError> actual = searchParamsValidator.validate(tagName, certificateName, orderingName,
+        List<ValidationError> actual = searchParamsValidator.validate(tagNames, certificateName, orderingName,
                                                                       certificateDescription, orderingCreateDate);
 
         assertEquals(expected, actual);
@@ -39,30 +40,30 @@ public class GiftCertificateSearchParamsValidatorTest {
     private static List<Arguments> provideSearchParams() {
         List<Arguments> testCases = new ArrayList<>();
 
-        testCases.add(Arguments.of("Tag", null, null, null, null, Collections.emptyList()));
-        testCases.add(Arguments.of(generateString("Tag", 2), null, null, null, null, Collections.emptyList()));
-        testCases.add(Arguments.of(generateString("Tag", 45), null, null, null, null, Collections.emptyList()));
-        testCases.add(Arguments.of("Tag!", null, null, null, null, Collections.singletonList(INVALID_SYMBOLS_IN_TAG_NAME)));
-        testCases.add(Arguments.of("T", null, null, null, null, Collections.singletonList(TOO_SHORT_TAG_NAME)));
-        testCases.add(Arguments.of(generateString("Tag", 46), null, null, null, null, Collections.singletonList(TOO_LONG_TAG_NAME)));
+        testCases.add(Arguments.of(singletonList("Tag"), null, null, null, null, Collections.emptyList()));
+        testCases.add(Arguments.of(singletonList(generateString("Tag", 2)), null, null, null, null, Collections.emptyList()));
+        testCases.add(Arguments.of(singletonList(generateString("Tag", 45)), null, null, null, null, Collections.emptyList()));
+        testCases.add(Arguments.of(singletonList("Tag!"), null, null, null, null, singletonList(INVALID_SYMBOLS_IN_TAG_NAME)));
+        testCases.add(Arguments.of(singletonList("T"), null, null, null, null, singletonList(TOO_SHORT_TAG_NAME)));
+        testCases.add(Arguments.of(singletonList(generateString("Tag", 46)), null, null, null, null, singletonList(TOO_LONG_TAG_NAME)));
 
         testCases.add(Arguments.of(null, "Certificate", null, null, null, Collections.emptyList()));
         testCases.add(Arguments.of(null, generateString("Certificate", 2), null, null, null, Collections.emptyList()));
         testCases.add(Arguments.of(null, generateString("Certificate", 45), null, null, null, Collections.emptyList()));
-        testCases.add(Arguments.of(null, "Certificate!", null, null, null, Collections.singletonList(INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_NAME)));
-        testCases.add(Arguments.of(null, "C", null, null, null, Collections.singletonList(TOO_SHORT_GIFT_CERTIFICATE_NAME)));
-        testCases.add(Arguments.of(null, generateString("Certificate", 46), null, null, null, Collections.singletonList(TOO_LONG_GIFT_CERTIFICATE_NAME)));
+        testCases.add(Arguments.of(null, "Certificate!", null, null, null, singletonList(INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_NAME)));
+        testCases.add(Arguments.of(null, "C", null, null, null, singletonList(TOO_SHORT_GIFT_CERTIFICATE_NAME)));
+        testCases.add(Arguments.of(null, generateString("Certificate", 46), null, null, null, singletonList(TOO_LONG_GIFT_CERTIFICATE_NAME)));
 
-        testCases.add(Arguments.of(null, null, "Error", null, null, Collections.singletonList(INVALID_NAME_ORDERING_TYPE)));
+        testCases.add(Arguments.of(null, null, "Error", null, null, singletonList(INVALID_NAME_ORDERING_TYPE)));
 
         testCases.add(Arguments.of(null, null, null, "Description", null, Collections.emptyList()));
         testCases.add(Arguments.of(null, null, null, generateString("Description", 2), null, Collections.emptyList()));
         testCases.add(Arguments.of(null, null, null, generateString("Description", 500), null, Collections.emptyList()));
-        testCases.add(Arguments.of(null, null, null, "Description$", null, Collections.singletonList(INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION)));
-        testCases.add(Arguments.of(null, null, null, "D", null, Collections.singletonList(TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION)));
-        testCases.add(Arguments.of(null, null, null, generateString("Description", 501), null, Collections.singletonList(TOO_LONG_GIFT_CERTIFICATE_DESCRIPTION)));
+        testCases.add(Arguments.of(null, null, null, "Description$", null, singletonList(INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION)));
+        testCases.add(Arguments.of(null, null, null, "D", null, singletonList(TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION)));
+        testCases.add(Arguments.of(null, null, null, generateString("Description", 501), null, singletonList(TOO_LONG_GIFT_CERTIFICATE_DESCRIPTION)));
 
-        testCases.add(Arguments.of(null, null, null, null, "Error", Collections.singletonList(INVALID_CREATE_DATE_ORDERING_TYPE)));
+        testCases.add(Arguments.of(null, null, null, null, "Error", singletonList(INVALID_CREATE_DATE_ORDERING_TYPE)));
 
         return testCases;
     }

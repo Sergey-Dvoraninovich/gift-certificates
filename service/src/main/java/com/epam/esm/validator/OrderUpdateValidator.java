@@ -8,11 +8,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import static com.epam.esm.validator.ValidationError.*;
+import static com.epam.esm.validator.ValidationError.INVALID_ORDER_ITEMS_AMOUNT;
 import static com.epam.esm.validator.ValidationError.NOT_UNIQUE_GIFT_CERTIFICATES_IN_ORDER;
+import static com.epam.esm.validator.ValidationError.ORDER_ITEMS_REQUIRED;
 
 @Component
 public class OrderUpdateValidator {
+    private static final Long MAX_ORDER_ITEMS_AMOUNT = 100L;
+
     public List<ValidationError> validateWithRequiredParams(OrderUpdateRequestDto orderUpdateRequestDto) {
         List<ValidationError> validationErrors = new ArrayList<>();
 
@@ -29,7 +32,7 @@ public class OrderUpdateValidator {
         List<ValidationError> validationErrors = new ArrayList<>();
 
         if (orderItemsDto != null) {
-            if (orderItemsDto.size() == 0){
+            if (orderItemsDto.size() > MAX_ORDER_ITEMS_AMOUNT){
                 validationErrors.add(INVALID_ORDER_ITEMS_AMOUNT);
             }
             HashSet<Long> giftCertificateIds = new HashSet<>();

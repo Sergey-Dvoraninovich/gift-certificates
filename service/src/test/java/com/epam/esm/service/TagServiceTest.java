@@ -24,6 +24,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class TagServiceTest {
+    private static final Integer PAGE_NUMBER = 1;
+    private static final Integer PAGE_SIZE = 10;
+
     @InjectMocks
     private TagServiceImpl tagService;
 
@@ -44,14 +47,14 @@ public class TagServiceTest {
     @Test
     void testFindAll() {
         List<Tag> tags = provideTagsList();
-        List<TagDto> tagsDto = provideTagDtoList();
-        when(tagRepository.findAll()).thenReturn(provideTagsList());
+        List<TagDto> tagsDto = provideTagsDtoList();
+        when(tagRepository.findAll(PAGE_NUMBER, PAGE_SIZE)).thenReturn(provideTagsList());
         for (int i = 0; i < tags.size(); i++) {
             when(tagDtoMapper.toDto(tags.get(i))).thenReturn(tagsDto.get(i));
         }
 
-        List<TagDto> expectedDtoList = provideTagDtoList();
-        List<TagDto> actualDtoList = tagService.findAll();
+        List<TagDto> expectedDtoList = provideTagsDtoList();
+        List<TagDto> actualDtoList = tagService.findAll(PAGE_NUMBER, PAGE_SIZE);
 
         assertEquals(expectedDtoList, actualDtoList);
     }
@@ -127,7 +130,7 @@ public class TagServiceTest {
         return firstTag;
     }
 
-    private List<TagDto> provideTagDtoList() {
+    private List<TagDto> provideTagsDtoList() {
         TagDto firstTagDto = new TagDto();
         firstTagDto.setId(1L);
         firstTagDto.setName("first tag");

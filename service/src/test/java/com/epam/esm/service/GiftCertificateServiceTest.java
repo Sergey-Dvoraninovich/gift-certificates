@@ -1,16 +1,21 @@
 package com.epam.esm.service;
 
+import com.epam.esm.dto.GiftCertificateRequestDto;
+import com.epam.esm.dto.GiftCertificateResponseDto;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.mapping.GiftCertificateRequestDtoMapper;
 import com.epam.esm.dto.mapping.GiftCertificateResponseDtoMapper;
 import com.epam.esm.dto.mapping.TagDtoMapper;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.InvalidEntityException;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.impl.GiftCertificateServiceImpl;
 import com.epam.esm.validator.GiftCertificateSearchParamsValidator;
-import com.epam.esm.validator.GiftCertificateValidator;
+import com.epam.esm.validator.GiftCertificateRequestValidator;
 import com.epam.esm.validator.TagValidator;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,15 +33,17 @@ import java.util.Collections;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class GiftCertificateServiceTest {
+    private static final Integer PAGE_NUMBER = 1;
+    private static final Integer PAGE_SIZE = 10;
+
     @InjectMocks
     private GiftCertificateServiceImpl giftCertificateService;
 
@@ -44,8 +51,10 @@ public class GiftCertificateServiceTest {
     private GiftCertificateRepository giftCertificateRepository;
 
     @Mock
-    private GiftCertificateValidator giftCertificateValidator;
+    private GiftCertificateRequestValidator giftCertificateRequestValidator;
 
+    @Mock
+    private GiftCertificateRequestDtoMapper giftCertificateRequestDtoMapper;
     @Mock
     private GiftCertificateResponseDtoMapper giftCertificateResponseDtoMapper;
 
@@ -68,88 +77,132 @@ public class GiftCertificateServiceTest {
 
     @Test
     void testFindAll() {
-        //GiftCertificateDto certificateDto = provideGiftCertificateDto();
+        GiftCertificateResponseDto certificateDto = provideGiftCertificateResponseDto();
         GiftCertificate certificate = provideGiftCertificate();
-        List<Tag> tags = provideTagsList();
         when(searchParamsValidator.validate(null, null, null, null, null)).thenReturn(Collections.emptyList());
-        when(giftCertificateRepository.findAll(null, null, null, null, null, 1, 10))
+        when(giftCertificateRepository.findAll(null, null, null, null, null, PAGE_NUMBER, PAGE_SIZE))
                 .thenReturn(Arrays.asList(certificate));
-        //List<GiftCertificateDto> expected = Arrays.asList(certificateDto);
+        when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateDto);
+        List<GiftCertificateResponseDto> expected = Arrays.asList(certificateDto);
 
-        //List<GiftCertificateDto> actual = giftCertificateService.findAll(null, null, null, null, null, 1, 10);
+        List<GiftCertificateResponseDto> actual = giftCertificateService.findAll(null, null, null, null, null, PAGE_NUMBER, PAGE_SIZE);
 
-        //assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
     void testFindById() {
-        //GiftCertificateDto certificateDto = provideGiftCertificateDto();
+        GiftCertificateResponseDto certificateDto = provideGiftCertificateResponseDto();
         GiftCertificate certificate = provideGiftCertificate();
-        List<Tag> tags = provideTagsList();
-        //when(giftCertificateRepository.findById(certificateDto.getId())).thenReturn(Optional.of(certificate));
-        //when(tagRepository.findByCertificateId(certificate.getId())).thenReturn(tags);
-        //when(giftCertificateDtoMapper.toDto(certificate, tags)).thenReturn(certificateDto);
+        when(giftCertificateRepository.findById(certificateDto.getId())).thenReturn(Optional.of(certificate));
+        when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateDto);
 
-        //GiftCertificateDto actual = giftCertificateService.findById(certificateDto.getId());
+        GiftCertificateResponseDto actual = giftCertificateService.findById(certificateDto.getId());
 
-        //assertEquals(certificateDto, actual);
+        assertEquals(certificateDto, actual);
     }
 
     @Test
     void testCreate() {
-        //GiftCertificateDto certificateDto = provideGiftCertificateDto();
+        GiftCertificateRequestDto certificateDto = provideGiftCertificateRequestDto();
+        GiftCertificateResponseDto certificateResponseDto = provideGiftCertificateResponseDto();
         GiftCertificate certificate = provideGiftCertificate();
-        List<TagDto> tagsDto = provideTagsDtoList();
         List<Tag> tags = provideTagsList();
 
-        //when(giftCertificateResponseDtoMapper.toEntity(certificateDto)).thenReturn(certificate);
-        //when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateDto);
-        //when(giftCertificateValidator.validateWithRequiredParams(any(GiftCertificateDto.class))).thenReturn(Collections.emptyList());
-        when(tagValidator.validateParams(any(String.class))).thenReturn(new ArrayList<>());
-
-        when(giftCertificateRepository.findById(certificate.getId())).thenReturn(Optional.of(certificate));
+        when(giftCertificateRequestValidator.validateWithRequiredParams(certificateDto)).thenReturn(Collections.emptyList());
         when(giftCertificateRepository.findByName(certificate.getName())).thenReturn(Optional.empty());
+        when(giftCertificateRequestDtoMapper.toEntity(certificateDto)).thenReturn(certificate);
+        when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateResponseDto);
+        when(tagRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
         when(giftCertificateRepository.create(any(GiftCertificate.class))).thenReturn(certificate);
         for (int i = 0; i < tags.size(); i++){
-            when(tagRepository.findByName(tags.get(i).getName())).thenReturn(Optional.empty());
-            when(tagRepository.create(tags.get(i))).thenReturn(tags.get(i));
-            when(tagDtoMapper.toEntity(tagsDto.get(i))).thenReturn(tags.get(i));
+            when(tagRepository.findById(tags.get(i).getId())).thenReturn(Optional.of(tags.get(i)));
         }
 
-        //GiftCertificateDto actual = giftCertificateService.create(certificateDto);
+        GiftCertificateResponseDto actual = giftCertificateService.create(certificateDto);
 
-        //assertEquals(certificateDto, actual);
+        assertEquals(certificateResponseDto, actual);
     }
 
     @Test
-    void testUpdate() {
+    void testUpdateTags() {
         GiftCertificate certificate = provideGiftCertificate();
-        List<TagDto> tagsDto = provideTagsDtoList();
-        List<Tag> tags = provideTagsList();
+        List<Tag> tags = provideTagsListForUpdate();
 
-        //GiftCertificateUpdateRequestDto updatedCertificateDto = provideGiftCertificateUpdateRequestDto();
-        //updatedCertificateDto.setDescription("New description");
         GiftCertificate updatedCertificate = provideGiftCertificate();
-        updatedCertificate.setDescription("New description");
+        updatedCertificate.setGiftCertificateTags(tags);
 
-        //when(giftCertificateDtoMapper.toEntity(updatedCertificateDto)).thenReturn(updatedCertificate);
-        //when(giftCertificateDtoMapper.toDto(any(GiftCertificate.class), eq(tags))).thenReturn(updatedCertificateDto);
+        GiftCertificateRequestDto certificateRequestDto = GiftCertificateRequestDto.builder().build();
+        certificateRequestDto.setTagIdsDto(provideTagIdsForUpdateList());
+        GiftCertificateResponseDto certificateResponseDto = provideGiftCertificateResponseDto();
+        certificateResponseDto.setTagsDto(provideTagsDtoForUpdateList());
 
-        when(giftCertificateValidator.validateParams(any(String.class), any(String.class), any(String.class),
-                any(String.class))).thenReturn(Collections.emptyList());
-        when(tagValidator.validateParams(any(String.class))).thenReturn(new ArrayList<>());
+        when(giftCertificateRequestValidator.validateParams(null, certificateRequestDto.getDescription(),
+                null, null)).thenReturn(Collections.emptyList());
+        when(giftCertificateRepository.findById(certificate.getId())).thenReturn(Optional.of(certificate));
+        when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateResponseDto);
 
-        when(giftCertificateRepository.findById(updatedCertificate.getId())).thenReturn(Optional.of(certificate));
-        //when(giftCertificateRepository.update(any(GiftCertificate.class))).thenReturn(true);
         for (int i = 0; i < tags.size(); i++){
-            when(tagRepository.findByName(tags.get(i).getName())).thenReturn(Optional.empty());
-            //when(tagRepository.create(tags.get(i))).thenReturn(tags.get(i).getId());
-            when(tagDtoMapper.toEntity(tagsDto.get(i))).thenReturn(tags.get(i));
+            when(tagRepository.findById(tags.get(i).getId())).thenReturn(Optional.of(tags.get(i)));
         }
 
-        //GiftCertificateDto actual = giftCertificateService.update(certificate.getId(), updatedCertificateDto);
+        when(giftCertificateRepository.update(any(GiftCertificate.class))).thenReturn(certificate);
 
-        //assertEquals(updatedCertificateDto, actual);
+        GiftCertificateResponseDto actual = giftCertificateService.update(certificate.getId(), certificateRequestDto);
+
+        assertEquals(certificateResponseDto, actual);
+    }
+
+    @Test
+    void testUpdateSingleField() {
+        GiftCertificate certificate = provideGiftCertificate();
+
+        GiftCertificate updatedCertificate = provideGiftCertificate();
+        updatedCertificate.setDescription("New description");
+        GiftCertificateRequestDto certificateRequestDto = GiftCertificateRequestDto.builder().build();
+        certificateRequestDto.setDescription("New description");
+        GiftCertificateResponseDto certificateResponseDto = provideGiftCertificateResponseDto();
+        certificateResponseDto.setDescription("New description");
+
+        when(giftCertificateRequestValidator.validateParams(null, certificateRequestDto.getDescription(),
+                null, null)).thenReturn(Collections.emptyList());
+        when(giftCertificateRepository.findById(certificate.getId())).thenReturn(Optional.of(certificate));
+        when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateResponseDto);
+
+        when(giftCertificateRepository.update(any(GiftCertificate.class))).thenReturn(certificate);
+
+        GiftCertificateResponseDto actual = giftCertificateService.update(certificate.getId(), certificateRequestDto);
+
+        assertEquals(certificateResponseDto, actual);
+    }
+
+
+    @Test
+    void testUpdateNoFields() {
+        GiftCertificateRequestDto certificateRequestDto = GiftCertificateRequestDto.builder().build();
+
+        try {
+            giftCertificateService.update(1L, certificateRequestDto);
+            assertTrue(false);
+        } catch (InvalidEntityException e) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    void testUpdateSeveralFields() {
+        GiftCertificateRequestDto certificateRequestDto = GiftCertificateRequestDto.builder()
+                .name("name")
+                .description("description")
+                .build();
+
+        try {
+            giftCertificateService.update(1L, certificateRequestDto);
+            assertTrue(false);
+        } catch (InvalidEntityException e) {
+            assertTrue(true);
+        }
     }
 
     @Test
@@ -185,43 +238,87 @@ public class GiftCertificateServiceTest {
         return Arrays.asList(firstTag, secondTag);
     }
 
-//    private GiftCertificateDto provideGiftCertificateDto() {
-//        GiftCertificateDto certificate = new GiftCertificateDto();
-//        certificate.setId(1L);
-//        certificate.setName("certificate first and second tags");
-//        certificate.setDescription("certificate with first tag and second tag");
-//        certificate.setPrice(new BigDecimal("50.00"));
-//        certificate.setDuration(Duration.ofDays(90));
-//        certificate.setTagsDto(provideTagsDtoList());
-//        Instant date = Instant.from(ZonedDateTime.of(2000, 1, 1, 11, 11, 11, 222000000, ZoneId.of("Europe/Minsk")));
-//        certificate.setCreateDate(date);
-//        certificate.setLastUpdateDate(date);
-//        return certificate;
-//    }
-//
-//    private GiftCertificateUpdateRequestDto provideGiftCertificateUpdateRequestDto() {
-//        GiftCertificateUpdateRequestDto certificate = new GiftCertificateUpdateRequestDto();
-//        certificate.setName("certificate first and second tags");
-//        certificate.setDescription("certificate with first tag and second tag");
-//        certificate.setPrice(new BigDecimal("50.00"));
-//        certificate.setDuration(Duration.ofDays(90));
-//        certificate.setTagIdsDto(provideTagIdsList());
-//        return certificate;
-//    }
-
-    private List<TagDto> provideTagsDtoList() {
-        TagDto firstTag = new TagDto();
+    private List<Tag> provideTagsListForUpdate() {
+        Tag firstTag = new Tag();
         firstTag.setId(1L);
         firstTag.setName("first tag");
 
-        TagDto secondTag = new TagDto();
+        Tag secondTag = new Tag();
         secondTag.setId(2L);
         secondTag.setName("second tag");
+
+        Tag thirdTag = new Tag();
+        thirdTag.setId(3L);
+        thirdTag.setName("third tag");
+
+        return Arrays.asList(firstTag, secondTag, thirdTag);
+    }
+
+    private GiftCertificateResponseDto provideGiftCertificateResponseDto() {
+        GiftCertificateResponseDto certificate = GiftCertificateResponseDto.builder()
+                .id(1L)
+                .name("certificate first and second tags")
+                .description("certificate with first tag and second tag")
+                .price(new BigDecimal("50.00"))
+                .duration(Duration.ofDays(90))
+                .tagsDto(provideTagsDtoList())
+                .build();
+
+        Instant date = Instant.from(ZonedDateTime.of(2000, 1, 1, 11, 11, 11, 222000000, ZoneId.of("Europe/Minsk")));
+        certificate.setCreateDate(date);
+        certificate.setLastUpdateDate(date);
+        return certificate;
+    }
+
+    private GiftCertificateRequestDto provideGiftCertificateRequestDto() {
+        GiftCertificateRequestDto certificate = GiftCertificateRequestDto.builder()
+                .name("certificate first and second tags")
+                .description("certificate with first tag and second tag")
+                .price(new BigDecimal("50.00"))
+                .duration(Duration.ofDays(90))
+                .tagIdsDto(provideTagIdsList())
+                .build();
+        return certificate;
+    }
+
+    private List<TagDto> provideTagsDtoList() {
+        TagDto firstTag = TagDto.builder()
+                .id(1L)
+                .name("first tag")
+                .build();
+
+        TagDto secondTag = TagDto.builder()
+                .id(2L)
+                .name("second tag")
+                .build();
 
         return Arrays.asList(firstTag, secondTag);
     }
 
+    private List<TagDto> provideTagsDtoForUpdateList() {
+        TagDto firstTag = TagDto.builder()
+                .id(1L)
+                .name("first tag")
+                .build();
+
+        TagDto secondTag = TagDto.builder()
+                .id(2L)
+                .name("second tag")
+                .build();
+
+        TagDto thirdTag = TagDto.builder()
+                .id(3L)
+                .name("third tag")
+                .build();
+
+        return Arrays.asList(firstTag, secondTag, thirdTag);
+    }
+
     private List<Long> provideTagIdsList() {
         return Arrays.asList(new Long[]{1L, 2L});
+    }
+
+    private List<Long> provideTagIdsForUpdateList() {
+        return Arrays.asList(new Long[]{1L, 2L, 3L});
     }
 }

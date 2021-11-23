@@ -1,6 +1,10 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dto.*;
+import com.epam.esm.dto.OrderCreateRequestDto;
+import com.epam.esm.dto.OrderItemDto;
+import com.epam.esm.dto.OrderResponseDto;
+import com.epam.esm.dto.OrderUpdateRequestDto;
+import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.mapping.OrderResponseDtoMapper;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
@@ -138,7 +142,7 @@ public class OrderServiceImpl implements OrderService {
         Optional<GiftCertificate> optionalCertificate;
         optionalCertificate = giftCertificateRepository.findById(orderItemDto.getId());
         if (!optionalCertificate.isPresent()) {
-            throw new EntityNotFoundException(orderItemDto.getId(), GiftCertificateResponseDto.class);
+            throw new EntityNotFoundException(orderItemDto.getId(), OrderItemDto.class);
         }
         else {
             orderItem.setGiftCertificate(optionalCertificate.get());

@@ -33,7 +33,7 @@ public class TagValidatorTest {
     @Test
     void testTagsValidator() {
         List<ValidationError> expected = Arrays.asList(TAG_NAME_REQUIRED);
-        TagDto testTag = provideTagDto();
+        TagDto testTag = TagDto.builder().build();
         testTag.setName(null);
 
         List<ValidationError> actual = tagValidator.validateWithRequiredParams(testTag);
@@ -61,12 +61,5 @@ public class TagValidatorTest {
             result.append(line);
         }
         return result.substring(0, length);
-    }
-
-    private TagDto provideTagDto() {
-        TagDto firstTag = new TagDto();
-        firstTag.setId(1L);
-        firstTag.setName("first tag");
-        return firstTag;
     }
 }

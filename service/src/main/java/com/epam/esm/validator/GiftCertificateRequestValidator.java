@@ -29,7 +29,7 @@ import static com.epam.esm.validator.ValidationError.TOO_SHORT_GIFT_CERTIFICATE_
 import static com.epam.esm.validator.ValidationError.TOO_SMALL_GIFT_CERTIFICATE_PRICE;
 
 @Component
-public class GiftCertificateValidator {
+public class GiftCertificateRequestValidator {
     private static final String NAME_NO_LEADING_SYMBOLS_REGEXP = "^[A-Za-z]{1}[A-Za-z\\s]{0,498}[A-Za-z]{1}$";
     private static final String NAME_SYMBOLS_REGEXP = "^[A-Za-z\\s]{2,45}$";
     private static final int NAME_MIN_LENGTH = 2;

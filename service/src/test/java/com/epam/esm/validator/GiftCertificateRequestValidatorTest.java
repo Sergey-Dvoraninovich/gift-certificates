@@ -1,6 +1,7 @@
 package com.epam.esm.validator;
 
-import com.epam.esm.dto.GiftCertificateDto;
+
+import com.epam.esm.dto.GiftCertificateRequestDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -37,15 +38,15 @@ import static com.epam.esm.validator.ValidationError.TOO_SMALL_GIFT_CERTIFICATE_
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class GiftCertificateValidatorTest {
-    private GiftCertificateValidator giftCertificateValidator = new GiftCertificateValidator();
+public class GiftCertificateRequestValidatorTest {
+    private GiftCertificateRequestValidator giftCertificateRequestValidator = new GiftCertificateRequestValidator();
 
     @ParameterizedTest
     @MethodSource("provideTagParams")
     void testValidateGiftCertificate(String name, String description, String price,
                           String duration, List<ValidationError> expected) {
 
-        List<ValidationError> actual = giftCertificateValidator.validateParams(name, description, price, duration);
+        List<ValidationError> actual = giftCertificateRequestValidator.validateParams(name, description, price, duration);
 
         assertEquals(expected, actual);
     }
@@ -54,13 +55,13 @@ public class GiftCertificateValidatorTest {
     void testValidateGiftCertificateRequiredParams() {
         List<ValidationError> expected = Arrays.asList(GIFT_CERTIFICATE_NAME_REQUIRED, GIFT_CERTIFICATE_DESCRIPTION_REQUIRED,
                 GIFT_CERTIFICATE_PRICE_REQUIRED, GIFT_CERTIFICATE_DURATION_REQUIRED);
-        GiftCertificateDto testCertificate = provideGiftCertificateDto();
+        GiftCertificateRequestDto testCertificate = GiftCertificateRequestDto.builder().build();
         testCertificate.setName(null);
         testCertificate.setDescription(null);
         testCertificate.setPrice(null);
         testCertificate.setDuration(null);
 
-        List<ValidationError> actual = giftCertificateValidator.validateWithRequiredParams(testCertificate);
+        List<ValidationError> actual = giftCertificateRequestValidator.validateWithRequiredParams(testCertificate);
 
         assertEquals(expected, actual);
     }
@@ -109,19 +110,5 @@ public class GiftCertificateValidatorTest {
             result.append(line);
         }
         return result.substring(0, length);
-    }
-
-    private GiftCertificateDto provideGiftCertificateDto() {
-        GiftCertificateDto certificate = new GiftCertificateDto();
-        certificate.setId(1L);
-        certificate.setName("certificate first and second tags");
-        certificate.setDescription("certificate with first tag and second tag");
-        certificate.setPrice(new BigDecimal("50.00"));
-        certificate.setDuration(Duration.ofDays(90));
-        certificate.setTagsDto(Collections.emptyList());
-        Instant date = Instant.from(ZonedDateTime.of(2000, 1, 1, 11, 11, 11, 222000000, ZoneId.of("Europe/Minsk")));
-        certificate.setCreateDate(date);
-        certificate.setLastUpdateDate(date);
-        return certificate;
     }
 }

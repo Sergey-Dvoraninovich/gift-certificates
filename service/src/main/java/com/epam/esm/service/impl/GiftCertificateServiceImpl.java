@@ -16,7 +16,7 @@ import com.epam.esm.repository.OrderingType;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.validator.GiftCertificateSearchParamsValidator;
-import com.epam.esm.validator.GiftCertificateValidator;
+import com.epam.esm.validator.GiftCertificateRequestValidator;
 import com.epam.esm.validator.TagValidator;
 import com.epam.esm.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +40,7 @@ import static com.epam.esm.validator.ValidationError.NO_GIFT_CERTIFICATE_FIELDS_
 public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final GiftCertificateRepository giftCertificateRepository;
     private final TagRepository tagRepository;
-    private final GiftCertificateValidator giftCertificateValidator;
+    private final GiftCertificateRequestValidator giftCertificateRequestValidator;
     private final TagValidator tagValidator;
     private final GiftCertificateSearchParamsValidator searchParamsValidator;
     private final GiftCertificateRequestDtoMapper giftCertificateRequestDtoMapper;
@@ -99,7 +99,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional
     public GiftCertificateResponseDto create(GiftCertificateRequestDto certificateDto) {
-        List<ValidationError> validationErrors = giftCertificateValidator.validateWithRequiredParams(certificateDto);
+        List<ValidationError> validationErrors = giftCertificateRequestValidator.validateWithRequiredParams(certificateDto);
 
         if (!validationErrors.isEmpty()) {
             throw new InvalidEntityException(validationErrors, GiftCertificateRequestDto.class);
@@ -136,7 +136,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         String priceString = certificateDto.getPrice() == null ? null : certificateDto.getPrice().toString();
         String durationString = certificateDto.getDuration() == null ? null : String.valueOf(certificateDto.getDuration().toDays());
-        List<ValidationError> validationErrors = giftCertificateValidator.validateParams(certificateDto.getName(), certificateDto.getDescription(),
+        List<ValidationError> validationErrors = giftCertificateRequestValidator.validateParams(certificateDto.getName(), certificateDto.getDescription(),
                 priceString, durationString);
 
         if (!validationErrors.isEmpty()) {
