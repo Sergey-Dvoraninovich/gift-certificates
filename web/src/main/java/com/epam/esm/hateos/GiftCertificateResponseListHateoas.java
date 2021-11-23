@@ -19,6 +19,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Data
 @AllArgsConstructor
 public class GiftCertificateResponseListHateoas extends RepresentationModel<GiftCertificateResponseHateoas> {
+    private static final String PREV_PAGE_REL = "prevPage";
+    private static final String NEXT_PAGE_REL = "nextPage";
+
     private List<GiftCertificateResponseHateoas> giftCertificatesDto;
 
     public static GiftCertificateResponseListHateoas build(List<GiftCertificateResponseDto> certificatesDto, HateoasProvider<GiftCertificateResponseDto> hateoasProvider,
@@ -39,7 +42,7 @@ public class GiftCertificateResponseListHateoas extends RepresentationModel<Gift
                             .getGiftCertificates(tagNames, certificateName, orderingName, certificateDescription,
                                     orderingDate, pageNumber - 1, pageSize)
             ));
-            certificateLinks.add(new Link(prevLinkLine).withRel("prevPage"));
+            certificateLinks.add(new Link(prevLinkLine).withRel(PREV_PAGE_REL));
         }
 
         String selfLinkLine = LinkProcessor.process(
@@ -55,7 +58,7 @@ public class GiftCertificateResponseListHateoas extends RepresentationModel<Gift
                             .getGiftCertificates(tagNames, certificateName, orderingName, certificateDescription,
                                     orderingDate, pageNumber + 1, pageSize)
                     ));
-            certificateLinks.add(new Link(nextLinkLine).withRel("nextPage"));
+            certificateLinks.add(new Link(nextLinkLine).withRel(NEXT_PAGE_REL));
         }
 
         hateoasListModel.add(certificateLinks);

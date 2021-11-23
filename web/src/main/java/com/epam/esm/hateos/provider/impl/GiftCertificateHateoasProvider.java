@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class GiftCertificateHateoasProvider implements HateoasProvider<GiftCertificateResponseDto> {
@@ -22,7 +23,7 @@ public class GiftCertificateHateoasProvider implements HateoasProvider<GiftCerti
         certificateLinks.add(selfLink);
 
         for (TagDto tagDto: certificateDto.getTagsDto()) {
-            Link tagLink = linkTo(TagController.class).slash(tagDto.getId()).withRel(tagDto.getName());
+            Link tagLink = linkTo(methodOn(TagController.class).getTag(tagDto.getId())).withRel(tagDto.getName());
             certificateLinks.add(tagLink);
         }
         return certificateLinks;

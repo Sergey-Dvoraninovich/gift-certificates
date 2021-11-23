@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
         if (!order.isPresent()) {
             throw new EntityNotFoundException(orderId, UserOrderResponseDto.class);
         }
-        if (order.get().getUser().getId() == orderId) {
+        if (order.get().getUser().getId() != orderId) {
             throw new EntityNotFoundException(orderId, UserOrderResponseDto.class);
         }
         return userOrderResponseDtoMapper.toDto(order.get());

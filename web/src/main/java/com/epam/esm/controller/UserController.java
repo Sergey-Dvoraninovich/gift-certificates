@@ -65,7 +65,7 @@ public class UserController {
         return new ResponseEntity<>(userListHateoas, OK);
     }
 
-    @ApiOperation(value = "Get User", response = UserDto.class)
+    @ApiOperation(value = "Get User", response = UserHateoas.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved the User"),
             @ApiResponse(code = 400, message = "The User can't be fetched due to bad request"),

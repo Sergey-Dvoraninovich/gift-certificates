@@ -1,5 +1,6 @@
 package com.epam.esm.hateos;
 
+import com.epam.esm.controller.OrderController;
 import com.epam.esm.controller.UserController;
 import com.epam.esm.dto.UserOrderResponseDto;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Data
 @AllArgsConstructor
@@ -21,10 +23,7 @@ public class UserOrderResponseHateoas extends RepresentationModel<UserOrderRespo
         UserOrderResponseHateoas hateoasModel = new UserOrderResponseHateoas(userOrderResponseDto);
 
         List<Link> orderResponseLinks = new ArrayList<>();
-        Link selfLink = linkTo(UserController.class)
-                .slash(userId)
-                .slash("orders")
-                .slash(userOrderResponseDto.getId())
+        Link selfLink = linkTo(methodOn(UserController.class).getUserOrder(userId, userOrderResponseDto.getId()))
                 .withSelfRel();
         orderResponseLinks.add(selfLink);
 

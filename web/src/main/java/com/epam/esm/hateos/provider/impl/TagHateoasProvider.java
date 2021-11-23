@@ -10,13 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class TagHateoasProvider implements HateoasProvider<TagDto> {
     @Override
     public List<Link> provide(TagDto tagDto) {
         List<Link> tagLinks = new ArrayList<>();
-        Link selfLink = linkTo(TagController.class).slash(tagDto.getId()).withSelfRel();
+        Link selfLink = linkTo(methodOn(TagController.class).getTag(tagDto.getId())).withSelfRel();
         tagLinks.add(selfLink);
         return tagLinks;
     }

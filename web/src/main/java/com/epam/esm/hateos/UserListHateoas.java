@@ -18,6 +18,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Data
 @AllArgsConstructor
 public class UserListHateoas extends RepresentationModel<UserListHateoas> {
+    private static final String PREV_PAGE_REL = "prevPage";
+    private static final String NEXT_PAGE_REL = "nextPage";
+
     private List<UserHateoas> usersDto;
 
     public static UserListHateoas build(List<UserDto> usersDto, HateoasProvider<UserDto> hateoasProvider,
@@ -31,13 +34,13 @@ public class UserListHateoas extends RepresentationModel<UserListHateoas> {
 
         List<Link> userLinks = new ArrayList<>();
         if (pageNumber > 1) {
-            Link prevLink = linkTo(methodOn(UserController.class).getUsers(pageNumber - 1, pageSize)).withRel("prevPage");
+            Link prevLink = linkTo(methodOn(UserController.class).getUsers(pageNumber - 1, pageSize)).withRel(PREV_PAGE_REL);
             userLinks.add(prevLink);
         }
         Link selfLink = linkTo(methodOn(UserController.class).getUsers(pageNumber, pageSize)).withSelfRel();
         userLinks.add(selfLink);
         if (usersDtoAmount > pageNumber * pageSize) {
-            Link nextLink = linkTo(methodOn(UserController.class).getUsers(pageNumber + 1, pageSize)).withRel("nextPage");
+            Link nextLink = linkTo(methodOn(UserController.class).getUsers(pageNumber + 1, pageSize)).withRel(NEXT_PAGE_REL);
             userLinks.add(nextLink);
         }
 

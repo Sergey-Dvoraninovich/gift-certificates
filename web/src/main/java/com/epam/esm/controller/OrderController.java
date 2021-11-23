@@ -1,9 +1,12 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.OrderCreateRequestDto;
+import com.epam.esm.dto.OrderItemDto;
 import com.epam.esm.dto.OrderResponseDto;
 import com.epam.esm.dto.OrderUpdateRequestDto;
+import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidPaginationException;
+import com.epam.esm.hateos.OrderItemHateoas;
 import com.epam.esm.hateos.OrderResponseHateoas;
 import com.epam.esm.hateos.OrderResponseListHateoas;
 import com.epam.esm.hateos.provider.impl.OrderResponseHateoasProvider;
@@ -30,6 +33,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.epam.esm.validator.ValidationError.PAGE_IS_OUT_OF_RANGE;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -71,7 +75,7 @@ public class OrderController {
         return new ResponseEntity<>(ordersHateoas, OK);
     }
 
-    @ApiOperation(value = "Get GiftCertificate order", response = OrderResponseDto.class)
+    @ApiOperation(value = "Get GiftCertificate order", response = OrderResponseHateoas.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved the GiftCertificate order"),
             @ApiResponse(code = 400, message = "The GiftCertificate order can't be fetched due to bad request"),
@@ -85,7 +89,29 @@ public class OrderController {
         return new ResponseEntity<>(orderResponseHateoas, OK);
     }
 
-    @ApiOperation(value = "Create GiftCertificate order", response = OrderResponseDto.class)
+    @ApiOperation(value = "Get OrderItem of Order", response = OrderItemHateoas.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved the OrderItem"),
+            @ApiResponse(code = 400, message = "The OrderItem can't be fetched due to bad request"),
+            @ApiResponse(code = 404, message = "The OrderItem order you were trying to reach is not found")
+    }
+    )
+    @GetMapping("/{orderId}/orderItems/{orderItemId}")
+    public ResponseEntity<OrderItemHateoas> getOrderItem(@ApiParam(value = "The Order ID") @PathVariable("orderId") @Min(1) long orderId,
+                                                         @ApiParam(value = "The Order Item ID") @PathVariable("orderItemId") @Min(1) long orderItemId) {
+        OrderResponseDto orderDto = orderService.findById(orderId);
+        List<OrderItemDto> orderItemsDto = orderDto.getOrderGiftCertificates().stream()
+                .filter(orderItemDto -> orderItemDto.getId() == orderItemId)
+                .collect(Collectors.toList());
+        if (orderItemsDto.size() < 1) {
+            throw new EntityNotFoundException(orderItemId, OrderItemDto.class);
+        }
+
+        OrderItemHateoas orderItemHateoas = OrderItemHateoas.build(orderId, orderItemsDto.get(0));
+        return new ResponseEntity<>(orderItemHateoas, OK);
+    }
+
+    @ApiOperation(value = "Create GiftCertificate order", response = OrderResponseHateoas.class)
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successfully created a GiftCertificate order"),
             @ApiResponse(code = 400, message = "The GiftCertificate order can't be created due to bad request"),
@@ -99,7 +125,7 @@ public class OrderController {
         return new ResponseEntity<>(orderResponseHateoas, CREATED);
     }
 
-    @ApiOperation(value = "Update GiftCertificate order", response = OrderResponseDto.class)
+    @ApiOperation(value = "Update GiftCertificate order", response = OrderResponseHateoas.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated a GiftCertificate order"),
             @ApiResponse(code = 400, message = "The GiftCertificate order can't be updated due to bad request"),

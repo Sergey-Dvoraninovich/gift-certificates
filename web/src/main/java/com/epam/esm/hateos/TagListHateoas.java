@@ -17,6 +17,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Data
 @AllArgsConstructor
 public class TagListHateoas extends RepresentationModel<TagListHateoas> {
+    private static final String PREV_PAGE_REL = "prevPage";
+    private static final String NEXT_PAGE_REL = "nextPage";
+
     private List<TagHateoas> tagsDto;
 
     public static TagListHateoas build(List<TagDto> tagsDto, HateoasProvider<TagDto> hateoasProvider,
@@ -30,13 +33,13 @@ public class TagListHateoas extends RepresentationModel<TagListHateoas> {
 
         List<Link> tagLinks = new ArrayList<>();
         if (pageNumber > 1) {
-            Link prevLink = linkTo(methodOn(TagController.class).getTags(pageNumber - 1, pageSize)).withRel("prevPage");
+            Link prevLink = linkTo(methodOn(TagController.class).getTags(pageNumber - 1, pageSize)).withRel(PREV_PAGE_REL);
             tagLinks.add(prevLink);
         }
         Link selfLink = linkTo(methodOn(TagController.class).getTags(pageNumber, pageSize)).withSelfRel();
         tagLinks.add(selfLink);
         if (tagsDtoAmount > pageNumber * pageSize) {
-            Link nextLink = linkTo(methodOn(TagController.class).getTags(pageNumber + 1, pageSize)).withRel("nextPage");
+            Link nextLink = linkTo(methodOn(TagController.class).getTags(pageNumber + 1, pageSize)).withRel(NEXT_PAGE_REL);
             tagLinks.add(nextLink);
         }
 

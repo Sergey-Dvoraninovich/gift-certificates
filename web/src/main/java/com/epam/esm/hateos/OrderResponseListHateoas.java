@@ -19,6 +19,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Data
 @AllArgsConstructor
 public class OrderResponseListHateoas extends RepresentationModel<OrderResponseListHateoas> {
+    private static final String PREV_PAGE_REL = "prevPage";
+    private static final String NEXT_PAGE_REL = "nextPage";
+
     private List<OrderResponseHateoas> orderResponsesDto;
 
     public static OrderResponseListHateoas build(List<OrderResponseDto> orderResponsesDto, HateoasProvider<OrderResponseDto> hateoasProvider,
@@ -32,13 +35,13 @@ public class OrderResponseListHateoas extends RepresentationModel<OrderResponseL
 
         List<Link> orderLinks = new ArrayList<>();
         if (pageNumber > 1) {
-            Link prevLink = linkTo(methodOn(OrderController.class).getOrders(pageNumber - 1, pageSize, sortOrder)).withRel("prevPage");
+            Link prevLink = linkTo(methodOn(OrderController.class).getOrders(pageNumber - 1, pageSize, sortOrder)).withRel(PREV_PAGE_REL);
             orderLinks.add(prevLink);
         }
         Link selfLink = linkTo(methodOn(OrderController.class).getOrders(pageNumber, pageSize, sortOrder)).withSelfRel();
         orderLinks.add(selfLink);
         if (ordersDtoAmount > pageNumber * pageSize) {
-            Link nextLink = linkTo(methodOn(OrderController.class).getOrders(pageNumber + 1, pageSize, sortOrder)).withRel("nextPage");
+            Link nextLink = linkTo(methodOn(OrderController.class).getOrders(pageNumber + 1, pageSize, sortOrder)).withRel(NEXT_PAGE_REL);
             orderLinks.add(nextLink);
         }
 

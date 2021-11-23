@@ -16,13 +16,15 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class UserHateoasProvider implements HateoasProvider<UserDto> {
+    private static final String USER_ORDERS_REL = "orders";
+
     @Override
     public List<Link> provide(UserDto userDto) {
         List<Link> userLinks = new ArrayList<>();
-        Link selfLink = linkTo(UserController.class).slash(userDto.getId()).withSelfRel();
+        Link selfLink = linkTo(methodOn(UserController.class).getUser(userDto.getId())).withSelfRel();
         String ordersLinkLine = LinkProcessor.process(
                 linkTo(methodOn(UserController.class).getUserOrders(userDto.getId(), null, null)));
-        Link ordersLink = new Link(ordersLinkLine).withRel("orders");
+        Link ordersLink = new Link(ordersLinkLine).withRel(USER_ORDERS_REL);
         userLinks.add(selfLink);
         userLinks.add(ordersLink);
         return userLinks;

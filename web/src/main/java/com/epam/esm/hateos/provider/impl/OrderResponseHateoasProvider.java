@@ -12,9 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class OrderResponseHateoasProvider implements HateoasProvider<OrderResponseDto> {
+    private static final String PARTIAL_GIFT_CERTIFICATE_REL = "giftCertificate_";
+    private static final String PARTIAL_ORDER_ITEM_REL = "orderItem_";
+    private static final String ORDER_ITEMS = "orderItems";
+
     @Override
     public List<Link> provide(OrderResponseDto orderResponseDto) {
         List<Link> orderLinks = new ArrayList<>();
@@ -23,8 +28,17 @@ public class OrderResponseHateoasProvider implements HateoasProvider<OrderRespon
 
         for (OrderItemDto orderItemDto: orderResponseDto.getOrderGiftCertificates()) {
             long id = orderItemDto.getId();
-            Link certificateLink = linkTo(GiftCertificateController.class).slash(id).withRel("giftCertificate_" + id);
+
+            Link certificateLink = linkTo(methodOn(GiftCertificateController.class).getGiftCertificate(orderItemDto.getId()))
+                    .withRel(PARTIAL_GIFT_CERTIFICATE_REL + id);
             orderLinks.add(certificateLink);
+
+            Link orderItemLink = linkTo(OrderController.class)
+                    .slash(orderResponseDto.getId())
+                    .slash(ORDER_ITEMS)
+                    .slash(orderItemDto.getId())
+                    .withRel(PARTIAL_ORDER_ITEM_REL + orderItemDto.getId());
+            orderLinks.add(orderItemLink);
         }
         return orderLinks;
     }
