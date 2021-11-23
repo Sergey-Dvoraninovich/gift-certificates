@@ -1,7 +1,5 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dto.GiftCertificateDto;
-import com.epam.esm.dto.GiftCertificateUpdateRequestDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.mapping.GiftCertificateResponseDtoMapper;
 import com.epam.esm.dto.mapping.TagDtoMapper;
@@ -70,13 +68,13 @@ public class GiftCertificateServiceTest {
 
     @Test
     void testFindAll() {
-        GiftCertificateDto certificateDto = provideGiftCertificateDto();
+        //GiftCertificateDto certificateDto = provideGiftCertificateDto();
         GiftCertificate certificate = provideGiftCertificate();
         List<Tag> tags = provideTagsList();
         when(searchParamsValidator.validate(null, null, null, null, null)).thenReturn(Collections.emptyList());
         when(giftCertificateRepository.findAll(null, null, null, null, null, 1, 10))
                 .thenReturn(Arrays.asList(certificate));
-        List<GiftCertificateDto> expected = Arrays.asList(certificateDto);
+        //List<GiftCertificateDto> expected = Arrays.asList(certificateDto);
 
         //List<GiftCertificateDto> actual = giftCertificateService.findAll(null, null, null, null, null, 1, 10);
 
@@ -85,10 +83,10 @@ public class GiftCertificateServiceTest {
 
     @Test
     void testFindById() {
-        GiftCertificateDto certificateDto = provideGiftCertificateDto();
+        //GiftCertificateDto certificateDto = provideGiftCertificateDto();
         GiftCertificate certificate = provideGiftCertificate();
         List<Tag> tags = provideTagsList();
-        when(giftCertificateRepository.findById(certificateDto.getId())).thenReturn(Optional.of(certificate));
+        //when(giftCertificateRepository.findById(certificateDto.getId())).thenReturn(Optional.of(certificate));
         //when(tagRepository.findByCertificateId(certificate.getId())).thenReturn(tags);
         //when(giftCertificateDtoMapper.toDto(certificate, tags)).thenReturn(certificateDto);
 
@@ -99,7 +97,7 @@ public class GiftCertificateServiceTest {
 
     @Test
     void testCreate() {
-        GiftCertificateDto certificateDto = provideGiftCertificateDto();
+        //GiftCertificateDto certificateDto = provideGiftCertificateDto();
         GiftCertificate certificate = provideGiftCertificate();
         List<TagDto> tagsDto = provideTagsDtoList();
         List<Tag> tags = provideTagsList();
@@ -129,8 +127,8 @@ public class GiftCertificateServiceTest {
         List<TagDto> tagsDto = provideTagsDtoList();
         List<Tag> tags = provideTagsList();
 
-        GiftCertificateUpdateRequestDto updatedCertificateDto = provideGiftCertificateUpdateRequestDto();
-        updatedCertificateDto.setDescription("New description");
+        //GiftCertificateUpdateRequestDto updatedCertificateDto = provideGiftCertificateUpdateRequestDto();
+        //updatedCertificateDto.setDescription("New description");
         GiftCertificate updatedCertificate = provideGiftCertificate();
         updatedCertificate.setDescription("New description");
 
@@ -187,29 +185,29 @@ public class GiftCertificateServiceTest {
         return Arrays.asList(firstTag, secondTag);
     }
 
-    private GiftCertificateDto provideGiftCertificateDto() {
-        GiftCertificateDto certificate = new GiftCertificateDto();
-        certificate.setId(1L);
-        certificate.setName("certificate first and second tags");
-        certificate.setDescription("certificate with first tag and second tag");
-        certificate.setPrice(new BigDecimal("50.00"));
-        certificate.setDuration(Duration.ofDays(90));
-        certificate.setTagsDto(provideTagsDtoList());
-        Instant date = Instant.from(ZonedDateTime.of(2000, 1, 1, 11, 11, 11, 222000000, ZoneId.of("Europe/Minsk")));
-        certificate.setCreateDate(date);
-        certificate.setLastUpdateDate(date);
-        return certificate;
-    }
-
-    private GiftCertificateUpdateRequestDto provideGiftCertificateUpdateRequestDto() {
-        GiftCertificateUpdateRequestDto certificate = new GiftCertificateUpdateRequestDto();
-        certificate.setName("certificate first and second tags");
-        certificate.setDescription("certificate with first tag and second tag");
-        certificate.setPrice(new BigDecimal("50.00"));
-        certificate.setDuration(Duration.ofDays(90));
-        certificate.setTagIdsDto(provideTagIdsList());
-        return certificate;
-    }
+//    private GiftCertificateDto provideGiftCertificateDto() {
+//        GiftCertificateDto certificate = new GiftCertificateDto();
+//        certificate.setId(1L);
+//        certificate.setName("certificate first and second tags");
+//        certificate.setDescription("certificate with first tag and second tag");
+//        certificate.setPrice(new BigDecimal("50.00"));
+//        certificate.setDuration(Duration.ofDays(90));
+//        certificate.setTagsDto(provideTagsDtoList());
+//        Instant date = Instant.from(ZonedDateTime.of(2000, 1, 1, 11, 11, 11, 222000000, ZoneId.of("Europe/Minsk")));
+//        certificate.setCreateDate(date);
+//        certificate.setLastUpdateDate(date);
+//        return certificate;
+//    }
+//
+//    private GiftCertificateUpdateRequestDto provideGiftCertificateUpdateRequestDto() {
+//        GiftCertificateUpdateRequestDto certificate = new GiftCertificateUpdateRequestDto();
+//        certificate.setName("certificate first and second tags");
+//        certificate.setDescription("certificate with first tag and second tag");
+//        certificate.setPrice(new BigDecimal("50.00"));
+//        certificate.setDuration(Duration.ofDays(90));
+//        certificate.setTagIdsDto(provideTagIdsList());
+//        return certificate;
+//    }
 
     private List<TagDto> provideTagsDtoList() {
         TagDto firstTag = new TagDto();

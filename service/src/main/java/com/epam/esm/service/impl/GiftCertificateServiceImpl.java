@@ -1,6 +1,8 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dto.*;
+import com.epam.esm.dto.GiftCertificateRequestDto;
+import com.epam.esm.dto.GiftCertificateResponseDto;
+import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.mapping.GiftCertificateRequestDtoMapper;
 import com.epam.esm.dto.mapping.GiftCertificateResponseDtoMapper;
 import com.epam.esm.dto.mapping.TagDtoMapper;
@@ -13,14 +15,21 @@ import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderingType;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.validator.*;
+import com.epam.esm.validator.GiftCertificateSearchParamsValidator;
+import com.epam.esm.validator.GiftCertificateValidator;
+import com.epam.esm.validator.TagValidator;
+import com.epam.esm.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.epam.esm.validator.ValidationError.IMPOSSIBLE_TO_UPDATE_SEVERAL_GIFT_CERTIFICATE_FIELDS;
@@ -190,7 +199,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         for (Long tagId: certificateTagIds) {
             Optional<Tag> tagOptional = tagRepository.findById(tagId);
 
-            if (!tagOptional.isPresent()) {
+            if (tagOptional.isPresent()) {
                 resultCertificateTags.add(tagOptional.get());
             } else {
                 throw new EntityNotFoundException(tagId, TagDto.class);

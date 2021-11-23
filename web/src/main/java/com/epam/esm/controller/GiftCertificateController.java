@@ -69,7 +69,7 @@ public class GiftCertificateController {
 
         Long certificatesDtoAmount = giftCertificateService.countAll(tagNames, certificateName, orderingName,
                 certificateDescription, orderingDate);
-        if (certificatesDtoAmount <= (pageNumber - 1) * pageSize) {
+        if (certificatesDtoAmount <= (pageNumber - 1) * pageSize && certificatesDtoAmount != 0L) {
             throw new InvalidPaginationException(pageNumber, pageSize, Collections.singletonList(PAGE_IS_OUT_OF_RANGE));
         }
 
