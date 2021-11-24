@@ -15,6 +15,7 @@ import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.impl.OrderServiceImpl;
 import com.epam.esm.validator.OrderCreateValidator;
+import com.epam.esm.validator.OrderCreateValidatorTest;
 import com.epam.esm.validator.OrderSearchParamsValidator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
