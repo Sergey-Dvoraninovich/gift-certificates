@@ -19,14 +19,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.epam.esm.repository.OrderingType.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.epam.esm.repository.OrderingType.ASC;
+import static com.epam.esm.repository.OrderingType.DESC;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestDatabaseConfig.class)
 @ActiveProfiles(resolver = TestProfileResolver.class)
 @Transactional
 public class GiftCertificateRepositoryTest {
+    private static final Integer PAGE_NUMBER = 1;
+    private static final Integer PAGE_SIZE = 10;
 
     @Autowired
     private GiftCertificateRepository giftCertificateRepository;
@@ -35,8 +39,8 @@ public class GiftCertificateRepositoryTest {
     void testFindByTagName() {
         List<GiftCertificate> expected = Arrays.asList(provideMultipleTagsGiftCertificate());
 
-        List<GiftCertificate> actual = giftCertificateRepository.findAll("first tag", null, null,
-                                                          null, null);
+        List<GiftCertificate> actual = giftCertificateRepository.findAll(Arrays.asList("first tag"), null, null,
+                                                          null, null, PAGE_NUMBER, PAGE_SIZE);
 
         assertEquals(expected.size(), actual.size());
     }
@@ -45,8 +49,8 @@ public class GiftCertificateRepositoryTest {
     void testFindSeveralByTagName() {
         List<GiftCertificate> expected = Arrays.asList(provideMultipleTagsGiftCertificate(), provideSingleTagCertificate());
 
-        List<GiftCertificate> actual = giftCertificateRepository.findAll("second tag", null, null,
-                null, null);
+        List<GiftCertificate> actual = giftCertificateRepository.findAll(Arrays.asList("second tag"), null, null,
+                null, null, PAGE_NUMBER, PAGE_SIZE);
 
         assertEquals(expected.size(), actual.size());
     }
@@ -57,7 +61,7 @@ public class GiftCertificateRepositoryTest {
         String name = expected.get(0).getName();
 
         List<GiftCertificate> actual = giftCertificateRepository.findAll(null, name, null,
-                null, null);
+                null, null, PAGE_NUMBER, PAGE_SIZE);
 
         assertEquals(expected, actual);
     }
@@ -69,7 +73,7 @@ public class GiftCertificateRepositoryTest {
         String description = expected.get(0).getDescription();
 
         List<GiftCertificate> actual = giftCertificateRepository.findAll(null, null, null,
-                description, null);
+                description, null, PAGE_NUMBER, PAGE_SIZE);
 
         assertEquals(expected, actual);
     }
@@ -79,7 +83,7 @@ public class GiftCertificateRepositoryTest {
         long expectedFirstId = 3L;
 
         List<GiftCertificate> actual = giftCertificateRepository.findAll(null, null, ASC,
-                null, null);
+                null, null, PAGE_NUMBER, PAGE_SIZE);
         long actualFirstId = actual.get(0).getId();
 
         assertEquals(expectedFirstId, actualFirstId);
@@ -90,7 +94,7 @@ public class GiftCertificateRepositoryTest {
         long expectedFirstId = 3L;
 
         List<GiftCertificate> actual = giftCertificateRepository.findAll(null, null, null,
-                null, DESC);
+                null, DESC, PAGE_NUMBER, PAGE_SIZE);
         long actualFirstId = actual.get(0).getId();
 
         assertEquals(expectedFirstId, actualFirstId);
@@ -103,7 +107,7 @@ public class GiftCertificateRepositoryTest {
         String description = certificate.getDescription();
         long expectedFirstId = certificate.getId();
 
-        List<GiftCertificate> actual = giftCertificateRepository.findAll("second tag", name, ASC, description, DESC);
+        List<GiftCertificate> actual = giftCertificateRepository.findAll(Arrays.asList("second tag"), name, ASC, description, DESC, PAGE_NUMBER, PAGE_SIZE);
         long actualFirstId = actual.get(0).getId();
 
         assertEquals(expectedFirstId, actualFirstId);
@@ -126,22 +130,8 @@ public class GiftCertificateRepositoryTest {
         giftCertificate.setCreateDate(date);
         giftCertificate.setLastUpdateDate(date);
 
-        long generatedId = giftCertificateRepository.create(giftCertificate);
-        boolean result = generatedId > 0;
-
-        assertTrue(result);
-    }
-
-    @Test
-    void testAddCertificateTag() {
-        boolean result = giftCertificateRepository.addCertificateTag(1L, 3L);
-
-        assertTrue(result);
-    }
-
-    @Test
-    void testRemoveCertificateTag() {
-        boolean result = giftCertificateRepository.removeCertificateTag(1L, 1L);
+        GiftCertificate certificate = giftCertificateRepository.create(giftCertificate);
+        boolean result = certificate.getId() > 0;
 
         assertTrue(result);
     }
@@ -149,11 +139,12 @@ public class GiftCertificateRepositoryTest {
     @Test
     void testUpdate() {
         GiftCertificate giftCertificate = provideMultipleTagsGiftCertificate();
+        giftCertificate.setCreateDate(Instant.now());
         giftCertificate.setLastUpdateDate(Instant.now());
 
-        boolean result = giftCertificateRepository.update(giftCertificate);
+        GiftCertificate result = giftCertificateRepository.update(giftCertificate);
 
-        assertTrue(result);
+        assertEquals(giftCertificate, result);
     }
 
     @Test
@@ -161,7 +152,7 @@ public class GiftCertificateRepositoryTest {
         GiftCertificate giftCertificate = provideMultipleTagsGiftCertificate();
         giftCertificate.setLastUpdateDate(Instant.now());
 
-        boolean result = giftCertificateRepository.delete(giftCertificate.getId());
+        boolean result = giftCertificateRepository.delete(giftCertificate);
 
         assertTrue(result);
     }

@@ -3,11 +3,9 @@ package com.epam.esm.repository;
 import com.epam.esm.TestProfileResolver;
 import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -17,10 +15,11 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles(resolver = TestProfileResolver.class)
-@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestDatabaseConfig.class)
 @Transactional
 public class TagRepositoryTest {
+    private static final Integer PAGE_NUMBER = 1;
+    private static final Integer PAGE_SIZE = 10;
 
     @Autowired
     private TagRepository tagRepository;
@@ -30,7 +29,7 @@ public class TagRepositoryTest {
         List<Tag> expected = provideTagsList();
 
         List<Tag> actual;
-        actual = tagRepository.findAll();
+        actual = tagRepository.findAll(PAGE_NUMBER, PAGE_SIZE);
 
         assertEquals(expected, actual);
     }
@@ -58,20 +57,11 @@ public class TagRepositoryTest {
     }
 
     @Test
-    void testFindByCertificateId() {
-        List<Tag> expected = provideCertificateTagsList();
-
-        List<Tag> actual = tagRepository.findByCertificateId(1L);
-
-        assertEquals(expected, actual);
-    }
-
-    @Test
     void testCreate() {
         Tag newTag = new Tag();
         newTag.setName("new tag");
 
-        long generatedId = 1L;//tagRepository.create(newTag);
+        long generatedId = tagRepository.create(newTag).getId();
         boolean result = generatedId > 0;
 
         assertTrue(result);
@@ -81,7 +71,7 @@ public class TagRepositoryTest {
     void testDelete() {
         Tag tag = provideTag();
 
-        boolean actual = true; //tagRepository.delete(tag.getId());
+        boolean actual = tagRepository.delete(tag);
 
         assertTrue(actual);
     }

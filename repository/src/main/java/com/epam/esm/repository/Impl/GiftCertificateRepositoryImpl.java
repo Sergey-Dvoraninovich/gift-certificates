@@ -9,7 +9,11 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,16 +41,11 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
         Root<GiftCertificate> certificateRoot = query.from(GiftCertificate.class);
         query.select(criteriaBuilder.count(query.from(GiftCertificate.class)));
-        Join<GiftCertificate, Tag> tags = certificateRoot.join(GIFT_CERTIFICATE_TAGS);
 
         query.select(criteriaBuilder.count(query.from(GiftCertificate.class)));
 
-        List<Predicate> predicates = new ArrayList<>();
-        Optional<Predicate> tagsOptionalPredicate = createTagsPredicate(criteriaBuilder, tags, tagNames);
-        tagsOptionalPredicate.ifPresent(predicates::add);
-
-        predicates.addAll(createCertificatePredicate(criteriaBuilder, certificateRoot,
-                certificateName, certificateDescription));
+        List<Predicate> predicates = createCertificatePredicate(criteriaBuilder, certificateRoot,
+                certificateName, certificateDescription);
         if (predicates.size() != 0) {
             Predicate resultPredicate = predicates.get(0);
             for (Predicate predicate : predicates) {
@@ -55,12 +54,15 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
             query.where(resultPredicate);
         }
 
+        query.groupBy(certificateRoot.get(ID));
+        Optional<Predicate> tagsOptionalPredicate = createTagsPredicate(criteriaBuilder, certificateRoot, tagNames);
+        tagsOptionalPredicate.ifPresent(query::where);
+
         List<Order> orders = createOrderingPredicate(criteriaBuilder, certificateRoot,
                 orderingName, orderingCreateDate);
         for (Order order: orders) {
             query.orderBy(order);
         }
-        query.groupBy(certificateRoot.get(ID));
 
         return (long) entityManager.createQuery(query).getResultList().size();
     }
@@ -72,16 +74,11 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> query = criteriaBuilder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> certificateRoot = query.from(GiftCertificate.class);
-        Join<GiftCertificate, Tag> tags = certificateRoot.join(GIFT_CERTIFICATE_TAGS);
 
         query.select(certificateRoot);
 
-        List<Predicate> predicates = new ArrayList<>();
-        Optional<Predicate> tagsOptionalPredicate = createTagsPredicate(criteriaBuilder, tags, tagNames);
-        tagsOptionalPredicate.ifPresent(predicates::add);
-
-        predicates.addAll(createCertificatePredicate(criteriaBuilder, certificateRoot,
-                certificateName, certificateDescription));
+        List<Predicate> predicates = createCertificatePredicate(criteriaBuilder, certificateRoot,
+                certificateName, certificateDescription);
         if (predicates.size() != 0) {
             Predicate resultPredicate = predicates.get(0);
             for (Predicate predicate : predicates) {
@@ -90,12 +87,15 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
             query.where(resultPredicate);
         }
 
+        query.groupBy(certificateRoot.get(ID));
+        Optional<Predicate> tagsOptionalPredicate = createTagsPredicate(criteriaBuilder, certificateRoot, tagNames);
+        tagsOptionalPredicate.ifPresent(query::where);
+
         List<Order> orders = createOrderingPredicate(criteriaBuilder, certificateRoot,
                 orderingName, orderingCreateDate);
         for (Order order: orders) {
             query.orderBy(order);
         }
-        query.groupBy(certificateRoot.get(ID));
 
         return entityManager.createQuery(query)
                 .setFirstResult((pageNumber - 1) * pageSize)
@@ -147,22 +147,33 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         return entityManager.find(Tag.class, certificate.getId()) == null;
     }
 
-    private Optional<Predicate> createTagsPredicate(CriteriaBuilder criteriaBuilder, Join<GiftCertificate,Tag> tags,
+    private Optional<Predicate> createTagsPredicate(CriteriaBuilder criteriaBuilder, Root<GiftCertificate> certificateRoot,
                                                     List<String> tagNames) {
-        Predicate resultPredicate = null;
+        Predicate result = null;
         if (tagNames != null){
+            CriteriaQuery<Tag> queryTag = criteriaBuilder.createQuery(Tag.class);
+            Root<Tag> tagRoot = queryTag.from(Tag.class);
+            Predicate resultPredicate;
             if (tagNames.size() != 0) {
                 List<Predicate> tagPredicates = new ArrayList<>();
                 for (String tagName: tagNames) {
-                    tagPredicates.add(criteriaBuilder.like(tags.get(NAME), "%" + tagName + "%"));
+                    tagPredicates.add(criteriaBuilder.like(tagRoot.get(NAME), "%" + tagName + "%"));
                 }
                 resultPredicate = tagPredicates.get(0);
                 for (Predicate predicate: tagPredicates) {
-                    resultPredicate = criteriaBuilder.and(resultPredicate, predicate);
+                    resultPredicate = criteriaBuilder.or(resultPredicate, predicate);
+                }
+                queryTag.where(resultPredicate);
+                List<Tag> suitableTags = entityManager.createQuery(queryTag).getResultList();
+
+                result = criteriaBuilder.isMember(suitableTags.get(0), certificateRoot.get(GIFT_CERTIFICATE_TAGS));
+                for (Tag tag : suitableTags) {
+                    Predicate memberPredicate = criteriaBuilder.isMember(tag, certificateRoot.get(GIFT_CERTIFICATE_TAGS));
+                    result = criteriaBuilder.and(result, memberPredicate);
                 }
             }
         }
-        return Optional.ofNullable(resultPredicate);
+        return Optional.ofNullable(result);
     }
 
     private List<Predicate> createCertificatePredicate(CriteriaBuilder criteriaBuilder, Root<GiftCertificate> certificateRoot,
