@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static com.epam.esm.repository.OrderingType.ASC;
 import static com.epam.esm.repository.OrderingType.DESC;
+import static java.lang.Boolean.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -166,7 +167,12 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
                 queryTag.where(resultPredicate);
                 List<Tag> suitableTags = entityManager.createQuery(queryTag).getResultList();
 
-                result = criteriaBuilder.isMember(suitableTags.get(0), certificateRoot.get(GIFT_CERTIFICATE_TAGS));
+                if (suitableTags.size() != 0) {
+                    result = criteriaBuilder.isMember(suitableTags.get(0), certificateRoot.get(GIFT_CERTIFICATE_TAGS));
+                }
+                else {
+                    result = criteriaBuilder.disjunction();
+                }
                 for (Tag tag : suitableTags) {
                     Predicate memberPredicate = criteriaBuilder.isMember(tag, certificateRoot.get(GIFT_CERTIFICATE_TAGS));
                     result = criteriaBuilder.and(result, memberPredicate);

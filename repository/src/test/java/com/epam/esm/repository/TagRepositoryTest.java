@@ -2,10 +2,20 @@ package com.epam.esm.repository;
 
 import com.epam.esm.TestProfileResolver;
 import com.epam.esm.entity.Tag;
+import javafx.application.Application;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -14,8 +24,9 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles(resolver = TestProfileResolver.class)
+@SpringBootTest
 @ContextConfiguration(classes = TestDatabaseConfig.class)
+@ActiveProfiles(resolver = TestProfileResolver.class)
 @Transactional
 public class TagRepositoryTest {
     private static final Integer PAGE_NUMBER = 1;

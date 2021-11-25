@@ -2,6 +2,7 @@ package com.epam.esm.repository;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ import javax.sql.DataSource;
 @Configuration
 @ComponentScan("com.epam.esm")
 @EnableTransactionManagement
+@EnableAutoConfiguration
 @Profile("test")
 @PropertySource("classpath:db-test.properties")
 public class TestDatabaseConfig {
