@@ -695,7 +695,7 @@ Caused by: org.springframework.beans.factory.NoSuchBeanDefinitionException: No q
 </thead>
 <tr>
 <td class="failures">testCreate()</td>
-<td class="failures">0s</td>
+<td class="failures">0.001s</td>
 <td class="failures">failed</td>
 </tr>
 <tr>
@@ -715,7 +715,7 @@ Caused by: org.springframework.beans.factory.NoSuchBeanDefinitionException: No q
 </tr>
 <tr>
 <td class="failures">testFindByName()</td>
-<td class="failures">0.003s</td>
+<td class="failures">0.002s</td>
 <td class="failures">failed</td>
 </tr>
 </table>
@@ -723,18 +723,18 @@ Caused by: org.springframework.beans.factory.NoSuchBeanDefinitionException: No q
 <div id="tab2" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>16:58:06.768 [Test worker] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating CacheAwareContextLoaderDelegate from class [org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate]
-16:58:06.782 [Test worker] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating BootstrapContext using constructor [public org.springframework.test.context.support.DefaultBootstrapContext(java.lang.Class,org.springframework.test.context.CacheAwareContextLoaderDelegate)]
-16:58:06.824 [Test worker] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating TestContextBootstrapper for test class [com.epam.esm.repository.TagRepositoryTest] from class [org.springframework.boot.test.context.SpringBootTestContextBootstrapper]
-16:58:06.848 [Test worker] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.epam.esm.repository.TagRepositoryTest]: class path resource [com/epam/esm/repository/TagRepositoryTest-context.xml] does not exist
-16:58:06.849 [Test worker] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.epam.esm.repository.TagRepositoryTest]: class path resource [com/epam/esm/repository/TagRepositoryTestContext.groovy] does not exist
-16:58:06.849 [Test worker] INFO org.springframework.test.context.support.AbstractContextLoader - Could not detect default resource locations for test class [com.epam.esm.repository.TagRepositoryTest]: no resource found for suffixes {-context.xml, Context.groovy}.
-16:58:07.075 [Test worker] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - @TestExecutionListeners is not present for class [com.epam.esm.repository.TagRepositoryTest]: using defaults.
-16:58:07.076 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.event.ApplicationEventsTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
-16:58:07.106 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@2f67b837, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@1869fbd2, org.springframework.test.context.event.ApplicationEventsTestExecutionListener@6af9fcb2, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@6cce16f4, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@7efaad5a, org.springframework.test.context.support.DirtiesContextTestExecutionListener@291a7e3c, org.springframework.test.context.transaction.TransactionalTestExecutionListener@ca30bc1, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@1046d517, org.springframework.test.context.event.EventPublishingTestExecutionListener@3b7d3a38, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@416c58f5, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@5505ae1a, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@73cd37c0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@21337f7b, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@2bb3058, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@7a362b6b]
-16:58:07.112 [Test worker] DEBUG org.springframework.test.context.support.AbstractDirtiesContextTestExecutionListener - Before test class: context [DefaultTestContext@5f9be66c testClass = TagRepositoryTest, testInstance = [null], testMethod = [null], testException = [null], mergedContextConfiguration = [WebMergedContextConfiguration@3abada5a testClass = TagRepositoryTest, locations = '{}', classes = '{class com.epam.esm.repository.TestDatabaseConfig}', contextInitializerClasses = '[]', activeProfiles = '{test}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@2b30a42c, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@4a8355dd, org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@72bc6553, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@5a59ca5e, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@5f8e8a9d, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@65466a6a], resourceBasePath = 'src/main/webapp', contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.web.ServletTestExecutionListener.activateListener' -&gt; true]], class annotated with @DirtiesContext [false] with mode [null].
-16:58:07.154 [Test worker] DEBUG org.springframework.core.env.StandardEnvironment - Activating profiles [test]
-16:58:07.159 [Test worker] DEBUG org.springframework.test.context.support.TestPropertySourceUtils - Adding inlined properties to environment: {spring.jmx.enabled=false, org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}
+<pre>17:08:22.742 [Test worker] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating CacheAwareContextLoaderDelegate from class [org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate]
+17:08:22.757 [Test worker] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating BootstrapContext using constructor [public org.springframework.test.context.support.DefaultBootstrapContext(java.lang.Class,org.springframework.test.context.CacheAwareContextLoaderDelegate)]
+17:08:22.816 [Test worker] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating TestContextBootstrapper for test class [com.epam.esm.repository.TagRepositoryTest] from class [org.springframework.boot.test.context.SpringBootTestContextBootstrapper]
+17:08:22.851 [Test worker] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.epam.esm.repository.TagRepositoryTest]: class path resource [com/epam/esm/repository/TagRepositoryTest-context.xml] does not exist
+17:08:22.852 [Test worker] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.epam.esm.repository.TagRepositoryTest]: class path resource [com/epam/esm/repository/TagRepositoryTestContext.groovy] does not exist
+17:08:22.853 [Test worker] INFO org.springframework.test.context.support.AbstractContextLoader - Could not detect default resource locations for test class [com.epam.esm.repository.TagRepositoryTest]: no resource found for suffixes {-context.xml, Context.groovy}.
+17:08:23.100 [Test worker] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - @TestExecutionListeners is not present for class [com.epam.esm.repository.TagRepositoryTest]: using defaults.
+17:08:23.101 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.event.ApplicationEventsTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
+17:08:23.123 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@5a2d131d, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@14fc1f0, org.springframework.test.context.event.ApplicationEventsTestExecutionListener@4ae9cfc1, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@512baff6, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@632ceb35, org.springframework.test.context.support.DirtiesContextTestExecutionListener@1c93f6e1, org.springframework.test.context.transaction.TransactionalTestExecutionListener@1800a575, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@1458ed9c, org.springframework.test.context.event.EventPublishingTestExecutionListener@10a9d961, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@130e116b, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@e383572, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@5ddf0d24, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@363a52f, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@60856961, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@2fd953a6]
+17:08:23.128 [Test worker] DEBUG org.springframework.test.context.support.AbstractDirtiesContextTestExecutionListener - Before test class: context [DefaultTestContext@1e461e41 testClass = TagRepositoryTest, testInstance = [null], testMethod = [null], testException = [null], mergedContextConfiguration = [WebMergedContextConfiguration@5ba88be8 testClass = TagRepositoryTest, locations = '{}', classes = '{class com.epam.esm.repository.TestDatabaseConfig}', contextInitializerClasses = '[]', activeProfiles = '{test}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@61c4eee0, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@4d1bf319, org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@4007f65e, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@5965d37, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@26abb146, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@65466a6a], resourceBasePath = 'src/main/webapp', contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.web.ServletTestExecutionListener.activateListener' -&gt; true]], class annotated with @DirtiesContext [false] with mode [null].
+17:08:23.175 [Test worker] DEBUG org.springframework.core.env.StandardEnvironment - Activating profiles [test]
+17:08:23.180 [Test worker] DEBUG org.springframework.test.context.support.TestPropertySourceUtils - Adding inlined properties to environment: {spring.jmx.enabled=false, org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -744,21 +744,21 @@ Caused by: org.springframework.beans.factory.NoSuchBeanDefinitionException: No q
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v2.5.6)
 
-2021-11-25 16:58:07.535  INFO 13732 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : Starting TagRepositoryTest using Java 1.8.0_281 on DESKTOP-NISJN62 with PID 13732 (started by Сергей in C:\projects\gift-certificates\repository)
-2021-11-25 16:58:07.536  INFO 13732 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : The following profiles are active: test
-2021-11-25 16:58:10.088  INFO 13732 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2021-11-25 16:58:10.196  INFO 13732 --- [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.1.Final
-2021-11-25 16:58:10.490  INFO 13732 --- [    Test worker] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
-2021-11-25 16:58:10.718  INFO 13732 --- [    Test worker] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
-2021-11-25 16:58:11.079  INFO 13732 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-2021-11-25 16:58:11.093  INFO 13732 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2021-11-25 16:58:11.104  WARN 13732 --- [    Test worker] o.s.w.c.s.GenericWebApplicationContext   : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'giftCertificateRepositoryImpl' defined in file [C:\projects\gift-certificates\repository\build\classes\java\main\com\epam\esm\repository\Impl\GiftCertificateRepositoryImpl.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'javax.persistence.EntityManager' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
-2021-11-25 16:58:11.104  INFO 13732 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2021-11-25 16:58:11.105  INFO 13732 --- [    Test worker] .SchemaDropperImpl$DelayedDropActionImpl : HHH000477: Starting delayed evictData of schema as part of SessionFactory shut-down'
-2021-11-25 16:58:11.123  INFO 13732 --- [    Test worker] ConditionEvaluationReportLoggingListener : 
+2021-11-25 17:08:23.517  INFO 12792 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : Starting TagRepositoryTest using Java 1.8.0_281 on DESKTOP-NISJN62 with PID 12792 (started by Сергей in C:\projects\gift-certificates\repository)
+2021-11-25 17:08:23.518  INFO 12792 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : The following profiles are active: test
+2021-11-25 17:08:25.669  INFO 12792 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2021-11-25 17:08:25.747  INFO 12792 --- [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.1.Final
+2021-11-25 17:08:25.978  INFO 12792 --- [    Test worker] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2021-11-25 17:08:26.166  INFO 12792 --- [    Test worker] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+2021-11-25 17:08:26.469  INFO 12792 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2021-11-25 17:08:26.482  INFO 12792 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-11-25 17:08:26.493  WARN 12792 --- [    Test worker] o.s.w.c.s.GenericWebApplicationContext   : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'giftCertificateRepositoryImpl' defined in file [C:\projects\gift-certificates\repository\build\classes\java\main\com\epam\esm\repository\Impl\GiftCertificateRepositoryImpl.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'javax.persistence.EntityManager' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2021-11-25 17:08:26.493  INFO 12792 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-11-25 17:08:26.493  INFO 12792 --- [    Test worker] .SchemaDropperImpl$DelayedDropActionImpl : HHH000477: Starting delayed evictData of schema as part of SessionFactory shut-down'
+2021-11-25 17:08:26.507  INFO 12792 --- [    Test worker] ConditionEvaluationReportLoggingListener : 
 
 Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
-2021-11-25 16:58:11.151 ERROR 13732 --- [    Test worker] o.s.b.d.LoggingFailureAnalysisReporter   : 
+2021-11-25 17:08:26.535 ERROR 12792 --- [    Test worker] o.s.b.d.LoggingFailureAnalysisReporter   : 
 
 ***************************
 APPLICATION FAILED TO START
@@ -773,7 +773,7 @@ Action:
 
 Consider defining a bean of type 'javax.persistence.EntityManager' in your configuration.
 
-2021-11-25 16:58:11.163 ERROR 13732 --- [    Test worker] o.s.test.context.TestContextManager      : Caught exception while allowing TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener@2f67b837] to prepare test instance [com.epam.esm.repository.TagRepositoryTest@781dac73]
+2021-11-25 17:08:26.549 ERROR 12792 --- [    Test worker] o.s.test.context.TestContextManager      : Caught exception while allowing TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener@5a2d131d] to prepare test instance [com.epam.esm.repository.TagRepositoryTest@6826b70f]
 
 java.lang.IllegalStateException: Failed to load ApplicationContext
 	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:132) ~[spring-test-5.3.12.jar:5.3.12]
@@ -900,19 +900,19 @@ Caused by: org.springframework.beans.factory.NoSuchBeanDefinitionException: No q
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v2.5.6)
 
-2021-11-25 16:58:11.238  INFO 13732 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : Starting TagRepositoryTest using Java 1.8.0_281 on DESKTOP-NISJN62 with PID 13732 (started by Сергей in C:\projects\gift-certificates\repository)
-2021-11-25 16:58:11.238  INFO 13732 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : The following profiles are active: test
-2021-11-25 16:58:11.838  INFO 13732 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2021-11-25 16:58:11.845  INFO 13732 --- [    Test worker] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
-2021-11-25 16:58:11.856  INFO 13732 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-2021-11-25 16:58:11.856  INFO 13732 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2021-11-25 16:58:11.859  WARN 13732 --- [    Test worker] o.s.w.c.s.GenericWebApplicationContext   : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'giftCertificateRepositoryImpl' defined in file [C:\projects\gift-certificates\repository\build\classes\java\main\com\epam\esm\repository\Impl\GiftCertificateRepositoryImpl.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'javax.persistence.EntityManager' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
-2021-11-25 16:58:11.859  INFO 13732 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2021-11-25 16:58:11.859  INFO 13732 --- [    Test worker] .SchemaDropperImpl$DelayedDropActionImpl : HHH000477: Starting delayed evictData of schema as part of SessionFactory shut-down'
-2021-11-25 16:58:11.862  INFO 13732 --- [    Test worker] ConditionEvaluationReportLoggingListener : 
+2021-11-25 17:08:26.622  INFO 12792 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : Starting TagRepositoryTest using Java 1.8.0_281 on DESKTOP-NISJN62 with PID 12792 (started by Сергей in C:\projects\gift-certificates\repository)
+2021-11-25 17:08:26.623  INFO 12792 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : The following profiles are active: test
+2021-11-25 17:08:27.303  INFO 12792 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2021-11-25 17:08:27.309  INFO 12792 --- [    Test worker] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+2021-11-25 17:08:27.316  INFO 12792 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2021-11-25 17:08:27.317  INFO 12792 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-11-25 17:08:27.320  WARN 12792 --- [    Test worker] o.s.w.c.s.GenericWebApplicationContext   : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'giftCertificateRepositoryImpl' defined in file [C:\projects\gift-certificates\repository\build\classes\java\main\com\epam\esm\repository\Impl\GiftCertificateRepositoryImpl.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'javax.persistence.EntityManager' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2021-11-25 17:08:27.320  INFO 12792 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-11-25 17:08:27.320  INFO 12792 --- [    Test worker] .SchemaDropperImpl$DelayedDropActionImpl : HHH000477: Starting delayed evictData of schema as part of SessionFactory shut-down'
+2021-11-25 17:08:27.324  INFO 12792 --- [    Test worker] ConditionEvaluationReportLoggingListener : 
 
 Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
-2021-11-25 16:58:11.864 ERROR 13732 --- [    Test worker] o.s.b.d.LoggingFailureAnalysisReporter   : 
+2021-11-25 17:08:27.327 ERROR 12792 --- [    Test worker] o.s.b.d.LoggingFailureAnalysisReporter   : 
 
 ***************************
 APPLICATION FAILED TO START
@@ -927,7 +927,7 @@ Action:
 
 Consider defining a bean of type 'javax.persistence.EntityManager' in your configuration.
 
-2021-11-25 16:58:11.872 ERROR 13732 --- [    Test worker] o.s.test.context.TestContextManager      : Caught exception while allowing TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener@2f67b837] to prepare test instance [com.epam.esm.repository.TagRepositoryTest@12214f2f]
+2021-11-25 17:08:27.339 ERROR 12792 --- [    Test worker] o.s.test.context.TestContextManager      : Caught exception while allowing TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener@5a2d131d] to prepare test instance [com.epam.esm.repository.TagRepositoryTest@7645e64]
 
 java.lang.IllegalStateException: Failed to load ApplicationContext
 	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:132) ~[spring-test-5.3.12.jar:5.3.12]
@@ -1054,19 +1054,19 @@ Caused by: org.springframework.beans.factory.NoSuchBeanDefinitionException: No q
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v2.5.6)
 
-2021-11-25 16:58:11.912  INFO 13732 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : Starting TagRepositoryTest using Java 1.8.0_281 on DESKTOP-NISJN62 with PID 13732 (started by Сергей in C:\projects\gift-certificates\repository)
-2021-11-25 16:58:11.912  INFO 13732 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : The following profiles are active: test
-2021-11-25 16:58:12.494  INFO 13732 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2021-11-25 16:58:12.502  INFO 13732 --- [    Test worker] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
-2021-11-25 16:58:12.514  INFO 13732 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-2021-11-25 16:58:12.514  INFO 13732 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2021-11-25 16:58:12.516  WARN 13732 --- [    Test worker] o.s.w.c.s.GenericWebApplicationContext   : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'giftCertificateRepositoryImpl' defined in file [C:\projects\gift-certificates\repository\build\classes\java\main\com\epam\esm\repository\Impl\GiftCertificateRepositoryImpl.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'javax.persistence.EntityManager' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
-2021-11-25 16:58:12.516  INFO 13732 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2021-11-25 16:58:12.516  INFO 13732 --- [    Test worker] .SchemaDropperImpl$DelayedDropActionImpl : HHH000477: Starting delayed evictData of schema as part of SessionFactory shut-down'
-2021-11-25 16:58:12.519  INFO 13732 --- [    Test worker] ConditionEvaluationReportLoggingListener : 
+2021-11-25 17:08:27.373  INFO 12792 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : Starting TagRepositoryTest using Java 1.8.0_281 on DESKTOP-NISJN62 with PID 12792 (started by Сергей in C:\projects\gift-certificates\repository)
+2021-11-25 17:08:27.373  INFO 12792 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : The following profiles are active: test
+2021-11-25 17:08:27.974  INFO 12792 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2021-11-25 17:08:27.981  INFO 12792 --- [    Test worker] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+2021-11-25 17:08:27.994  INFO 12792 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2021-11-25 17:08:27.994  INFO 12792 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-11-25 17:08:27.998  WARN 12792 --- [    Test worker] o.s.w.c.s.GenericWebApplicationContext   : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'giftCertificateRepositoryImpl' defined in file [C:\projects\gift-certificates\repository\build\classes\java\main\com\epam\esm\repository\Impl\GiftCertificateRepositoryImpl.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'javax.persistence.EntityManager' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2021-11-25 17:08:27.998  INFO 12792 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-11-25 17:08:27.998  INFO 12792 --- [    Test worker] .SchemaDropperImpl$DelayedDropActionImpl : HHH000477: Starting delayed evictData of schema as part of SessionFactory shut-down'
+2021-11-25 17:08:28.002  INFO 12792 --- [    Test worker] ConditionEvaluationReportLoggingListener : 
 
 Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
-2021-11-25 16:58:12.521 ERROR 13732 --- [    Test worker] o.s.b.d.LoggingFailureAnalysisReporter   : 
+2021-11-25 17:08:28.004 ERROR 12792 --- [    Test worker] o.s.b.d.LoggingFailureAnalysisReporter   : 
 
 ***************************
 APPLICATION FAILED TO START
@@ -1081,7 +1081,7 @@ Action:
 
 Consider defining a bean of type 'javax.persistence.EntityManager' in your configuration.
 
-2021-11-25 16:58:12.533 ERROR 13732 --- [    Test worker] o.s.test.context.TestContextManager      : Caught exception while allowing TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener@2f67b837] to prepare test instance [com.epam.esm.repository.TagRepositoryTest@5bbf744b]
+2021-11-25 17:08:28.016 ERROR 12792 --- [    Test worker] o.s.test.context.TestContextManager      : Caught exception while allowing TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener@5a2d131d] to prepare test instance [com.epam.esm.repository.TagRepositoryTest@474ce6b8]
 
 java.lang.IllegalStateException: Failed to load ApplicationContext
 	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:132) ~[spring-test-5.3.12.jar:5.3.12]
@@ -1208,19 +1208,19 @@ Caused by: org.springframework.beans.factory.NoSuchBeanDefinitionException: No q
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v2.5.6)
 
-2021-11-25 16:58:12.567  INFO 13732 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : Starting TagRepositoryTest using Java 1.8.0_281 on DESKTOP-NISJN62 with PID 13732 (started by Сергей in C:\projects\gift-certificates\repository)
-2021-11-25 16:58:12.567  INFO 13732 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : The following profiles are active: test
-2021-11-25 16:58:13.103  INFO 13732 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2021-11-25 16:58:13.110  INFO 13732 --- [    Test worker] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
-2021-11-25 16:58:13.120  INFO 13732 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-2021-11-25 16:58:13.121  INFO 13732 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2021-11-25 16:58:13.123  WARN 13732 --- [    Test worker] o.s.w.c.s.GenericWebApplicationContext   : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'giftCertificateRepositoryImpl' defined in file [C:\projects\gift-certificates\repository\build\classes\java\main\com\epam\esm\repository\Impl\GiftCertificateRepositoryImpl.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'javax.persistence.EntityManager' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
-2021-11-25 16:58:13.123  INFO 13732 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2021-11-25 16:58:13.124  INFO 13732 --- [    Test worker] .SchemaDropperImpl$DelayedDropActionImpl : HHH000477: Starting delayed evictData of schema as part of SessionFactory shut-down'
-2021-11-25 16:58:13.126  INFO 13732 --- [    Test worker] ConditionEvaluationReportLoggingListener : 
+2021-11-25 17:08:28.060  INFO 12792 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : Starting TagRepositoryTest using Java 1.8.0_281 on DESKTOP-NISJN62 with PID 12792 (started by Сергей in C:\projects\gift-certificates\repository)
+2021-11-25 17:08:28.061  INFO 12792 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : The following profiles are active: test
+2021-11-25 17:08:28.655  INFO 12792 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2021-11-25 17:08:28.660  INFO 12792 --- [    Test worker] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+2021-11-25 17:08:28.669  INFO 12792 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2021-11-25 17:08:28.669  INFO 12792 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-11-25 17:08:28.671  WARN 12792 --- [    Test worker] o.s.w.c.s.GenericWebApplicationContext   : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'giftCertificateRepositoryImpl' defined in file [C:\projects\gift-certificates\repository\build\classes\java\main\com\epam\esm\repository\Impl\GiftCertificateRepositoryImpl.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'javax.persistence.EntityManager' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2021-11-25 17:08:28.671  INFO 12792 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-11-25 17:08:28.672  INFO 12792 --- [    Test worker] .SchemaDropperImpl$DelayedDropActionImpl : HHH000477: Starting delayed evictData of schema as part of SessionFactory shut-down'
+2021-11-25 17:08:28.674  INFO 12792 --- [    Test worker] ConditionEvaluationReportLoggingListener : 
 
 Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
-2021-11-25 16:58:13.128 ERROR 13732 --- [    Test worker] o.s.b.d.LoggingFailureAnalysisReporter   : 
+2021-11-25 17:08:28.676 ERROR 12792 --- [    Test worker] o.s.b.d.LoggingFailureAnalysisReporter   : 
 
 ***************************
 APPLICATION FAILED TO START
@@ -1235,7 +1235,7 @@ Action:
 
 Consider defining a bean of type 'javax.persistence.EntityManager' in your configuration.
 
-2021-11-25 16:58:13.136 ERROR 13732 --- [    Test worker] o.s.test.context.TestContextManager      : Caught exception while allowing TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener@2f67b837] to prepare test instance [com.epam.esm.repository.TagRepositoryTest@1bcb8599]
+2021-11-25 17:08:28.688 ERROR 12792 --- [    Test worker] o.s.test.context.TestContextManager      : Caught exception while allowing TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener@5a2d131d] to prepare test instance [com.epam.esm.repository.TagRepositoryTest@3b42b729]
 
 java.lang.IllegalStateException: Failed to load ApplicationContext
 	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:132) ~[spring-test-5.3.12.jar:5.3.12]
@@ -1362,19 +1362,19 @@ Caused by: org.springframework.beans.factory.NoSuchBeanDefinitionException: No q
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v2.5.6)
 
-2021-11-25 16:58:13.166  INFO 13732 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : Starting TagRepositoryTest using Java 1.8.0_281 on DESKTOP-NISJN62 with PID 13732 (started by Сергей in C:\projects\gift-certificates\repository)
-2021-11-25 16:58:13.166  INFO 13732 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : The following profiles are active: test
-2021-11-25 16:58:14.912  INFO 13732 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2021-11-25 16:58:14.918  INFO 13732 --- [    Test worker] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
-2021-11-25 16:58:14.930  INFO 13732 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-2021-11-25 16:58:14.930  INFO 13732 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2021-11-25 16:58:14.933  WARN 13732 --- [    Test worker] o.s.w.c.s.GenericWebApplicationContext   : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'giftCertificateRepositoryImpl' defined in file [C:\projects\gift-certificates\repository\build\classes\java\main\com\epam\esm\repository\Impl\GiftCertificateRepositoryImpl.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'javax.persistence.EntityManager' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
-2021-11-25 16:58:14.933  INFO 13732 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2021-11-25 16:58:14.933  INFO 13732 --- [    Test worker] .SchemaDropperImpl$DelayedDropActionImpl : HHH000477: Starting delayed evictData of schema as part of SessionFactory shut-down'
-2021-11-25 16:58:14.936  INFO 13732 --- [    Test worker] ConditionEvaluationReportLoggingListener : 
+2021-11-25 17:08:28.743  INFO 12792 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : Starting TagRepositoryTest using Java 1.8.0_281 on DESKTOP-NISJN62 with PID 12792 (started by Сергей in C:\projects\gift-certificates\repository)
+2021-11-25 17:08:28.743  INFO 12792 --- [    Test worker] c.epam.esm.repository.TagRepositoryTest  : The following profiles are active: test
+2021-11-25 17:08:29.255  INFO 12792 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2021-11-25 17:08:29.261  INFO 12792 --- [    Test worker] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+2021-11-25 17:08:29.268  INFO 12792 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2021-11-25 17:08:29.268  INFO 12792 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-11-25 17:08:29.270  WARN 12792 --- [    Test worker] o.s.w.c.s.GenericWebApplicationContext   : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'giftCertificateRepositoryImpl' defined in file [C:\projects\gift-certificates\repository\build\classes\java\main\com\epam\esm\repository\Impl\GiftCertificateRepositoryImpl.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'javax.persistence.EntityManager' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2021-11-25 17:08:29.270  INFO 12792 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-11-25 17:08:29.270  INFO 12792 --- [    Test worker] .SchemaDropperImpl$DelayedDropActionImpl : HHH000477: Starting delayed evictData of schema as part of SessionFactory shut-down'
+2021-11-25 17:08:29.272  INFO 12792 --- [    Test worker] ConditionEvaluationReportLoggingListener : 
 
 Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
-2021-11-25 16:58:14.938 ERROR 13732 --- [    Test worker] o.s.b.d.LoggingFailureAnalysisReporter   : 
+2021-11-25 17:08:29.275 ERROR 12792 --- [    Test worker] o.s.b.d.LoggingFailureAnalysisReporter   : 
 
 ***************************
 APPLICATION FAILED TO START
@@ -1389,7 +1389,7 @@ Action:
 
 Consider defining a bean of type 'javax.persistence.EntityManager' in your configuration.
 
-2021-11-25 16:58:14.946 ERROR 13732 --- [    Test worker] o.s.test.context.TestContextManager      : Caught exception while allowing TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener@2f67b837] to prepare test instance [com.epam.esm.repository.TagRepositoryTest@7112b21a]
+2021-11-25 17:08:29.287 ERROR 12792 --- [    Test worker] o.s.test.context.TestContextManager      : Caught exception while allowing TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener@5a2d131d] to prepare test instance [com.epam.esm.repository.TagRepositoryTest@33827b88]
 
 java.lang.IllegalStateException: Failed to load ApplicationContext
 	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:132) ~[spring-test-5.3.12.jar:5.3.12]
@@ -1518,7 +1518,7 @@ Caused by: org.springframework.beans.factory.NoSuchBeanDefinitionException: No q
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 7.2</a> at Nov 25, 2021 4:58:15 PM</p>
+<a href="http://www.gradle.org">Gradle 7.2</a> at Nov 25, 2021 5:08:29 PM</p>
 </div>
 </div>
 </body>
