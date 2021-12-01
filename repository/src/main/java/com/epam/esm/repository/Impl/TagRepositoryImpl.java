@@ -3,7 +3,6 @@ package com.epam.esm.repository.Impl;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.TagRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@RequiredArgsConstructor
 public class TagRepositoryImpl implements TagRepository {
     private static final String TAG_NAME_PARAM = "tagName";
     private static final String USER_ID_PARAM = "userId";
@@ -43,7 +41,7 @@ public class TagRepositoryImpl implements TagRepository {
             = "SELECT t FROM Tag t WHERE t.name = :tagName";
 
     @PersistenceContext
-    private final EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Override
     public Long countAll() {

@@ -4,16 +4,7 @@ import com.epam.esm.repository.mapping.DurationConverter;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
@@ -48,7 +39,8 @@ public class GiftCertificate {
     @Column(name = "last_update_date", nullable = false)
     private Instant lastUpdateDate;
 
-    @ManyToMany
+    //TODO work with it
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "gift_certificates_tags",
             joinColumns = @JoinColumn(name = "id_gift_certificate"),

@@ -11,7 +11,7 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
 
     implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.6.1.Final'
-    implementation group: 'org.springframework', name: 'spring-orm', version: '5.3.9'
+    implementation group: 'org.springframework', name: 'spring-orm', version: springVersion
 
     implementation 'com.google.code.findbugs:annotations:3.0.1'
 

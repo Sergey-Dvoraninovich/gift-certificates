@@ -3,7 +3,6 @@ package com.epam.esm.repository.Impl;
 import com.epam.esm.entity.Order;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.OrderingType;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -17,12 +16,11 @@ import java.util.Optional;
 import static com.epam.esm.repository.OrderingType.ASC;
 
 @Repository
-@RequiredArgsConstructor
 public class OrderRepositoryImpl implements OrderRepository {
     private static final String CREATE_ORDER_TIME = "createOrderTime";
 
     @PersistenceContext
-    private final EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Override
     public Long countAll() {

@@ -1,21 +1,16 @@
 package com.epam.esm.repository.Impl;
 
-import com.epam.esm.entity.*;
+import com.epam.esm.entity.Order;
+import com.epam.esm.entity.User;
 import com.epam.esm.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-@RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
     private static final String USER_ID_PARAM = "userId";
 
@@ -32,7 +27,7 @@ public class UserRepositoryImpl implements UserRepository {
             = "SELECT o FROM Order o WHERE o.user.id = :userId";
 
     @PersistenceContext
-    private final EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Override
     public Long countAll() {

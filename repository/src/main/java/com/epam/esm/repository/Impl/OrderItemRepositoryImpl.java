@@ -2,7 +2,6 @@ package com.epam.esm.repository.Impl;
 
 import com.epam.esm.entity.OrderItem;
 import com.epam.esm.repository.OrderItemRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -10,10 +9,9 @@ import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
 @Repository
-@RequiredArgsConstructor
 public class OrderItemRepositoryImpl implements OrderItemRepository {
     @PersistenceContext
-    private final EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Override
     public Optional<OrderItem> findById(long id) {

@@ -3,6 +3,7 @@ package com.epam.esm.repository;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan("com.epam.esm")
+@EntityScan(basePackages = "com.epam.esm.entity")
 @EnableTransactionManagement
 @EnableAutoConfiguration
 @Profile("test")
@@ -50,6 +52,10 @@ public class TestDatabaseConfig {
         dataSource.setPassword(password);
         dataSource.setMinIdle(Integer.parseInt(minPoolSizeLine));
         dataSource.setMaxTotal(Integer.parseInt(maxPoolSizeLine));
+
+        //System.out.println("-----------------------");
+        //System.out.println(url);
+        //System.out.println("-----------------------");
 
         return dataSource;
     }

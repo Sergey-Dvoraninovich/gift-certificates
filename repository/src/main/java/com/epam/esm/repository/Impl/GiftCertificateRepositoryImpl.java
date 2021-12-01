@@ -4,7 +4,6 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderingType;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -21,10 +20,8 @@ import java.util.Optional;
 
 import static com.epam.esm.repository.OrderingType.ASC;
 import static com.epam.esm.repository.OrderingType.DESC;
-import static java.lang.Boolean.*;
 
 @Repository
-@RequiredArgsConstructor
 public class GiftCertificateRepositoryImpl implements GiftCertificateRepository {
     private static final String GIFT_CERTIFICATE_TAGS = "giftCertificateTags";
     private static final String ID = "id";
@@ -33,7 +30,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     private static final String CREATE_DATE = "createDate";
 
     @PersistenceContext
-    private final EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Override
     public Long countAll(List<String> tagNames, String certificateName, OrderingType orderingName,
