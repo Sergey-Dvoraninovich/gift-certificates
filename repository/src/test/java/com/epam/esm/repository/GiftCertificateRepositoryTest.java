@@ -150,27 +150,29 @@ public class GiftCertificateRepositoryTest {
 //    }
 
     //TODO work with it
-//    @Test
-//    void testUpdate() {
-//        GiftCertificate giftCertificate = provideMultipleTagsGiftCertificate();
-//        giftCertificate.setCreateDate(Instant.now());
-//        giftCertificate.setLastUpdateDate(Instant.now());
-//
-//        GiftCertificate result = giftCertificateRepository.update(giftCertificate);
-//
-//        assertEquals(giftCertificate, result);
-//    }
+    @Test
+    @Transactional
+    void testUpdate() {
+        GiftCertificate giftCertificate = provideMultipleTagsGiftCertificate();
+        giftCertificate.setCreateDate(Instant.now());
+        giftCertificate.setLastUpdateDate(Instant.now());
+
+        GiftCertificate result = giftCertificateRepository.update(giftCertificate);
+
+        assertEquals(giftCertificate, result);
+    }
 
     //TODO work with it
-//    @Test
-//    void testDelete() {
-//        GiftCertificate giftCertificate = provideMultipleTagsGiftCertificate();
-//        giftCertificate.setLastUpdateDate(Instant.now());
-//
-//        boolean result = giftCertificateRepository.delete(giftCertificate);
-//
-//        assertTrue(result);
-//    }
+    @Test
+    @Transactional
+    void testDelete() {
+        GiftCertificate giftCertificate = provideMultipleTagsGiftCertificate();
+        giftCertificate.setLastUpdateDate(Instant.now());
+
+        boolean result = giftCertificateRepository.delete(giftCertificate);
+
+        assertTrue(result);
+    }
 
     //stored in DB
     private GiftCertificate provideMultipleTagsGiftCertificate() {

@@ -4,9 +4,11 @@ import com.epam.esm.TestProfileResolver;
 import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(classes = TestDatabaseConfig.class)
 @ActiveProfiles(resolver = TestProfileResolver.class)
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {"classpath:init_data.sql"})
+//@ConditionalOnMissingClass("org.springframework.orm.jpa.JpaTransactionManager")
 public class TagRepositoryTest {
     private static final Integer PAGE_NUMBER = 1;
     private static final Integer PAGE_SIZE = 10;
@@ -67,28 +70,30 @@ public class TagRepositoryTest {
     }
 
     //TODO work with it
-//    @Test
-//    @Transactional
-//    void testCreate() {
-//        Tag newTag = new Tag();
-//        newTag.setName("new tag");
-//
-//        long generatedId = tagRepository.create(newTag).getId();
-//        boolean result = generatedId > 0;
-//
-//        assertTrue(result);
-//    }
+    @Test
+    @Transactional
+    //@ConditionalOnMissingClass("org.springframework.orm.jpa.JpaTransactionManager")
+    void testCreate() {
+        Tag newTag = new Tag();
+        newTag.setName("new tag");
+
+        long generatedId = tagRepository.create(newTag).getId();
+        boolean result = generatedId > 0;
+
+        assertTrue(result);
+    }
 
     //TODO work with it
-//    @Test
-//    @Transactional
-//    void testDelete() {
-//        Tag tag = provideTag();
-//
-//        boolean actual = tagRepository.delete(tag);
-//
-//        assertTrue(actual);
-//    }
+    @Test
+    @Transactional
+    //@ConditionalOnMissingClass("org.springframework.orm.jpa.JpaTransactionManager")
+    void testDelete() {
+        Tag tag = provideTag();
+
+        boolean actual = tagRepository.delete(tag);
+
+        assertTrue(actual);
+    }
 
     private Tag provideTag() {
         Tag tag = new Tag();

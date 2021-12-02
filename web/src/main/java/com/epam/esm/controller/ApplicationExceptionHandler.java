@@ -21,13 +21,17 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
@@ -36,12 +40,13 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
-public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
+public class ApplicationExceptionHandler {
     private final ResourceBundleMessageSource messageSource;
 
     private static final Logger logger = LogManager.getLogger();
 
     private static final String ERROR_MESSAGE = "errorMessage";
+    private static final String ERROR_CODE = "errorCode";
 
     private static final String ENTITY_ALREADY_EXISTS_MESSAGE = "entity_already_exists";
     private static final String ENTITY_NOT_FOUND_MESSAGE = "entity_not_found";
@@ -58,6 +63,10 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     private static final String USER_MESSAGE = "entities.user";
     private static final String USER_ORDER_RESPONSE_MESSAGE = "entities.user_order_response";
     private static final String ENTITY_PLACEHOLDER_MESSAGE = "entities.placeholder";
+
+    private static final String INVALID_ARTIFACT_MESSAGE = "not_found.invalid_artifact";
+    private static final String INVALID_VERSION_MESSAGE = "not_found.invalid_version";
+    private static final String NOT_FOUND_MESSAGE = "not_found";
 
     private static final String TAG_ALREADY_EXISTS_MESSAGE = "entity_already_exists.tag_message";
     private static final String GIFT_CERTIFICATE_ALREADY_EXISTS_MESSAGE = "entity_already_exists.gift_certificate_message";
@@ -112,7 +121,10 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 
     private static final String ERROR_SEPARATOR = ", ";
 
+    private static final String APPLICATION_NAME = "api";
+
     @ExceptionHandler(EntityAlreadyExistsException.class)
+    @ResponseStatus(CONFLICT)
     public ResponseEntity<Object> handleEntityAlreadyExists(EntityAlreadyExistsException e) {
         Class<?> entityClass = e.getCauseEntity();
         String entityName = getEntityMessage(entityClass, ENTITY_PLACEHOLDER_MESSAGE);
@@ -125,7 +137,43 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         }
 
         String errorMessage = String.format(getMessage(ENTITY_ALREADY_EXISTS_MESSAGE), entityName, message);
-        return buildErrorResponseEntity(CONFLICT, errorMessage);
+        return buildErrorResponseEntity(CONFLICT, errorMessage, 409L);
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<Object> handleAnyException(NoHandlerFoundException e, HttpServletRequest request) {
+        String errorMessage = getMessage(NOT_FOUND_MESSAGE);;
+        Long errorCode = 40403L;
+
+        String requestURL = e.getRequestURL().replaceFirst("/", "");
+        int applicationNameLastPosition = requestURL.indexOf("/");
+        String requestedApplicationName = applicationNameLastPosition != -1
+                ? requestURL.substring(0, applicationNameLastPosition)
+                : "";
+
+        if (requestedApplicationName.equals(APPLICATION_NAME)) {
+            requestURL = requestURL.replaceFirst(APPLICATION_NAME + "/", "");
+            int apiVersionLastPosition = requestURL.indexOf("/");
+
+            if (apiVersionLastPosition != -1) {
+                String apiVersion = requestURL.substring(0, requestURL.indexOf("/"));
+
+                List<String> validApiVersions = Arrays.stream(ApiVersion.values())
+                        .map(Enum::name)
+                        .map(String::toLowerCase)
+                        .collect(Collectors.toList());
+
+                if (!validApiVersions.contains(apiVersion)) {
+                    errorMessage = getMessage(INVALID_VERSION_MESSAGE);
+                    errorCode = 40404L;
+                }
+            }
+        }
+        else {
+            errorMessage = getMessage(INVALID_ARTIFACT_MESSAGE);
+            errorCode = 40402L;
+        }
+        return buildErrorResponseEntity(NOT_FOUND, errorMessage, errorCode);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
@@ -134,7 +182,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         String entityName = getEntityMessage(entityClass, ENTITY_PLACEHOLDER_MESSAGE);
 
         String errorMessage = String.format(getMessage(ENTITY_NOT_FOUND_MESSAGE), entityName, e.getEntityId());
-        return buildErrorResponseEntity(NOT_FOUND, errorMessage);
+        return buildErrorResponseEntity(NOT_FOUND, errorMessage, 40401L);
     }
 
     @ExceptionHandler(InvalidPaginationException.class)
@@ -169,7 +217,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 
         String errorMessage = String.format(getMessage(INVALID_PAGINATION_MESSAGE),
                 e.getPageNumber(), e.getPageSize(), errorLine);
-        return buildErrorResponseEntity(BAD_REQUEST, errorMessage);
+        return buildErrorResponseEntity(BAD_REQUEST, errorMessage, 40001L);
     }
 
     @ExceptionHandler(InvalidEntityException.class)
@@ -322,14 +370,14 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         errorLine.replace(lastSeparatorPos, errorLine.length(), "");
 
         String errorMessage = String.format(getMessage(INVALID_ENTITY_MESSAGE), errorLine);
-        return buildErrorResponseEntity(BAD_REQUEST, errorMessage);
+        return buildErrorResponseEntity(BAD_REQUEST, errorMessage, 40002L);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleDefault(Exception e) {
         logger.error("Exception appeared: ", e);
         String errorMessage = getMessage(INTERNAL_SERVER_ERROR_MESSAGE);
-        return buildErrorResponseEntity(INTERNAL_SERVER_ERROR, errorMessage);
+        return buildErrorResponseEntity(INTERNAL_SERVER_ERROR, errorMessage, 50001L);
     }
 
     private String getMessage(String errorMessageName) {
@@ -366,9 +414,11 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         return entityName;
     }
 
-    private ResponseEntity<Object> buildErrorResponseEntity(HttpStatus status, String errorMessage) {
+    private ResponseEntity<Object> buildErrorResponseEntity(HttpStatus status, String errorMessage, Long errorCode) {
         Map<String, Object> body = new HashMap<>();
+
         body.put(ERROR_MESSAGE, errorMessage);
+        body.put(ERROR_CODE, errorCode);
 
         return new ResponseEntity<>(body, status);
     }

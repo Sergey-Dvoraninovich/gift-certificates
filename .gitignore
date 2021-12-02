@@ -3,6 +3,6 @@ HELP.md
 db-production.properties
 .idea
 /build
-/repository/build
-/service/build
-/web/build
+/repository/build/
+/service/build/
+/web/build/
