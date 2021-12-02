@@ -24,13 +24,12 @@ import java.util.Optional;
 
 import static com.epam.esm.repository.OrderingType.ASC;
 import static com.epam.esm.repository.OrderingType.DESC;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = TestDatabaseConfig.class)
 @ActiveProfiles(resolver = TestProfileResolver.class)
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {"classpath:init_data.sql"})
-public class GiftCertificateRepositoryTest {
+public class GiftCertificateRepositoryTestFind {
     private static final Integer PAGE_NUMBER = 1;
     private static final Integer PAGE_SIZE = 10;
 
@@ -134,46 +133,6 @@ public class GiftCertificateRepositoryTest {
         assertEquals(expected, actual.get());
     }
 
-    //TODO work with it
-//    @Test
-//    void testCreate() {
-//        GiftCertificate giftCertificate = provideGiftCertificate();
-//
-//        Instant date = Instant.now();
-//        giftCertificate.setCreateDate(date);
-//        giftCertificate.setLastUpdateDate(date);
-//
-//        GiftCertificate certificate = giftCertificateRepository.create(giftCertificate);
-//        boolean result = certificate.getId() > 0;
-//
-//        assertTrue(result);
-//    }
-
-    //TODO work with it
-    @Test
-    @Transactional
-    void testUpdate() {
-        GiftCertificate giftCertificate = provideMultipleTagsGiftCertificate();
-        giftCertificate.setCreateDate(Instant.now());
-        giftCertificate.setLastUpdateDate(Instant.now());
-
-        GiftCertificate result = giftCertificateRepository.update(giftCertificate);
-
-        assertEquals(giftCertificate, result);
-    }
-
-    //TODO work with it
-    @Test
-    @Transactional
-    void testDelete() {
-        GiftCertificate giftCertificate = provideMultipleTagsGiftCertificate();
-        giftCertificate.setLastUpdateDate(Instant.now());
-
-        boolean result = giftCertificateRepository.delete(giftCertificate);
-
-        assertTrue(result);
-    }
-
     //stored in DB
     private GiftCertificate provideMultipleTagsGiftCertificate() {
         GiftCertificate giftCertificate = new GiftCertificate();
@@ -239,5 +198,4 @@ public class GiftCertificateRepositoryTest {
 
         return Arrays.asList(firstTag, secondTag);
     }
-
 }

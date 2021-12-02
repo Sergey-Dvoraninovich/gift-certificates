@@ -137,7 +137,7 @@ public class ApplicationExceptionHandler {
         }
 
         String errorMessage = String.format(getMessage(ENTITY_ALREADY_EXISTS_MESSAGE), entityName, message);
-        return buildErrorResponseEntity(CONFLICT, errorMessage, 409L);
+        return buildErrorResponseEntity(CONFLICT, errorMessage, 40901L);
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)

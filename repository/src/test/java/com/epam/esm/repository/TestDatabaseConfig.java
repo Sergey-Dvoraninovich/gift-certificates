@@ -1,25 +1,26 @@
 package com.epam.esm.repository;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan("com.epam.esm")
-@EntityScan(basePackages = "com.epam.esm.entity")
 @EnableTransactionManagement
 @EnableAutoConfiguration
 @Profile("test")
@@ -44,6 +45,9 @@ public class TestDatabaseConfig {
     @Value("${db.pool.max}")
     private String maxPoolSizeLine;
 
+    @Autowired
+    JpaVendorAdapter jpaVendorAdapter;
+
     @Bean
     public DataSource mysqlDataSource() {
         BasicDataSource dataSource = new BasicDataSource();
@@ -54,10 +58,6 @@ public class TestDatabaseConfig {
         dataSource.setMinIdle(Integer.parseInt(minPoolSizeLine));
         dataSource.setMaxTotal(Integer.parseInt(maxPoolSizeLine));
 
-        //System.out.println("-----------------------");
-        //System.out.println(url);
-        //System.out.println("-----------------------");
-
         return dataSource;
     }
 
@@ -66,8 +66,27 @@ public class TestDatabaseConfig {
         return new NamedParameterJdbcTemplate(dataSource);
     }
 
-    @Bean
-    public PlatformTransactionManager transactionManager(DataSource dataSource) {
-        return new DataSourceTransactionManager(dataSource);
+    @Bean(name = "entityManager")
+    public EntityManager entityManager() {
+        return entityManagerFactory().createEntityManager();
+    }
+
+    @Primary
+    @Bean(name = "entityManagerFactory")
+    EntityManagerFactory entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
+        emf.setDataSource(mysqlDataSource());
+        emf.setJpaVendorAdapter(jpaVendorAdapter);
+        emf.setPackagesToScan("com.epam.esm.entity");
+        emf.setPersistenceUnitName("default");
+        emf.afterPropertiesSet();
+        return emf.getObject();
+    }
+
+    @Bean(name = "transactionManager")
+    public PlatformTransactionManager transactionManager() {
+        JpaTransactionManager tm = new JpaTransactionManager();
+        tm.setEntityManagerFactory(entityManagerFactory());
+        return tm;
     }
 }

@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(classes = TestDatabaseConfig.class)
 @ActiveProfiles(resolver = TestProfileResolver.class)
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {"classpath:init_data.sql"})
-public class UserRepositoryTest {
+public class UserRepositoryTestFind {
     private static final Integer PAGE_NUMBER = 1;
     private static final Integer PAGE_SIZE = 10;
 

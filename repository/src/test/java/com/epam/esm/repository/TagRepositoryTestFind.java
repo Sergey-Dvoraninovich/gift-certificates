@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = TestDatabaseConfig.class)
 @ActiveProfiles(resolver = TestProfileResolver.class)
 @Transactional
-public class TagRepositoryTest {
+public class TagRepositoryTestFind {
     private static final Integer PAGE_NUMBER = 1;
     private static final Integer PAGE_SIZE = 10;
 
@@ -74,8 +74,6 @@ public class TagRepositoryTest {
         removeRedundantTag(actualTag);
     }
 
-
-
     @Test
     void testFindByName() {
         //Given
@@ -93,40 +91,6 @@ public class TagRepositoryTest {
         //Clean
         removeRedundantTag(actualTag);
     }
-
-    @Test
-    void testCreate() {
-        //Given
-        Tag newTag = new Tag();
-        newTag.setName("new tag");
-
-        //When
-        long generatedId = tagRepository.create(newTag).getId();
-
-        //Then
-        assertTrue(generatedId > 0);
-
-        //Clean
-        removeRedundantTag(newTag);
-    }
-
-
-
-    @Test
-    void testDelete() {
-        //Given
-        Tag tag = provideNewTag("new tag");
-
-        //When
-        boolean actual = tagRepository.delete(tag);
-
-        //Then
-        assertTrue(actual);
-        Optional<Tag> deletedTag = tagRepository.findById(tag.getId());
-        assertFalse(deletedTag.isPresent());
-    }
-
-
 
     private Tag provideNewTag(String tagName) {
         Tag newTag = new Tag();
@@ -154,5 +118,4 @@ public class TagRepositoryTest {
         List<String> tagNameList = Arrays.asList("first new tag", "second new tag", "third new tag");
         return tagNameList.stream().map(tagName -> provideNewTag(tagName)).collect(Collectors.toList());
     }
-
 }

@@ -39,7 +39,6 @@ public class GiftCertificate {
     @Column(name = "last_update_date", nullable = false)
     private Instant lastUpdateDate;
 
-    //TODO work with it
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "gift_certificates_tags",
