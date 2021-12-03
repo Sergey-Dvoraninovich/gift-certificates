@@ -137,7 +137,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         String priceString = certificateDto.getPrice() == null ? null : certificateDto.getPrice().toString();
         String durationString = certificateDto.getDuration() == null ? null : String.valueOf(certificateDto.getDuration().toDays());
         List<ValidationError> validationErrors = giftCertificateRequestValidator.validateParams(certificateDto.getName(), certificateDto.getDescription(),
-                priceString, durationString);
+                priceString, durationString, certificateDto.getTagIdsDto());
 
         if (!validationErrors.isEmpty()) {
             throw new InvalidEntityException(validationErrors, GiftCertificateRequestDto.class);

@@ -1,5 +1,7 @@
 package com.epam.esm.validator;
 
+import java.util.HashSet;
+
 public enum ValidationError {
     TAG_NAME_REQUIRED,
     GIFT_CERTIFICATE_NAME_REQUIRED,
@@ -27,6 +29,9 @@ public enum ValidationError {
     TOO_SMALL_GIFT_CERTIFICATE_PRICE,
     TOO_BIG_GIFT_CERTIFICATE_PRICE,
     INVALID_GIFT_CERTIFICATE_PRICE_FORMAT,
+
+    INVALID_TAGS_AMOUNT,
+    NOT_UNIQUE_TAGS_IN_GIFT_CERTIFICATE,
 
     TOO_SHORT_TAG_NAME,
     TOO_LONG_TAG_NAME,

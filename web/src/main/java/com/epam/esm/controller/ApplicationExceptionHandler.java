@@ -20,12 +20,14 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +55,7 @@ public class ApplicationExceptionHandler {
     private static final String INVALID_ENTITY_MESSAGE = "invalid_entity";
     private static final String INVALID_PAGINATION_MESSAGE = "invalid_pagination";
     private static final String INTERNAL_SERVER_ERROR_MESSAGE = "internal_server_error";
+    private static final String INVALID_REQUEST_MESSAGE = "invalid_request";
 
     private static final String TAG_MESSAGE = "entities.tag";
     private static final String GIFT_CERTIFICATE_MESSAGE = "entities.gift_certificate";
@@ -107,6 +110,9 @@ public class ApplicationExceptionHandler {
     private static final String TOO_SMALL_GIFT_CERTIFICATE_PRICE_MESSAGE = "invalid_entity.gift_certificate_too_small_price";
     private static final String TOO_BIG_GIFT_CERTIFICATE_PRICE_MESSAGE = "invalid_entity.gift_certificate_too_big_price";
     private static final String INVALID_GIFT_CERTIFICATE_PRICE_FORMAT_MESSAGE = "invalid_entity.gift_certificate_invalid_price_format";
+
+    private static final String INVALID_TAGS_AMOUNT_MESSAGE = "invalid_entity.invalid_tags_amount";
+    private static final String NOT_UNIQUE_TAGS_IN_GIFT_CERTIFICATE_MESSAGE = "invalid_entity.not_unique_tags_in_gift_certificate";
 
     private static final String INVALID_NAME_ORDERING_TYPE_MESSAGE = "invalid_entity.invalid_name_ordering_type";
     private static final String INVALID_CREATE_DATE_ORDERING_TYPE_MESSAGE = "invalid_entity.invalid_create_date_ordering_type";
@@ -218,6 +224,12 @@ public class ApplicationExceptionHandler {
         String errorMessage = String.format(getMessage(INVALID_PAGINATION_MESSAGE),
                 e.getPageNumber(), e.getPageSize(), errorLine);
         return buildErrorResponseEntity(BAD_REQUEST, errorMessage, 40001L);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Object> handleNotReadable() {
+        String errorMessage = getMessage(INVALID_REQUEST_MESSAGE);
+        return buildErrorResponseEntity(BAD_REQUEST, errorMessage, 40002L);
     }
 
     @ExceptionHandler(InvalidEntityException.class)
@@ -351,6 +363,15 @@ public class ApplicationExceptionHandler {
                     break;
                 }
 
+                case INVALID_TAGS_AMOUNT: {
+                    errorLine.append(getMessage(INVALID_TAGS_AMOUNT_MESSAGE));
+                    break;
+                }
+                case NOT_UNIQUE_TAGS_IN_GIFT_CERTIFICATE: {
+                    errorLine.append(getMessage(NOT_UNIQUE_TAGS_IN_GIFT_CERTIFICATE_MESSAGE));
+                    break;
+                }
+
                 case INVALID_NAME_ORDERING_TYPE: {
                     errorLine.append(getMessage(INVALID_NAME_ORDERING_TYPE_MESSAGE));
                     break;
@@ -370,7 +391,7 @@ public class ApplicationExceptionHandler {
         errorLine.replace(lastSeparatorPos, errorLine.length(), "");
 
         String errorMessage = String.format(getMessage(INVALID_ENTITY_MESSAGE), errorLine);
-        return buildErrorResponseEntity(BAD_REQUEST, errorMessage, 40002L);
+        return buildErrorResponseEntity(BAD_REQUEST, errorMessage, 40003L);
     }
 
     @ExceptionHandler(Exception.class)

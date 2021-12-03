@@ -1,32 +1,18 @@
 package com.epam.esm.validator;
 
 import com.epam.esm.dto.GiftCertificateRequestDto;
+import com.epam.esm.dto.OrderItemDto;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.epam.esm.validator.ValidationError.GIFT_CERTIFICATE_DESCRIPTION_REQUIRED;
-import static com.epam.esm.validator.ValidationError.GIFT_CERTIFICATE_DURATION_REQUIRED;
-import static com.epam.esm.validator.ValidationError.GIFT_CERTIFICATE_NAME_REQUIRED;
-import static com.epam.esm.validator.ValidationError.GIFT_CERTIFICATE_PRICE_REQUIRED;
-import static com.epam.esm.validator.ValidationError.INVALID_GIFT_CERTIFICATE_PRICE_FORMAT;
-import static com.epam.esm.validator.ValidationError.INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION;
-import static com.epam.esm.validator.ValidationError.INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_GIFT_CERTIFICATE_NAME;
-import static com.epam.esm.validator.ValidationError.INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION;
-import static com.epam.esm.validator.ValidationError.INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DURATION;
-import static com.epam.esm.validator.ValidationError.INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_NAME;
-import static com.epam.esm.validator.ValidationError.TOO_BIG_GIFT_CERTIFICATE_PRICE;
-import static com.epam.esm.validator.ValidationError.TOO_LONG_GIFT_CERTIFICATE_DESCRIPTION;
-import static com.epam.esm.validator.ValidationError.TOO_LONG_GIFT_CERTIFICATE_DURATION;
-import static com.epam.esm.validator.ValidationError.TOO_LONG_GIFT_CERTIFICATE_NAME;
-import static com.epam.esm.validator.ValidationError.TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION;
-import static com.epam.esm.validator.ValidationError.TOO_SHORT_GIFT_CERTIFICATE_DURATION;
-import static com.epam.esm.validator.ValidationError.TOO_SHORT_GIFT_CERTIFICATE_NAME;
-import static com.epam.esm.validator.ValidationError.TOO_SMALL_GIFT_CERTIFICATE_PRICE;
+import static com.epam.esm.validator.ValidationError.*;
+import static com.epam.esm.validator.ValidationError.NOT_UNIQUE_GIFT_CERTIFICATES_IN_ORDER;
 
 @Component
 public class GiftCertificateRequestValidator {
@@ -49,6 +35,8 @@ public class GiftCertificateRequestValidator {
     private static final BigDecimal MIN_PRICE = new BigDecimal("9.99");
     private static final BigDecimal MAX_PRICE = new BigDecimal("10000");
 
+    private static final int MAX_TAGS_AMOUNT = 100;
+
     public List<ValidationError> validateWithRequiredParams(GiftCertificateRequestDto certificateDto) {
         List<ValidationError> validationErrors = new ArrayList<>();
         if (certificateDto.getName() == null){
@@ -65,12 +53,12 @@ public class GiftCertificateRequestValidator {
         }
         if (validationErrors.size() == 0) {
             validationErrors.addAll(validateParams(certificateDto.getName(), certificateDto.getDescription(), certificateDto.getPrice().toString(),
-                    String.valueOf(certificateDto.getDuration().toDays())));
+                    String.valueOf(certificateDto.getDuration().toDays()), certificateDto.getTagIdsDto()));
         }
         return validationErrors;
     }
 
-    public List<ValidationError> validateParams(String name, String description, String price, String duration) {
+    public List<ValidationError> validateParams(String name, String description, String price, String duration, List<Long> tagIdsDto) {
         List<ValidationError> validationErrors = new ArrayList<>();
 
         if (name != null) {
@@ -139,6 +127,19 @@ public class GiftCertificateRequestValidator {
                 if (MAX_PRICE.compareTo(priceValue) < 0) {
                     validationErrors.add(TOO_BIG_GIFT_CERTIFICATE_PRICE);
                 }
+            }
+        }
+
+        if (tagIdsDto != null) {
+            if (tagIdsDto.size() > MAX_TAGS_AMOUNT){
+                validationErrors.add(INVALID_TAGS_AMOUNT);
+            }
+            HashSet<Long> tagIds = new HashSet<>();
+            for (Long id: tagIdsDto) {
+                tagIds.add(id);
+            }
+            if (tagIdsDto.size() != tagIds.size()) {
+                validationErrors.add(NOT_UNIQUE_TAGS_IN_GIFT_CERTIFICATE);
             }
         }
 
