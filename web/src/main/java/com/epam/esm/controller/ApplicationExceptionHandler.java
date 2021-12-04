@@ -56,6 +56,7 @@ public class ApplicationExceptionHandler {
     private static final String INVALID_PAGINATION_MESSAGE = "invalid_pagination";
     private static final String INTERNAL_SERVER_ERROR_MESSAGE = "internal_server_error";
     private static final String INVALID_REQUEST_MESSAGE = "invalid_request";
+    private static final String BODY_CANT_BE_EMPTY_MESSAGE = "body_cant_be_empty";
 
     private static final String TAG_MESSAGE = "entities.tag";
     private static final String GIFT_CERTIFICATE_MESSAGE = "entities.gift_certificate";
@@ -227,9 +228,18 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Object> handleNotReadable() {
-        String errorMessage = getMessage(INVALID_REQUEST_MESSAGE);
-        return buildErrorResponseEntity(BAD_REQUEST, errorMessage, 40002L);
+    public ResponseEntity<Object> handleNotReadable(HttpServletRequest request) {
+        String errorMessage;
+        long errorCode;
+        if (request.getContentLength() == 0) {
+            errorMessage = String.format(getMessage(BODY_CANT_BE_EMPTY_MESSAGE), request.getRequestURI());
+            errorCode = 40004L;
+        }
+        else  {
+            errorMessage = String.format(getMessage(INVALID_REQUEST_MESSAGE), request.getContextPath());
+            errorCode = 40002L;
+        }
+        return buildErrorResponseEntity(BAD_REQUEST, errorMessage, errorCode);
     }
 
     @ExceptionHandler(InvalidEntityException.class)

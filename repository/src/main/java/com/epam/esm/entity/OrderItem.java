@@ -15,7 +15,7 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "price", nullable = false, columnDefinition="Decimal(5,2)")
+    @Column(name = "price", nullable = false)
     private BigDecimal price;
 
     @ManyToOne

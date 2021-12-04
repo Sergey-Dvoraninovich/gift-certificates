@@ -26,7 +26,7 @@ public class GiftCertificate {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "price", nullable = false, columnDefinition="Decimal(5,2)")
+    @Column(name = "price", nullable = false)
     private BigDecimal price;
 
     @Column(name = "duration", nullable = false)
