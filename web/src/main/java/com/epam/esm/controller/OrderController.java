@@ -19,15 +19,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -36,9 +29,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.epam.esm.validator.ValidationError.PAGE_IS_OUT_OF_RANGE;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -56,6 +47,7 @@ public class OrderController {
     }
     )
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<OrderResponseListHateoas> getOrders(@ApiParam(value = "pageNumber", required = false) @RequestParam(value = "pageNumber", defaultValue = "1") @Min(1) Integer pageNumber,
                                                               @ApiParam(value = "pageSize", required = false) @RequestParam(value = "pageSize", defaultValue = "10") @Min(1) Integer pageSize,
                                                               @ApiParam(value = "sortOrder", required = false) @RequestParam(value = "sortOrder", defaultValue = "ASC") String sortOrder) {
@@ -83,6 +75,7 @@ public class OrderController {
     }
     )
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<OrderResponseHateoas> getOrder(@ApiParam(value = "The Order ID") @PathVariable("id") @Min(1) long id) {
         OrderResponseDto orderDto = orderService.findById(id);
         OrderResponseHateoas orderResponseHateoas = OrderResponseHateoas.build(orderDto, orderResponseHateoasProvider);
@@ -97,6 +90,7 @@ public class OrderController {
     }
     )
     @GetMapping("/{orderId}/orderItems/{orderItemId}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<OrderItemHateoas> getOrderItem(@ApiParam(value = "The Order ID") @PathVariable("orderId") @Min(1) long orderId,
                                                          @ApiParam(value = "The Order Item ID") @PathVariable("orderItemId") @Min(1) long orderItemId) {
         OrderResponseDto orderDto = orderService.findById(orderId);
@@ -119,6 +113,7 @@ public class OrderController {
     }
     )
     @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<OrderResponseHateoas> createOrder(@ApiParam(value = "The Order create request dto") @RequestBody @NotNull OrderCreateRequestDto orderCreateRequestDto) {
         OrderResponseDto createdOrderDto = orderService.create(orderCreateRequestDto);
         OrderResponseHateoas orderResponseHateoas = OrderResponseHateoas.build(createdOrderDto, orderResponseHateoasProvider);
@@ -133,6 +128,7 @@ public class OrderController {
     }
     )
     @PatchMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<OrderResponseHateoas> updateOrder(@ApiParam(value = "The Order ID") @PathVariable("id") @Min(1) long id,
                                                         @ApiParam(value = "The Order update request dto") @RequestBody @NotNull OrderUpdateRequestDto orderUpdateRequestDto) {
         OrderResponseDto updatedOrderDto = orderService.update(id, orderUpdateRequestDto);
@@ -148,6 +144,7 @@ public class OrderController {
     }
     )
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteOrder(@ApiParam(value = "The Order ID") @PathVariable("id") @Min(1) long id) {
         orderService.delete(id);
         return new ResponseEntity<>(NO_CONTENT);

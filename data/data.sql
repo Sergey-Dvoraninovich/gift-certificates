@@ -1,13 +1,17 @@
-USE certificates;
-
-SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE TABLE tags;
-TRUNCATE TABLE gift_certificates;
-TRUNCATE TABLE gift_certificates_tags;
-TRUNCATE TABLE users;
-TRUNCATE TABLE orders;
-TRUNCATE TABLE order_items;
-SET FOREIGN_KEY_CHECKS = 1;
+SET session_replication_role = 'replica';
+TRUNCATE TABLE tags,
+               gift_certificates,
+               gift_certificates_tags,
+               users,
+               orders,
+               order_items;
+ALTER SEQUENCE tags_id_seq RESTART WITH 1;
+ALTER SEQUENCE gift_certificates_id_seq RESTART WITH 1;
+ALTER SEQUENCE gift_certificates_tags_id_seq RESTART WITH 1;
+ALTER SEQUENCE users_id_seq RESTART WITH 1;
+ALTER SEQUENCE orders_id_seq RESTART WITH 61;
+ALTER SEQUENCE order_items_id_seq RESTART WITH 1;
+SET session_replication_role = 'origin';
 
 INSERT INTO tags(name) VALUES('tag one');
 INSERT INTO tags(name) VALUES('tag two');

@@ -1,17 +1,7 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.dto.GiftCertificateResponseDto;
-import com.epam.esm.dto.OrderCreateRequestDto;
-import com.epam.esm.dto.OrderItemDto;
-import com.epam.esm.dto.OrderResponseDto;
-import com.epam.esm.dto.OrderUpdateRequestDto;
-import com.epam.esm.dto.TagDto;
-import com.epam.esm.dto.UserDto;
-import com.epam.esm.dto.UserOrderResponseDto;
-import com.epam.esm.exception.EntityAlreadyExistsException;
-import com.epam.esm.exception.EntityNotFoundException;
-import com.epam.esm.exception.InvalidEntityException;
-import com.epam.esm.exception.InvalidPaginationException;
+import com.epam.esm.dto.*;
+import com.epam.esm.exception.*;
 import com.epam.esm.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -21,24 +11,21 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static com.epam.esm.exception.RefreshTokenException.State.INVALID_TOKEN;
+import static com.epam.esm.exception.UserAuthenticationException.State.INVALID_LOGIN;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -47,9 +34,6 @@ public class ApplicationExceptionHandler {
 
     private static final Logger logger = LogManager.getLogger();
 
-    private static final String ERROR_MESSAGE = "errorMessage";
-    private static final String ERROR_CODE = "errorCode";
-
     private static final String ENTITY_ALREADY_EXISTS_MESSAGE = "entity_already_exists";
     private static final String ENTITY_NOT_FOUND_MESSAGE = "entity_not_found";
     private static final String INVALID_ENTITY_MESSAGE = "invalid_entity";
@@ -57,6 +41,8 @@ public class ApplicationExceptionHandler {
     private static final String INTERNAL_SERVER_ERROR_MESSAGE = "internal_server_error";
     private static final String INVALID_REQUEST_MESSAGE = "invalid_request";
     private static final String BODY_CANT_BE_EMPTY_MESSAGE = "body_cant_be_empty";
+    private static final String ACCESS_DENIED_MESSAGE = "access_denied";
+    private static final String BAD_REQUEST_MESSAGE = "bad_request";
 
     private static final String TAG_MESSAGE = "entities.tag";
     private static final String GIFT_CERTIFICATE_MESSAGE = "entities.gift_certificate";
@@ -65,6 +51,9 @@ public class ApplicationExceptionHandler {
     private static final String ORDER_RESPONSE_MESSAGE = "entities.order_response";
     private static final String ORDER_UPDATE_REQUEST_MESSAGE = "entities.order_update_request";
     private static final String USER_MESSAGE = "entities.user";
+    private static final String TOKEN_MESSAGE = "entities.token";
+    private static final String USER_SIGN_IN_MESSAGE = "entities.user_sign_in";
+    private static final String USER_SIGN_UP_MESSAGE = "entities.user_sign_up";
     private static final String USER_ORDER_RESPONSE_MESSAGE = "entities.user_order_response";
     private static final String ENTITY_PLACEHOLDER_MESSAGE = "entities.placeholder";
 
@@ -119,6 +108,27 @@ public class ApplicationExceptionHandler {
     private static final String INVALID_CREATE_DATE_ORDERING_TYPE_MESSAGE = "invalid_entity.invalid_create_date_ordering_type";
     private static final String INVALID_ORDER_ORDERING_TYPE_MESSAGE = "invalid_entity.invalid_order_ordering_type";
 
+    private static final String NOT_UNIQUE_USER_LOGIN_MESSAGE = "invalid_entity.not_unique_user_login";
+    private static final String INVALID_USER_LOGIN_MESSAGE = "invalid_entity.invalid_user_login";
+    private static final String TOO_SHORT_USER_LOGIN_MESSAGE = "invalid_entity.too_short_user_login";
+    private static final String TOO_LONG_USER_LOGIN_MESSAGE = "invalid_entity.too_long_user_login";
+
+    private static final String INVALID_USER_PASSWORD_MESSAGE = "invalid_entity.invalid_user_password";
+    private static final String TOO_SHORT_USER_PASSWORD_MESSAGE = "invalid_entity.too_short_user_password";
+    private static final String TOO_LONG_USER_PASSWORD_MESSAGE = "invalid_entity.too_long_user_password";
+
+    private static final String INVALID_USER_NAME_MESSAGE = "invalid_entity.invalid_user_name";
+    private static final String TOO_SHORT_USER_NAME_MESSAGE = "invalid_entity.too_short_user_name";
+    private static final String TOO_LONG_USER_NAME_MESSAGE = "invalid_entity.too_long_user_name";
+
+    private static final String INVALID_USER_SURNAME_MESSAGE = "invalid_entity.invalid_user_surname";
+    private static final String TOO_SHORT_USER_SURNAME_MESSAGE = "invalid_entity.too_short_user_surname";
+    private static final String TOO_LONG_USER_SURNAME_MESSAGE = "invalid_entity.too_long_user_surname";
+
+    private static final String INVALID_USER_EMAIL_MESSAGE = "invalid_entity.invalid_user_email";
+    private static final String TOO_SHORT_USER_EMAIL_MESSAGE = "invalid_entity.too_short_user_email";
+    private static final String TOO_LONG_USER_EMAIL_MESSAGE = "invalid_entity.too_long_user_email";
+
     private static final String TOO_SMALL_PAGE_NUMBER_MESSAGE = "invalid_entity.too_small_page_number";
 
     private static final String TOO_SMALL_PAGE_SIZE_MESSAGE = "invalid_entity.too_small_page_size";
@@ -126,13 +136,24 @@ public class ApplicationExceptionHandler {
 
     private static final String PAGE_IS_OUT_OF_RANGE_MESSAGE = "invalid_entity.page_is_out_of_range";
 
+    private static final String REFRESH_TOKEN_EXPIRED_MESSAGE = "refresh_token_expired";
+    private static final String INVALID_REFRESH_TOKEN_MESSAGE = "invalid_refresh_token";
+
+    private static final String INVALID_JWT_SIGNATURE_MESSAGE = "invalid_jwt_signature";
+    private static final String UNSUPPORTED_JWT_MESSAGE = "unsupported_jwt";
+    private static final String JWT_EXPIRED_MESSAGE = "jwt_expired";
+    private static final String INVALID_JWT_MESSAGE = "invalid_jwt";
+
+    private static final String INVALID_LOGIN_MESSAGE = "invalid_login";
+    private static final String INVALID_PASSWORD_MESSAGE = "invalid_password";
+
     private static final String ERROR_SEPARATOR = ", ";
 
     private static final String APPLICATION_NAME = "api";
 
     @ExceptionHandler(EntityAlreadyExistsException.class)
     @ResponseStatus(CONFLICT)
-    public ResponseEntity<Object> handleEntityAlreadyExists(EntityAlreadyExistsException e) {
+    public ResponseEntity<ExceptionResponse> handleEntityAlreadyExists(EntityAlreadyExistsException e) {
         Class<?> entityClass = e.getCauseEntity();
         String entityName = getEntityMessage(entityClass, ENTITY_PLACEHOLDER_MESSAGE);
 
@@ -148,7 +169,7 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity<Object> handleAnyException(NoHandlerFoundException e, HttpServletRequest request) {
+    public ResponseEntity<ExceptionResponse> handleAnyException(NoHandlerFoundException e, HttpServletRequest request) {
         String errorMessage = getMessage(NOT_FOUND_MESSAGE);;
         Long errorCode = 40403L;
 
@@ -184,7 +205,7 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException e) {
+    public ResponseEntity<ExceptionResponse> handleEntityNotFound(EntityNotFoundException e) {
         Class<?> entityClass = e.getCauseEntity();
         String entityName = getEntityMessage(entityClass, ENTITY_PLACEHOLDER_MESSAGE);
 
@@ -192,8 +213,14 @@ public class ApplicationExceptionHandler {
         return buildErrorResponseEntity(NOT_FOUND, errorMessage, 40401L);
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ExceptionResponse> handleAccessDenied(AccessDeniedException e) {
+        String errorMessage = String.format(getMessage(ACCESS_DENIED_MESSAGE));
+        return buildErrorResponseEntity(FORBIDDEN, errorMessage, 40301L);
+    }
+
     @ExceptionHandler(InvalidPaginationException.class)
-    public ResponseEntity<Object> handleEntityNotFound(InvalidPaginationException e) {
+    public ResponseEntity<ExceptionResponse> handleEntityNotFound(InvalidPaginationException e) {
         List<ValidationError> validationErrors = e.getPaginationErrors();
         StringBuilder errorLine = new StringBuilder();
         for (ValidationError error: validationErrors) {
@@ -228,7 +255,7 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Object> handleNotReadable(HttpServletRequest request) {
+    public ResponseEntity<ExceptionResponse> handleNotReadable(HttpServletRequest request) {
         String errorMessage;
         long errorCode;
         if (request.getContentLength() == 0) {
@@ -243,7 +270,7 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler(InvalidEntityException.class)
-    public ResponseEntity<Object> handleInvalidEntity(InvalidEntityException e) {
+    public ResponseEntity<ExceptionResponse> handleInvalidEntity(InvalidEntityException e) {
         List<ValidationError> validationErrors = e.getValidationErrors();
         StringBuilder errorLine = new StringBuilder();
 
@@ -373,6 +400,75 @@ public class ApplicationExceptionHandler {
                     break;
                 }
 
+                case TOO_SHORT_USER_LOGIN: {
+                    errorLine.append(getMessage(TOO_SHORT_USER_LOGIN_MESSAGE));
+                    break;
+                }
+                case TOO_LONG_USER_LOGIN: {
+                    errorLine.append(getMessage(TOO_LONG_USER_LOGIN_MESSAGE));
+                    break;
+                }
+                case INVALID_USER_LOGIN: {
+                    errorLine.append(getMessage(INVALID_USER_LOGIN_MESSAGE));
+                    break;
+                }
+                case NOT_UNIQUE_USER_LOGIN: {
+                    errorLine.append(getMessage(NOT_UNIQUE_USER_LOGIN_MESSAGE));
+                    break;
+                }
+
+                case TOO_SHORT_USER_PASSWORD: {
+                    errorLine.append(getMessage(TOO_SHORT_USER_PASSWORD_MESSAGE));
+                    break;
+                }
+                case TOO_LONG_USER_PASSWORD: {
+                    errorLine.append(getMessage(TOO_LONG_USER_PASSWORD_MESSAGE));
+                    break;
+                }
+                case INVALID_USER_PASSWORD: {
+                    errorLine.append(getMessage(INVALID_USER_PASSWORD_MESSAGE));
+                    break;
+                }
+
+                case TOO_SHORT_USER_NAME: {
+                    errorLine.append(getMessage(TOO_SHORT_USER_NAME_MESSAGE));
+                    break;
+                }
+                case TOO_LONG_USER_NAME: {
+                    errorLine.append(getMessage(TOO_LONG_USER_NAME_MESSAGE));
+                    break;
+                }
+                case INVALID_USER_NAME: {
+                    errorLine.append(getMessage(INVALID_USER_NAME_MESSAGE));
+                    break;
+                }
+
+                case TOO_SHORT_USER_SURNAME: {
+                    errorLine.append(getMessage(TOO_SHORT_USER_SURNAME_MESSAGE));
+                    break;
+                }
+                case TOO_LONG_USER_SURNAME: {
+                    errorLine.append(getMessage(TOO_LONG_USER_SURNAME_MESSAGE));
+                    break;
+                }
+                case INVALID_USER_SURNAME: {
+                    errorLine.append(getMessage(INVALID_USER_SURNAME_MESSAGE));
+                    break;
+                }
+
+                case TOO_SHORT_USER_EMAIL: {
+                    errorLine.append(getMessage(TOO_SHORT_USER_EMAIL_MESSAGE));
+                    break;
+                }
+                case TOO_LONG_USER_EMAIL: {
+                    errorLine.append(getMessage(TOO_LONG_USER_EMAIL_MESSAGE));
+                    break;
+                }
+                case INVALID_USER_EMAIL: {
+                    errorLine.append(getMessage(INVALID_USER_EMAIL_MESSAGE));
+                    break;
+                }
+
                 case INVALID_TAGS_AMOUNT: {
                     errorLine.append(getMessage(INVALID_TAGS_AMOUNT_MESSAGE));
                     break;
@@ -404,8 +500,68 @@ public class ApplicationExceptionHandler {
         return buildErrorResponseEntity(BAD_REQUEST, errorMessage, 40003L);
     }
 
+    @ExceptionHandler(JwtTokenException.class)
+    public ResponseEntity<ExceptionResponse> handleDefault(JwtTokenException e) {
+        String errorMessage = getMessage(BAD_REQUEST_MESSAGE);
+        long errorCode = 40000L;
+        switch (e.getState()) {
+            case INVALID_JWT_SIGNATURE: {
+                errorMessage = getMessage(INVALID_JWT_SIGNATURE_MESSAGE);
+                errorCode = 40007L;
+                break;
+            }
+            case JWT_EXPIRED: {
+                errorMessage = getMessage(JWT_EXPIRED_MESSAGE);
+                errorCode = 40008L;
+                break;
+            }
+            case UNSUPPORTED_JWT: {
+                errorMessage = getMessage(UNSUPPORTED_JWT_MESSAGE);
+                errorCode = 40009L;
+                break;
+            }
+            case INVALID_JWT: {
+                errorMessage = getMessage(INVALID_JWT_MESSAGE);
+                errorCode = 40010L;
+                break;
+            }
+        }
+        System.out.println((e.getState().name()));
+        return buildErrorResponseEntity(BAD_REQUEST, errorMessage, errorCode);
+    }
+
+    @ExceptionHandler(RefreshTokenException.class)
+    public ResponseEntity<ExceptionResponse> handleRefreshTokenException(RefreshTokenException e) {
+        String errorMessage;
+        long errorCode;
+        if (e.getState().equals(INVALID_TOKEN)) {
+            errorMessage = getMessage(INVALID_REFRESH_TOKEN_MESSAGE);
+            errorCode = 40005L;
+        }
+        else  {
+            errorMessage = getMessage(REFRESH_TOKEN_EXPIRED_MESSAGE);
+            errorCode = 40006L;
+        }
+        return buildErrorResponseEntity(BAD_REQUEST, errorMessage, errorCode);
+    }
+
+    @ExceptionHandler(UserAuthenticationException.class)
+    public ResponseEntity<ExceptionResponse> handleUserAuthentication(UserAuthenticationException e) {
+        String errorMessage;
+        long errorCode;
+        if (e.getState().equals(INVALID_LOGIN)) {
+            errorMessage = getMessage(INVALID_LOGIN_MESSAGE);
+            errorCode = 40011L;
+        }
+        else  {
+            errorMessage = getMessage(INVALID_PASSWORD_MESSAGE);
+            errorCode = 40012L;
+        }
+        return buildErrorResponseEntity(BAD_REQUEST, errorMessage, errorCode);
+    }
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleDefault(Exception e) {
+    public ResponseEntity<ExceptionResponse> handleDefault(Exception e) {
         logger.error("Exception appeared: ", e);
         String errorMessage = getMessage(INTERNAL_SERVER_ERROR_MESSAGE);
         return buildErrorResponseEntity(INTERNAL_SERVER_ERROR, errorMessage, 50001L);
@@ -439,18 +595,26 @@ public class ApplicationExceptionHandler {
         else if (UserDto.class.equals(entity)) {
             entityName = getMessage(USER_MESSAGE);
         }
+        else if (TokenDto.class.equals(entity)) {
+            entityName = getMessage(TOKEN_MESSAGE);
+        }
+        else if (UserSignInDto.class.equals(entity)) {
+            entityName = getMessage(USER_SIGN_IN_MESSAGE);
+        }
+        else if (UserSignUpDto.class.equals(entity)) {
+            entityName = getMessage(USER_SIGN_UP_MESSAGE);
+        }
         else if (UserOrderResponseDto.class.equals(entity)) {
             entityName = getMessage(USER_ORDER_RESPONSE_MESSAGE);
         }
         return entityName;
     }
 
-    private ResponseEntity<Object> buildErrorResponseEntity(HttpStatus status, String errorMessage, Long errorCode) {
-        Map<String, Object> body = new HashMap<>();
-
-        body.put(ERROR_MESSAGE, errorMessage);
-        body.put(ERROR_CODE, errorCode);
-
-        return new ResponseEntity<>(body, status);
+    private ResponseEntity<ExceptionResponse> buildErrorResponseEntity(HttpStatus status, String errorMessage, Long errorCode) {
+        ExceptionResponse exceptionResponse = ExceptionResponse.builder()
+                .errorMessage(errorMessage)
+                .errorCode(errorCode)
+                .build();
+        return new ResponseEntity<>(exceptionResponse, status);
     }
 }

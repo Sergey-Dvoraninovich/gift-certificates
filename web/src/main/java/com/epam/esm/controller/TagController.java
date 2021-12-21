@@ -3,8 +3,8 @@ package com.epam.esm.controller;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.exception.InvalidPaginationException;
 import com.epam.esm.hateos.TagHateoas;
-import com.epam.esm.hateos.provider.impl.TagHateoasProvider;
 import com.epam.esm.hateos.TagListHateoas;
+import com.epam.esm.hateos.provider.impl.TagHateoasProvider;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validator.PaginationValidator;
 import com.epam.esm.validator.ValidationError;
@@ -14,14 +14,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -29,9 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.epam.esm.validator.ValidationError.PAGE_IS_OUT_OF_RANGE;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/api/v1/tags")
@@ -50,6 +42,7 @@ public class TagController {
     }
     )
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<TagListHateoas> getTags(@RequestParam(value = "pageNumber", defaultValue = "1") Integer pageNumber,
                                                   @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
         List<ValidationError> validationErrors = paginationValidator.validateParams(pageNumber, pageSize);
@@ -76,6 +69,7 @@ public class TagController {
     }
     )
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<TagHateoas> getTag(@ApiParam(value = "The Tag ID") @PathVariable("id") @Min(1) long id) {
         TagDto tagDto = tagService.findById(id);
         TagHateoas tagHateoas = TagHateoas.build(tagDto, tagHateoasProvider);
@@ -90,6 +84,7 @@ public class TagController {
     }
     )
     @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<TagHateoas> createTag(@ApiParam(value = "The Tag create request dto") @RequestBody @NotNull TagDto tagDto) {
         TagDto createdTag = tagService.create(tagDto);
         TagHateoas tagHateoas = TagHateoas.build(createdTag, tagHateoasProvider);
@@ -104,6 +99,7 @@ public class TagController {
     }
     )
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteTag(@ApiParam(value = "The Tag ID") @PathVariable("id") @Min(1) long id) {
         tagService.delete(id);
         return new ResponseEntity<>(NO_CONTENT);
@@ -117,6 +113,7 @@ public class TagController {
     }
     )
     @GetMapping("/mostWidelyUsedTag")
+    @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<TagHateoas> getMostWidelyUsedTag() {
         TagDto tagDto = tagService.findMostWidelyUsedTag();
         TagHateoas tagHateoas = TagHateoas.build(tagDto, tagHateoasProvider);

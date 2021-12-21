@@ -4,15 +4,15 @@ plugins {
 
 group = 'com.epam'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.8'
+sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: servletApiVersion
-    compileOnly group: 'javax.websocket', name: 'javax.websocket-api', version: websocketVersion
+    //TODO remove unused dependencies
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.5.5'
 
     implementation group: 'org.springframework', name: 'spring-web', version: springVersion
     implementation group: 'org.springframework', name: 'spring-webmvc', version: springVersion

@@ -1,7 +1,6 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.entity.Order;
-import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 
 import java.util.List;
@@ -34,6 +33,31 @@ public interface UserRepository {
      * @return the optional
      */
     Optional<User> findById(long id);
+
+    /**
+     * Find User by login optional.
+     *
+     * @param login the User login
+     * @return the optional User login
+     */
+    Optional<User> findByLogin(String login);
+
+    /**
+     * Create User.
+     *
+     * @param user the User
+     * @return the created User
+     */
+    User create(User user);
+
+
+    /**
+     * Update User.
+     *
+     * @param user the User
+     * @return the updated User
+     */
+    User update(User user);
 
     /**
      * Count amount of all Use Orders.

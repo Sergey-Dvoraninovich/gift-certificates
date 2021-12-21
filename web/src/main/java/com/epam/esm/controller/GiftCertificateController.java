@@ -15,16 +15,9 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -32,9 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.epam.esm.validator.ValidationError.PAGE_IS_OUT_OF_RANGE;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/api/v1/giftCertificates")
@@ -104,6 +95,7 @@ public class GiftCertificateController {
     }
     )
     @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<GiftCertificateResponseHateoas> createGiftCertificate(@ApiParam(value = "The GiftCertificate create request dto") @RequestBody @NotNull GiftCertificateRequestDto giftCertificateDto) {
         GiftCertificateResponseDto createdGiftCertificate = giftCertificateService.create(giftCertificateDto);
         GiftCertificateResponseHateoas certificateHateoas = GiftCertificateResponseHateoas.build(createdGiftCertificate, giftCertificateHateoasProvider);
@@ -118,6 +110,7 @@ public class GiftCertificateController {
     }
     )
     @PatchMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<GiftCertificateResponseHateoas> updateGiftCertificate(@ApiParam(value = "The GiftCertificate ID") @PathVariable("id") @Min(1) long id,
                                                                         @ApiParam(value = "The GiftCertificate update request dto") @RequestBody @NotNull GiftCertificateRequestDto giftCertificate) {
         GiftCertificateResponseDto updatedGiftCertificate = giftCertificateService.update(id, giftCertificate);
@@ -133,6 +126,7 @@ public class GiftCertificateController {
     }
     )
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteGiftCertificate(@ApiParam(value = "The GiftCertificate ID") @PathVariable("id") @Min(1) long id) {
         giftCertificateService.delete(id);
         return new ResponseEntity<>(NO_CONTENT);

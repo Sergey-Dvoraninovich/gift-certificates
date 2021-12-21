@@ -46,7 +46,7 @@ public class GiftCertificateRequestValidatorTest {
     void testValidateGiftCertificate(String name, String description, String price,
                           String duration, List<ValidationError> expected) {
 
-        List<ValidationError> actual = giftCertificateRequestValidator.validateParams(name, description, price, duration);
+        List<ValidationError> actual = giftCertificateRequestValidator.validateParams(name, description, price, duration, Collections.emptyList());
 
         assertEquals(expected, actual);
     }

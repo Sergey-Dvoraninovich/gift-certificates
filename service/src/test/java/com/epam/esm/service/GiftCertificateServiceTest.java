@@ -131,7 +131,7 @@ public class GiftCertificateServiceTest {
         certificateResponseDto.setTagsDto(provideTagsDtoForUpdateList());
 
         when(giftCertificateRequestValidator.validateParams(null, certificateRequestDto.getDescription(),
-                null, null)).thenReturn(Collections.emptyList());
+                null, null, Collections.emptyList())).thenReturn(Collections.emptyList());
         when(giftCertificateRepository.findById(certificate.getId())).thenReturn(Optional.of(certificate));
         when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateResponseDto);
 
@@ -158,7 +158,7 @@ public class GiftCertificateServiceTest {
         certificateResponseDto.setDescription("New description");
 
         when(giftCertificateRequestValidator.validateParams(null, certificateRequestDto.getDescription(),
-                null, null)).thenReturn(Collections.emptyList());
+                null, null, Collections.emptyList())).thenReturn(Collections.emptyList());
         when(giftCertificateRepository.findById(certificate.getId())).thenReturn(Optional.of(certificate));
         when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateResponseDto);
 

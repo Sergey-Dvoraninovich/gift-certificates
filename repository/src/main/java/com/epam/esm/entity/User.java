@@ -3,12 +3,7 @@ package com.epam.esm.entity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
 @NoArgsConstructor
@@ -22,6 +17,9 @@ public class User {
     @Column(name = "login", unique = true, nullable = false)
     private String login;
 
+    @Column(name = "password", nullable = false)
+    private String password;
+
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -30,4 +28,8 @@ public class User {
 
     @Column(name = "email", nullable = false)
     private String email;
+
+    @ManyToOne
+    @JoinColumn(name = "id_role")
+    private UserRole role;
 }

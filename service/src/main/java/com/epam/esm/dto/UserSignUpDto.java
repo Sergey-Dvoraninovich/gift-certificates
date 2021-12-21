@@ -6,19 +6,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class UserDto {
-    @ApiModelProperty(notes = "The user ID")
-    private long id;
-
+public class UserSignUpDto {
     @ApiModelProperty(notes = "The user login")
     private String login;
 
-    @ApiModelProperty(notes = "The user's role")
-    private String role;
+    @ApiModelProperty(notes = "The user password")
+    private String password;
 
     @ApiModelProperty(notes = "The user's first name")
     private String name;
