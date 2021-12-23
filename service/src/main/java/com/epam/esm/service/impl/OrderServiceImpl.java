@@ -4,6 +4,7 @@ import com.epam.esm.dto.OrderCreateRequestDto;
 import com.epam.esm.dto.OrderItemDto;
 import com.epam.esm.dto.OrderResponseDto;
 import com.epam.esm.dto.OrderUpdateRequestDto;
+import com.epam.esm.dto.PageDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.mapping.OrderResponseDtoMapper;
 import com.epam.esm.entity.GiftCertificate;
@@ -14,7 +15,6 @@ import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderRepository;
-import com.epam.esm.repository.OrderingType;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.validator.OrderCreateValidator;
@@ -45,18 +45,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Long countAll() {
-        return orderRepository.countAll();
+        return orderRepository.count();
     }
 
     @Override
-    public List<OrderResponseDto> findAll(String sortOrder, Integer pageNumber, Integer pageSize){
-        List<ValidationError> validationErrors = orderSearchParamsValidator.validate(sortOrder);
-        if (!validationErrors.isEmpty()) {
-            throw new InvalidEntityException(validationErrors, String.class);
-        }
-        OrderingType sortOrderType = OrderingType.valueOf(sortOrder);
+    public List<OrderResponseDto> findAll(PageDto pageDto){
 
-        return orderRepository.findAll(sortOrderType, pageNumber, pageSize)
+        return orderRepository.findAll(pageDto.toPageable())
                 .stream()
                 .map(orderDtoMapper::toDto)
                 .collect(Collectors.toList());
@@ -97,7 +92,7 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderItems(orderItems);
         order.setUser(optionalUser.get());
 
-        order = orderRepository.create(order);
+        order = orderRepository.save(order);
         return orderDtoMapper.toDto(order);
     }
 
@@ -123,7 +118,7 @@ public class OrderServiceImpl implements OrderService {
         order.setUpdateOrderTime(Instant.now());
         order.setOrderItems(orderItems);
 
-        order = orderRepository.update(order);
+        order = orderRepository.save(order);
         return orderDtoMapper.toDto(order);
     }
 

@@ -5,12 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class UserDto {
+public class UserDto extends RepresentationModel<UserDto> {
     @ApiModelProperty(notes = "The user ID")
     private long id;
 

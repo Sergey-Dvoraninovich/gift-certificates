@@ -3,6 +3,7 @@ package com.epam.esm.service;
 import com.epam.esm.dto.OrderCreateRequestDto;
 import com.epam.esm.dto.OrderResponseDto;
 import com.epam.esm.dto.OrderUpdateRequestDto;
+import com.epam.esm.dto.PageDto;
 
 import java.util.List;
 
@@ -17,15 +18,7 @@ public interface OrderService {
      */
     Long countAll();
 
-    /**
-     * Find all orders.
-     *
-     * @param sortOrder  the sort order
-     * @param pageNumber the page number
-     * @param pageSize   the page size
-     * @return the list of Orders
-     */
-    List<OrderResponseDto> findAll(String sortOrder, Integer pageNumber, Integer pageSize);
+    List<OrderResponseDto> findAll(PageDto pageDto);
 
     /**
      * Find Order by id.

@@ -1,42 +1,39 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.entity.GiftCertificate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
  * The interface Gift certificate repository.
  */
-public interface GiftCertificateRepository {
+@Repository
+public interface GiftCertificateRepository extends PagingAndSortingRepository<GiftCertificate, Long>,
+        JpaSpecificationExecutor<GiftCertificate>, CrudRepository<GiftCertificate, Long> {
+
     /**
-     * Count amount of all Gift Certificates.
+     * Count Gift Certificate amount.
      *
-     * @param tagNames               the tag names search param
-     * @param certificateName        the certificate name search param
-     * @param orderingName           the name ordering type
-     * @param certificateDescription the certificate description search param
-     * @param orderingCreateDate     the create date ordering type
-     * @return the long of Gift Certificates amount
+     * @param specification the specification
+     * @return the long amount of Gift Certificates
      */
-    Long countAll(List<String> tagNames, String certificateName, OrderingType orderingName,
-                  String certificateDescription, OrderingType orderingCreateDate);
+    long count(Specification<GiftCertificate> specification);
 
     /**
      * Find all Gift Certificates.
      *
-     * @param tagNames               the tag names search param
-     * @param certificateName        the certificate name search param
-     * @param orderingName           the name ordering type
-     * @param certificateDescription the certificate description search param
-     * @param orderingCreateDate     the create date ordering type
-     * @param pageNumber             the page number
-     * @param pageSize               the page size
+     * @param specification the specification
+     * @param pageable the Pageable
      * @return the list of Gift Certificates
      */
-    List<GiftCertificate> findAll(List<String> tagNames, String certificateName, OrderingType orderingName,
-                                  String certificateDescription, OrderingType orderingCreateDate,
-                                  int pageNumber, int pageSize);
+    Page<GiftCertificate> findAll(Specification<GiftCertificate> specification, Pageable pageable);
 
     /**
      * Find Gift Certificate by id.
@@ -56,26 +53,17 @@ public interface GiftCertificateRepository {
 
 
     /**
-     * Create Gift Certificate.
+     * Create or update Gift Certificate.
      *
      * @param certificate the Gift Certificate
      * @return the created Gift Certificate
      */
-    GiftCertificate create(GiftCertificate certificate);
-
-    /**
-     * Update Gift Certificate.
-     *
-     * @param certificate the Gift Certificate
-     * @return the updated Gift Certificate
-     */
-    GiftCertificate update(GiftCertificate certificate);
+    GiftCertificate save(GiftCertificate certificate);
 
     /**
      * Delete Gift Certificate.
      *
      * @param certificate the Gift Certificate
-     * @return the boolean result of Gift Certificate deletion
      */
-    boolean delete(GiftCertificate certificate);
+    void delete(GiftCertificate certificate);
 }

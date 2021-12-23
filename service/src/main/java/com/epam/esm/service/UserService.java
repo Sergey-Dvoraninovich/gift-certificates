@@ -1,6 +1,11 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dto.*;
+import com.epam.esm.dto.PageDto;
+import com.epam.esm.dto.TokenDto;
+import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.UserOrderResponseDto;
+import com.epam.esm.dto.UserSignInDto;
+import com.epam.esm.dto.UserSignUpDto;
 
 import java.util.List;
 
@@ -15,14 +20,14 @@ public interface UserService {
      */
     Long countAll();
 
+
     /**
      * Find all Users.
      *
-     * @param pageNumber the page number
-     * @param pageSize   the page size
-     * @return the list of Users
+     * @param pageDto the page dto
+     * @return the list
      */
-    List<UserDto> findAll(Integer pageNumber, Integer pageSize);
+    List<UserDto> findAll(PageDto pageDto);
 
     /**
      * Sign up User.
@@ -43,10 +48,10 @@ public interface UserService {
     /**
      * Find User by id.
      *
-     * @param id the User id
+     * @param userId the User id
      * @return the User Dto
      */
-    UserDto findById(long id);
+    UserDto findById(long userId);
 
     /**
      * Find by User by login.
@@ -67,20 +72,20 @@ public interface UserService {
     /**
      * Count amount of all User orders.
      *
-     * @param id the User id
+     * @param userId the User id
      * @return the long amount of User Orders
      */
-    Long countAllUserOrders(long id);
+    Long countAllUserOrders(long userId);
+
 
     /**
-     * Find User Orders.
+     * Find user Orders list.
      *
-     * @param id         the User id
-     * @param pageNumber the page number
-     * @param pageSize   the page size
-     * @return the list of User Orders
+     * @param userId  the user id
+     * @param pageDto the page dto
+     * @return the list
      */
-    List<UserOrderResponseDto> findUserOrders(long id, Integer pageNumber, Integer pageSize);
+    List<UserOrderResponseDto> findUserOrders(long userId, PageDto pageDto);
 
     /**
      * Find User Order by User id and Order id.

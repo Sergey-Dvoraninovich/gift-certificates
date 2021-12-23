@@ -1,14 +1,11 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.TestProfileResolver;
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Order;
-import com.epam.esm.entity.OrderItem;
-import com.epam.esm.entity.Tag;
-import com.epam.esm.entity.User;
+import com.epam.esm.entity.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -29,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ActiveProfiles(resolver = TestProfileResolver.class)
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {"classpath:init_data.sql"})
 public class UserRepositoryTestFind {
-    private static final Integer PAGE_NUMBER = 1;
+    private static final Integer PAGE_NUMBER = 0;
     private static final Integer PAGE_SIZE = 10;
 
     @Autowired
@@ -40,7 +37,7 @@ public class UserRepositoryTestFind {
         List<User> expected = provideUsersList();
 
         List<User> actual;
-        actual = userRepository.findAll(PAGE_NUMBER, PAGE_SIZE);
+        actual = (List<User>) userRepository.findAll(PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
 
         assertEquals(expected.size(), actual.size());
     }
@@ -50,7 +47,7 @@ public class UserRepositoryTestFind {
         List<User> expected = provideUsersList();
 
         List<User> actual;
-        actual = userRepository.findAll(PAGE_NUMBER, PAGE_SIZE);
+        actual = (List<User>) userRepository.findAll(PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
 
         assertEquals(expected, actual);
     }
@@ -82,7 +79,7 @@ public class UserRepositoryTestFind {
         User user = provideUsersList().get(0);
 
         List<Order> actual;
-        actual = userRepository.findUserOrders(user.getId(), PAGE_NUMBER, PAGE_SIZE);
+        actual = (List<Order>) userRepository.findUserOrders(user.getId(), PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
 
         assertEquals(userOrders, actual);
     }

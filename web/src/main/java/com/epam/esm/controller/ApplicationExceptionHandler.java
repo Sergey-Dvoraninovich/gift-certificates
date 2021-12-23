@@ -1,7 +1,25 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.dto.*;
-import com.epam.esm.exception.*;
+import com.epam.esm.dto.GiftCertificateFilterDto;
+import com.epam.esm.dto.GiftCertificateResponseDto;
+import com.epam.esm.dto.OrderCreateRequestDto;
+import com.epam.esm.dto.OrderItemDto;
+import com.epam.esm.dto.OrderResponseDto;
+import com.epam.esm.dto.OrderUpdateRequestDto;
+import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.TokenDto;
+import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.UserOrderResponseDto;
+import com.epam.esm.dto.UserSignInDto;
+import com.epam.esm.dto.UserSignUpDto;
+import com.epam.esm.exception.EntityAlreadyExistsException;
+import com.epam.esm.exception.EntityNotFoundException;
+import com.epam.esm.exception.ExceptionResponse;
+import com.epam.esm.exception.InvalidEntityException;
+import com.epam.esm.exception.InvalidPaginationException;
+import com.epam.esm.exception.JwtTokenException;
+import com.epam.esm.exception.RefreshTokenException;
+import com.epam.esm.exception.UserAuthenticationException;
 import com.epam.esm.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -46,6 +64,7 @@ public class ApplicationExceptionHandler {
 
     private static final String TAG_MESSAGE = "entities.tag";
     private static final String GIFT_CERTIFICATE_MESSAGE = "entities.gift_certificate";
+    private static final String GIFT_CERTIFICATE_FILTER_MESSAGE = "entities.gift_certificate_filter";
     private static final String ORDER_CREATE_REQUEST_MESSAGE = "entities.order_create_request";
     private static final String ORDER_ITEM_MESSAGE = "entities.order_item";
     private static final String ORDER_RESPONSE_MESSAGE = "entities.order_response";
@@ -129,8 +148,10 @@ public class ApplicationExceptionHandler {
     private static final String TOO_SHORT_USER_EMAIL_MESSAGE = "invalid_entity.too_short_user_email";
     private static final String TOO_LONG_USER_EMAIL_MESSAGE = "invalid_entity.too_long_user_email";
 
+    private static final String INVALID_PAGE_NUMBER_MESSAGE = "invalid_entity.invalid_page_number";
     private static final String TOO_SMALL_PAGE_NUMBER_MESSAGE = "invalid_entity.too_small_page_number";
 
+    private static final String INVALID_PAGE_SIZE_MESSAGE = "invalid_entity.invalid_page_size";
     private static final String TOO_SMALL_PAGE_SIZE_MESSAGE = "invalid_entity.too_small_page_size";
     private static final String TOO_BIG_PAGE_SIZE_MESSAGE = "invalid_entity.too_big_page_size";
 
@@ -225,11 +246,19 @@ public class ApplicationExceptionHandler {
         StringBuilder errorLine = new StringBuilder();
         for (ValidationError error: validationErrors) {
             switch (error) {
+                case INVALID_PAGE_NUMBER: {
+                    errorLine.append(getMessage(INVALID_PAGE_NUMBER_MESSAGE));
+                    break;
+                }
                 case TOO_SMALL_PAGE_NUMBER: {
                     errorLine.append(getMessage(TOO_SMALL_PAGE_NUMBER_MESSAGE));
                     break;
                 }
 
+                case INVALID_PAGE_SIZE: {
+                    errorLine.append(getMessage(INVALID_PAGE_SIZE_MESSAGE));
+                    break;
+                }
                 case TOO_SMALL_PAGE_SIZE: {
                     errorLine.append(getMessage(TOO_SMALL_PAGE_SIZE_MESSAGE));
                     break;
@@ -579,6 +608,9 @@ public class ApplicationExceptionHandler {
         }
         else if (GiftCertificateResponseDto.class.equals(entity)) {
             entityName = getMessage(GIFT_CERTIFICATE_MESSAGE);
+        }
+        else if (GiftCertificateFilterDto.class.equals(entity)) {
+            entityName = getMessage(GIFT_CERTIFICATE_FILTER_MESSAGE);
         }
         else if (OrderCreateRequestDto.class.equals(entity)) {
             entityName = getMessage(ORDER_CREATE_REQUEST_MESSAGE);

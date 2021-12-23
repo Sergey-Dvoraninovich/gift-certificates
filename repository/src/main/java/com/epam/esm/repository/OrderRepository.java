@@ -1,30 +1,28 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.entity.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
  * The interface Order repository.
  */
-public interface OrderRepository {
+@Repository
+public interface OrderRepository extends PagingAndSortingRepository<Order, Long>,
+        CrudRepository<Order, Long> {
     /**
      * Count amount of all Orders.
      *
      * @return the long amount of Orders
      */
-    Long countAll();
+    long count();
 
-    /**
-     * Find all Orders.
-     *
-     * @param sortOrder  the sort order
-     * @param pageNumber the page number
-     * @param pageSize   the page size
-     * @return the list
-     */
-    List<Order> findAll(OrderingType sortOrder, int pageNumber, int pageSize);
+    Page<Order> findAll(Pageable pageable);
 
     /**
      * Find Order by id.
@@ -35,26 +33,17 @@ public interface OrderRepository {
     Optional<Order> findById(long id);
 
     /**
-     * Create Order.
+     * Create or update Order.
      *
      * @param order the Order
      * @return the created Order
      */
-    Order create(Order order);
-
-    /**
-     * Update Order.
-     *
-     * @param order the Order
-     * @return the updated Order
-     */
-    Order update(Order order);
+    Order save(Order order);
 
     /**
      * Delete Order.
      *
      * @param order the order
-     * @return the boolean result of deleting Order
      */
-    boolean delete(Order order);
+    void delete(Order order);
 }

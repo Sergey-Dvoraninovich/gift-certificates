@@ -9,22 +9,19 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
-@Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class GiftCertificateResponseDto {
+public class GiftCertificateResponseDto extends RepresentationModel<TagDto> {
     @ApiModelProperty(notes = "The database generated GiftCertificate ID")
     private long id;
 

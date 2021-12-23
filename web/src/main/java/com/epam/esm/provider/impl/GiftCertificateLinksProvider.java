@@ -1,10 +1,10 @@
-package com.epam.esm.hateos.provider.impl;
+package com.epam.esm.provider.impl;
 
 import com.epam.esm.controller.GiftCertificateController;
 import com.epam.esm.controller.TagController;
 import com.epam.esm.dto.GiftCertificateResponseDto;
 import com.epam.esm.dto.TagDto;
-import com.epam.esm.hateos.provider.HateoasProvider;
+import com.epam.esm.provider.LinksProvider;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class GiftCertificateHateoasProvider implements HateoasProvider<GiftCertificateResponseDto> {
+public class GiftCertificateLinksProvider implements LinksProvider<GiftCertificateResponseDto> {
     @Override
     public List<Link> provide(GiftCertificateResponseDto certificateDto) {
         List<Link> certificateLinks = new ArrayList<>();

@@ -1,10 +1,10 @@
-package com.epam.esm.hateos.provider.impl;
+package com.epam.esm.provider.impl;
 
 import com.epam.esm.controller.GiftCertificateController;
 import com.epam.esm.controller.OrderController;
 import com.epam.esm.dto.OrderItemDto;
 import com.epam.esm.dto.OrderResponseDto;
-import com.epam.esm.hateos.provider.HateoasProvider;
+import com.epam.esm.provider.LinksProvider;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class OrderResponseHateoasProvider implements HateoasProvider<OrderResponseDto> {
+public class OrderResponseLinksProvider implements LinksProvider<OrderResponseDto> {
     private static final String PARTIAL_GIFT_CERTIFICATE_REL = "giftCertificate_";
     private static final String PARTIAL_ORDER_ITEM_REL = "orderItem_";
     private static final String ORDER_ITEMS = "orderItems";

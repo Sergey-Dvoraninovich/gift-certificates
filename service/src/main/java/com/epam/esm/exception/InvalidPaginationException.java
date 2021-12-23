@@ -5,21 +5,21 @@ import com.epam.esm.validator.ValidationError;
 import java.util.List;
 
 public class InvalidPaginationException extends RuntimeException {
-    private final Integer pageNumber;
-    private final Integer pageSize;
+    private final String pageNumber;
+    private final String  pageSize;
     private final List<ValidationError> paginationErrors;
 
-    public InvalidPaginationException(Integer pageNumber, Integer pageSize, List<ValidationError> paginationErrors) {
+    public InvalidPaginationException(String pageNumber, String pageSize, List<ValidationError> paginationErrors) {
         this.pageNumber = pageNumber;
         this.pageSize = pageSize;
         this.paginationErrors = paginationErrors;
     }
 
-    public Integer getPageNumber() {
+    public String getPageNumber() {
         return pageNumber;
     }
 
-    public Integer getPageSize() {
+    public String getPageSize() {
         return pageSize;
     }
 

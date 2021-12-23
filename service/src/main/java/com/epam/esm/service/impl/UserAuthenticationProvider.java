@@ -3,15 +3,12 @@ package com.epam.esm.service.impl;
 import com.epam.esm.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 @AllArgsConstructor
@@ -23,16 +20,7 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
         String login = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-        Optional<com.epam.esm.entity.User> optionalUser = userRepository.findByLogin(login);
-        if (optionalUser.isEmpty()) {
-            throw new BadCredentialsException("Unknown user " + login);
-        }
-        com.epam.esm.entity.User user = optionalUser.get();
-
-        if (!password.equals(user.getPassword())) {
-            throw new BadCredentialsException("Bad password");
-        }
-
+        com.epam.esm.entity.User user = userRepository.findByLogin(login).get();
         UserDetails principal = User.builder()
                 .username(user.getLogin())
                 .password(user.getPassword())

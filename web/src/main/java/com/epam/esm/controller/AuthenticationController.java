@@ -3,28 +3,17 @@ package com.epam.esm.controller;
 import com.epam.esm.dto.TokenDto;
 import com.epam.esm.dto.UserSignInDto;
 import com.epam.esm.dto.UserSignUpDto;
-import com.epam.esm.service.RefreshTokenService;
-import com.epam.esm.service.UserService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
-
-@RestController
 @RequestMapping("/api/v1/auth")
-@RequiredArgsConstructor
-public class AuthenticationController {
-
-    private final UserService userService;
-    private final RefreshTokenService refreshTokenService;
+public interface AuthenticationController {
 
     @ApiOperation(value = "Sign up user", response = Iterable.class)
     @ApiResponses(value = {
@@ -33,10 +22,7 @@ public class AuthenticationController {
     }
     )
     @PostMapping("/signup")
-    public ResponseEntity<TokenDto> signup(@RequestBody UserSignUpDto userSignUpDto) {
-        TokenDto tokenDto = userService.signUp(userSignUpDto);
-        return new ResponseEntity<>(tokenDto, CREATED);
-    }
+    ResponseEntity<TokenDto> signup(@ApiParam(value = "The Sign Up Dto") @RequestBody UserSignUpDto userSignUpDto);
 
     @ApiOperation(value = "Sign up sign in", response = Iterable.class)
     @ApiResponses(value = {
@@ -45,10 +31,7 @@ public class AuthenticationController {
     }
     )
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody UserSignInDto userSignInDto) {
-        TokenDto tokenDto = userService.login(userSignInDto);
-        return new ResponseEntity<>(tokenDto, OK);
-    }
+    ResponseEntity<TokenDto> login(@ApiParam(value = "The Sign In Dto") @RequestBody UserSignInDto userSignInDto);
 
     @ApiOperation(value = "Get new TokenDto by Refresh Token", response = Iterable.class)
     @ApiResponses(value = {
@@ -58,8 +41,5 @@ public class AuthenticationController {
     }
     )
     @PostMapping("/refreshToken")
-    public ResponseEntity<TokenDto> refreshToken(@RequestBody TokenDto tokenDto) {
-        TokenDto refreshedTokenDto = refreshTokenService.refreshToken(tokenDto.getRefreshToken());
-        return new ResponseEntity<>(refreshedTokenDto, OK);
-    }
+    ResponseEntity<TokenDto> refreshToken(@ApiParam(value = "The Token Dto with refresh token") @RequestBody TokenDto tokenDto);
 }

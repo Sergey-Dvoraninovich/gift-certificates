@@ -5,6 +5,7 @@ import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +32,7 @@ public class TagRepositoryTestFind {
         List<Tag> expected = provideNewTagsList();
 
         //When
-        long actual = tagRepository.countAll();
+        long actual = tagRepository.count();
 
         //Then
         assertEquals(expected.size(), actual);
@@ -46,7 +47,7 @@ public class TagRepositoryTestFind {
         List<Tag> expected = provideNewTagsList();
 
         //When
-        List<Tag> actual = tagRepository.findAll(PAGE_NUMBER, PAGE_SIZE);
+        List<Tag> actual = (List<Tag>) tagRepository.findAll(PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
 
         //Then
         assertNotNull(actual);
@@ -80,7 +81,7 @@ public class TagRepositoryTestFind {
         Tag expectedTag = provideNewTag("new tag");
 
         //When
-        Optional<Tag> actualTagOptional = tagRepository.findByName(expectedTag.getName());
+        Optional<Tag> actualTagOptional = tagRepository.findTagByName(expectedTag.getName());
         Tag actualTag = actualTagOptional.orElseGet(null);
 
         //Then
@@ -96,7 +97,7 @@ public class TagRepositoryTestFind {
         Tag newTag = new Tag();
         newTag.setName(tagName);
 
-        long generatedId = tagRepository.create(newTag).getId();
+        long generatedId = tagRepository.save(newTag).getId();
         assertTrue(generatedId > 0);
 
         return newTag;
@@ -109,7 +110,7 @@ public class TagRepositoryTestFind {
     private List<Tag> provideNewTagsList() {
         //Remove old tags form DB.
         Arrays.asList("first tag", "second tag", "third tag").forEach(tagName -> {
-            Optional<Tag> oldTagOptional = tagRepository.findByName(tagName);
+            Optional<Tag> oldTagOptional = tagRepository.findTagByName(tagName);
             if (oldTagOptional.isPresent()) {
                 tagRepository.delete(oldTagOptional.get());
             }});

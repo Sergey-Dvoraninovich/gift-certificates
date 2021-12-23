@@ -1,8 +1,8 @@
-package com.epam.esm.hateos.provider.impl;
+package com.epam.esm.provider.impl;
 
 import com.epam.esm.controller.TagController;
 import com.epam.esm.dto.TagDto;
-import com.epam.esm.hateos.provider.HateoasProvider;
+import com.epam.esm.provider.LinksProvider;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class TagHateoasProvider implements HateoasProvider<TagDto> {
+public class TagLinksProvider implements LinksProvider<TagDto> {
     @Override
     public List<Link> provide(TagDto tagDto) {
         List<Link> tagLinks = new ArrayList<>();

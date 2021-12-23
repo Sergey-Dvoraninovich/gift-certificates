@@ -1,21 +1,17 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dto.GiftCertificateRequestDto;
-import com.epam.esm.dto.GiftCertificateResponseDto;
-import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.*;
 import com.epam.esm.dto.mapping.GiftCertificateRequestDtoMapper;
 import com.epam.esm.dto.mapping.GiftCertificateResponseDtoMapper;
-import com.epam.esm.dto.mapping.TagDtoMapper;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.InvalidEntityException;
 import com.epam.esm.repository.GiftCertificateRepository;
+import com.epam.esm.repository.GiftCertificateSpecificationBuilder;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.impl.GiftCertificateServiceImpl;
-import com.epam.esm.validator.GiftCertificateSearchParamsValidator;
 import com.epam.esm.validator.GiftCertificateRequestValidator;
-import com.epam.esm.validator.TagValidator;
-import org.junit.jupiter.api.Assertions;
+import com.epam.esm.validator.GiftCertificateSearchParamsValidator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,14 +19,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,12 +71,17 @@ public class GiftCertificateServiceTest {
         GiftCertificateResponseDto certificateDto = provideGiftCertificateResponseDto();
         GiftCertificate certificate = provideGiftCertificate();
         when(searchParamsValidator.validate(null, null, null, null, null)).thenReturn(Collections.emptyList());
-        when(giftCertificateRepository.findAll(null, null, null, null, null, PAGE_NUMBER, PAGE_SIZE))
-                .thenReturn(Arrays.asList(certificate));
+        Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
+                .certificateName(null)
+                .certificateDescription(null)
+                .certificateTagNames(null)
+                .build();
+        when(giftCertificateRepository.findAll(specification, PageRequest.of(PAGE_NUMBER, PAGE_SIZE)))
+                .thenReturn((Page<GiftCertificate>) Arrays.asList(certificate));
         when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateDto);
         List<GiftCertificateResponseDto> expected = Arrays.asList(certificateDto);
 
-        List<GiftCertificateResponseDto> actual = giftCertificateService.findAll(null, null, null, null, null, PAGE_NUMBER, PAGE_SIZE);
+        List<GiftCertificateResponseDto> actual = giftCertificateService.findAll(new GiftCertificateFilterDto(), new PageDto(PAGE_NUMBER, PAGE_SIZE));
 
         assertEquals(expected, actual);
     }
@@ -107,7 +111,7 @@ public class GiftCertificateServiceTest {
         when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateResponseDto);
         when(tagRepository.findById(any(Long.class))).thenReturn(Optional.empty());
 
-        when(giftCertificateRepository.create(any(GiftCertificate.class))).thenReturn(certificate);
+        when(giftCertificateRepository.save(any(GiftCertificate.class))).thenReturn(certificate);
         for (int i = 0; i < tags.size(); i++){
             when(tagRepository.findById(tags.get(i).getId())).thenReturn(Optional.of(tags.get(i)));
         }
@@ -139,7 +143,7 @@ public class GiftCertificateServiceTest {
             when(tagRepository.findById(tags.get(i).getId())).thenReturn(Optional.of(tags.get(i)));
         }
 
-        when(giftCertificateRepository.update(any(GiftCertificate.class))).thenReturn(certificate);
+        when(giftCertificateRepository.save(any(GiftCertificate.class))).thenReturn(certificate);
 
         GiftCertificateResponseDto actual = giftCertificateService.update(certificate.getId(), certificateRequestDto);
 
@@ -162,7 +166,7 @@ public class GiftCertificateServiceTest {
         when(giftCertificateRepository.findById(certificate.getId())).thenReturn(Optional.of(certificate));
         when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateResponseDto);
 
-        when(giftCertificateRepository.update(any(GiftCertificate.class))).thenReturn(certificate);
+        when(giftCertificateRepository.save(any(GiftCertificate.class))).thenReturn(certificate);
 
         GiftCertificateResponseDto actual = giftCertificateService.update(certificate.getId(), certificateRequestDto);
 

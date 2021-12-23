@@ -4,17 +4,14 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
-@Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class TagDto {
+public class TagDto extends RepresentationModel<TagDto> {
     @ApiModelProperty(notes = "The tag ID")
     private long id;
 

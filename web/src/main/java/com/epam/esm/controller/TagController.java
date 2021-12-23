@@ -1,40 +1,23 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.TagDto;
-import com.epam.esm.exception.InvalidPaginationException;
-import com.epam.esm.hateos.TagHateoas;
-import com.epam.esm.hateos.TagListHateoas;
-import com.epam.esm.hateos.provider.impl.TagHateoasProvider;
-import com.epam.esm.service.TagService;
-import com.epam.esm.validator.PaginationValidator;
-import com.epam.esm.validator.ValidationError;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 
-import static com.epam.esm.validator.ValidationError.PAGE_IS_OUT_OF_RANGE;
-import static org.springframework.http.HttpStatus.*;
-
-@RestController
 @RequestMapping("/api/v1/tags")
-@RequiredArgsConstructor
-public class TagController {
+public interface TagController extends PagedController<TagDto> {
 
-    private final TagService tagService;
-    private final TagHateoasProvider tagHateoasProvider;
-    private final PaginationValidator paginationValidator;
-
-    @ApiOperation(value = "Get list of Tags", response = TagListHateoas.class)
+    @ApiOperation(value = "Get list of Tags", response = PagedModel.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved list of Tags"),
             @ApiResponse(code = 400, message = "The resource can't be fetched due to bad request"),
@@ -43,25 +26,9 @@ public class TagController {
     )
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<TagListHateoas> getTags(@RequestParam(value = "pageNumber", defaultValue = "1") Integer pageNumber,
-                                                  @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-        List<ValidationError> validationErrors = paginationValidator.validateParams(pageNumber, pageSize);
-        if (!validationErrors.isEmpty()) {
-            throw new InvalidPaginationException(pageNumber, pageSize, validationErrors);
-        }
+    ResponseEntity<PagedModel<TagDto>> getAll(@ApiParam(value = "The Tag params") @RequestParam Map<String, Object> params);
 
-        Long tagsDtoAmount = tagService.countAll();
-        if (tagsDtoAmount <= (pageNumber - 1) * pageSize) {
-            throw new InvalidPaginationException(pageNumber, pageSize, Collections.singletonList(PAGE_IS_OUT_OF_RANGE));
-        }
-
-        List<TagDto> tagsDto = tagService.findAll(pageNumber, pageSize);
-        TagListHateoas tagListHateoas = TagListHateoas.build(tagsDto, tagHateoasProvider,
-                tagsDtoAmount, pageNumber, pageSize);
-        return new ResponseEntity<>(tagListHateoas, OK);
-    }
-
-    @ApiOperation(value = "Get Tag", response = TagHateoas.class)
+    @ApiOperation(value = "Get Tag", response = TagDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved the Tag"),
             @ApiResponse(code = 400, message = "The Tag can't be fetched due to bad request"),
@@ -70,13 +37,10 @@ public class TagController {
     )
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<TagHateoas> getTag(@ApiParam(value = "The Tag ID") @PathVariable("id") @Min(1) long id) {
-        TagDto tagDto = tagService.findById(id);
-        TagHateoas tagHateoas = TagHateoas.build(tagDto, tagHateoasProvider);
-        return new ResponseEntity<>(tagHateoas, OK);
-    }
+    ResponseEntity<TagDto> getTag(@ApiParam(value = "The Tag ID") @PathVariable("id") @Min(1) long id) ;
 
-    @ApiOperation(value = "Create Tag", response = TagHateoas.class)
+
+    @ApiOperation(value = "Create Tag", response = TagDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successfully created a Tag"),
             @ApiResponse(code = 400, message = "The Tag can't be created due to bad request"),
@@ -85,11 +49,7 @@ public class TagController {
     )
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<TagHateoas> createTag(@ApiParam(value = "The Tag create request dto") @RequestBody @NotNull TagDto tagDto) {
-        TagDto createdTag = tagService.create(tagDto);
-        TagHateoas tagHateoas = TagHateoas.build(createdTag, tagHateoasProvider);
-        return new ResponseEntity<>(tagHateoas, CREATED);
-    }
+    ResponseEntity<TagDto> createTag(@ApiParam(value = "The Tag create request dto") @RequestBody @NotNull TagDto tagDto);
 
     @ApiOperation(value = "Delete Tag")
     @ApiResponses(value = {
@@ -100,12 +60,9 @@ public class TagController {
     )
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Void> deleteTag(@ApiParam(value = "The Tag ID") @PathVariable("id") @Min(1) long id) {
-        tagService.delete(id);
-        return new ResponseEntity<>(NO_CONTENT);
-    }
+    ResponseEntity<Void> deleteTag(@ApiParam(value = "The Tag ID") @PathVariable("id") @Min(1) long id);
 
-    @ApiOperation(value = "Get most widely used tag for user with highest order price", response = TagHateoas.class)
+    @ApiOperation(value = "Get most widely used tag for user with highest order price", response = TagDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved tag"),
             @ApiResponse(code = 400, message = "The tag can't be fetched due to bad request"),
@@ -114,9 +71,6 @@ public class TagController {
     )
     @GetMapping("/mostWidelyUsedTag")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<TagHateoas> getMostWidelyUsedTag() {
-        TagDto tagDto = tagService.findMostWidelyUsedTag();
-        TagHateoas tagHateoas = TagHateoas.build(tagDto, tagHateoasProvider);
-        return new ResponseEntity<>(tagHateoas, OK);
-    }
+    ResponseEntity<TagDto> getMostWidelyUsedTag();
+
 }

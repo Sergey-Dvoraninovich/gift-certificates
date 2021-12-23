@@ -1,5 +1,6 @@
 package com.epam.esm.service;
 
+import com.epam.esm.dto.PageDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.mapping.TagDtoMapper;
 import com.epam.esm.entity.Tag;
@@ -13,6 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,13 +51,13 @@ public class TagServiceTest {
     void testFindAll() {
         List<Tag> tags = provideTagsList();
         List<TagDto> tagsDto = provideTagsDtoList();
-        when(tagRepository.findAll(PAGE_NUMBER, PAGE_SIZE)).thenReturn(provideTagsList());
+        when(tagRepository.findAll(PageRequest.of(PAGE_NUMBER, PAGE_SIZE))).thenReturn((Page<Tag>) provideTagsList());
         for (int i = 0; i < tags.size(); i++) {
             when(tagDtoMapper.toDto(tags.get(i))).thenReturn(tagsDto.get(i));
         }
 
         List<TagDto> expectedDtoList = provideTagsDtoList();
-        List<TagDto> actualDtoList = tagService.findAll(PAGE_NUMBER, PAGE_SIZE);
+        List<TagDto> actualDtoList = tagService.findAll(new PageDto(PAGE_NUMBER, PAGE_SIZE));
 
         assertEquals(expectedDtoList, actualDtoList);
     }
@@ -74,7 +77,7 @@ public class TagServiceTest {
     @Test
     void testFindByName() {
         Tag tag = provideTag();
-        when(tagRepository.findByName(tag.getName())).thenReturn(Optional.of(tag));
+        when(tagRepository.findTagByName(tag.getName())).thenReturn(Optional.of(tag));
         TagDto tagDto = provideTagDto();
         when(tagDtoMapper.toDto(tag)).thenReturn(tagDto);
 
@@ -86,8 +89,8 @@ public class TagServiceTest {
     @Test
     void testCreate() {
         Tag tag = provideTag();
-        when(tagRepository.findByName(tag.getName())).thenReturn(Optional.empty());
-        when(tagRepository.create(tag)).thenReturn(tag);
+        when(tagRepository.findTagByName(tag.getName())).thenReturn(Optional.empty());
+        when(tagRepository.save(tag)).thenReturn(tag);
         TagDto tagDto = provideTagDto();
         when(tagDtoMapper.toDto(tag)).thenReturn(tagDto);
         when(tagDtoMapper.toEntity(tagDto)).thenReturn(tag);
@@ -102,7 +105,6 @@ public class TagServiceTest {
     void testDelete() {
         Tag tag = provideTag();
         when(tagRepository.findById(tag.getId())).thenReturn(Optional.of(tag));
-        when(tagRepository.delete(tag)).thenReturn(true);
 
         tagService.delete(tag.getId());
     }

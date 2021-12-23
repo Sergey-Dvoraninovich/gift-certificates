@@ -2,29 +2,36 @@ package com.epam.esm.repository;
 
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
  * The interface User repository.
  */
-public interface UserRepository {
+@Repository
+public interface UserRepository extends PagingAndSortingRepository<User, Long>,
+        CrudRepository<User, Long> {
     /**
      * Count amount of all Users.
      *
      * @return the long
      */
-    Long countAll();
+    long count();
 
     /**
      * Find all Users.
      *
-     * @param pageNumber the page number
-     * @param pageSize   the page size
+     * @param pageable the Pageable
      * @return the list of Users
      */
-    List<User> findAll(int pageNumber, int pageSize);
+    Page<User> findAll(Pageable pageable);
 
     /**
      * Find User by id.
@@ -43,37 +50,30 @@ public interface UserRepository {
     Optional<User> findByLogin(String login);
 
     /**
-     * Create User.
+     * Create or update User.
      *
      * @param user the User
      * @return the created User
      */
-    User create(User user);
-
-
-    /**
-     * Update User.
-     *
-     * @param user the User
-     * @return the updated User
-     */
-    User update(User user);
+    User save(User user);
 
     /**
      * Count amount of all Use Orders.
      *
-     * @param id the User id
+     * @param userId the User id
      * @return the long amount of User Orders
      */
-    Long countAllUserOrders(long id);
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.user.id = :userId")
+    long countAllUserOrders(@Param("userId") long userId);
+
 
     /**
-     * Find User Orders.
+     * Find user orders list.
      *
-     * @param id         the User id
-     * @param pageNumber the page number
-     * @param pageSize   the page size
-     * @return the list User Orders
+     * @param userId   the User id
+     * @param pageable the pageable
+     * @return the list
      */
-    List<Order> findUserOrders(long id, int pageNumber, int pageSize);
+    @Query("SELECT o FROM Order o WHERE o.user.id = :userId")
+    Page<Order> findUserOrders(@Param("userId") long userId, Pageable pageable);
 }

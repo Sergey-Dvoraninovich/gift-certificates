@@ -1,5 +1,6 @@
 package com.epam.esm.service;
 
+import com.epam.esm.dto.PageDto;
 import com.epam.esm.dto.TagDto;
 
 import java.util.List;
@@ -19,11 +20,10 @@ public interface TagService {
     /**
      * Find all Tags.
      *
-     * @param pageNumber the page number
-     * @param pageSize   the page size
+     * @param pageDto the Page Dto
      * @return the list of Tags
      */
-    List<TagDto> findAll(Integer pageNumber, Integer pageSize);
+    List<TagDto> findAll(PageDto pageDto);
 
     /**
      * Find Tag by id.

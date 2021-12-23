@@ -1,7 +1,9 @@
 package com.epam.esm.service;
 
+import com.epam.esm.dto.GiftCertificateFilterDto;
 import com.epam.esm.dto.GiftCertificateRequestDto;
 import com.epam.esm.dto.GiftCertificateResponseDto;
+import com.epam.esm.dto.PageDto;
 
 import java.util.List;
 
@@ -9,34 +11,10 @@ import java.util.List;
  * The interface Gift certificate service.
  */
 public interface GiftCertificateService {
-    /**
-     * Count amount of all Gift Certificates.
-     *
-     * @param tagNames               the tag names search param
-     * @param certificateName        the certificate name search param
-     * @param orderingName           the name ordering type
-     * @param certificateDescription the certificate description search param
-     * @param orderingCreateDate     the create date ordering type
-     * @return the long
-     */
-    Long countAll(String[] tagNames, String certificateName, String orderingName,
-                  String certificateDescription, String orderingCreateDate);
 
-    /**
-     * Find all Gift Certificates.
-     *
-     * @param tagNames               the tag names search param
-     * @param certificateName        the certificate name search param
-     * @param orderingName           the name ordering type
-     * @param certificateDescription the certificate description search param
-     * @param orderingCreateDate     the create date ordering type
-     * @param pageNumber             the page number
-     * @param pageSize               the page size
-     * @return the list
-     */
-    List<GiftCertificateResponseDto> findAll(String[] tagNames, String certificateName, String orderingName,
-                                             String certificateDescription, String orderingCreateDate,
-                                             Integer pageNumber, Integer pageSize);
+    Long countAll(GiftCertificateFilterDto filterDto);
+
+    List<GiftCertificateResponseDto> findAll(GiftCertificateFilterDto filterDto, PageDto pageDto);
 
     /**
      * Find Gift Certificate by id.

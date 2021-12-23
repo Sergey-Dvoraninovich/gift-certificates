@@ -1,5 +1,6 @@
 package com.epam.esm.service;
 
+import com.epam.esm.dto.PageDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.UserOrderResponseDto;
 import com.epam.esm.dto.mapping.UserDtoMapper;
@@ -19,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -61,13 +63,13 @@ public class UserServiceTest {
     void testFindAll() {
         List<User> users = provideUsersList();
         List<UserDto> usersDto = provideUsersDtoList();
-        when(userRepository.findAll(PAGE_NUMBER, PAGE_SIZE)).thenReturn(users);
+        when(userRepository.findAll(new PageDto(PAGE_NUMBER, PAGE_SIZE).toPageable())).thenReturn((Page<User>) users);
         for (int i = 0; i < users.size(); i++) {
             when(userDtoMapper.toDto(users.get(i))).thenReturn(usersDto.get(i));
         }
 
         List<UserDto> expectedDtoList = provideUsersDtoList();
-        List<UserDto> actualDtoList = userService.findAll(PAGE_NUMBER, PAGE_SIZE);
+        List<UserDto> actualDtoList = userService.findAll(new PageDto(PAGE_NUMBER, PAGE_SIZE));
 
         assertEquals(expectedDtoList, actualDtoList);
     }
@@ -117,12 +119,12 @@ public class UserServiceTest {
         List<UserOrderResponseDto> userOrdersDto = provideUserOrderResponsesDtoList();
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(userRepository.findUserOrders(user.getId(), PAGE_NUMBER, PAGE_SIZE)).thenReturn(userOrders);
+        when(userRepository.findUserOrders(user.getId(), new PageDto(PAGE_NUMBER, PAGE_SIZE).toPageable())).thenReturn((Page<Order>) userOrders);
         for (int i = 0; i < userOrders.size(); i++) {
             when(userOrderResponseDtoMapper.toDto(userOrders.get(i))).thenReturn(userOrdersDto.get(i));
         }
 
-        List<UserOrderResponseDto> actualOrdersDto = userService.findUserOrders(user.getId(), PAGE_NUMBER, PAGE_SIZE);
+        List<UserOrderResponseDto> actualOrdersDto = userService.findUserOrders(user.getId(), new PageDto(PAGE_NUMBER, PAGE_SIZE));
 
         assertEquals(userOrdersDto, actualOrdersDto);
     }

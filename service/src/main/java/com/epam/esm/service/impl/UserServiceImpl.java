@@ -1,6 +1,11 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dto.*;
+import com.epam.esm.dto.PageDto;
+import com.epam.esm.dto.TokenDto;
+import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.UserOrderResponseDto;
+import com.epam.esm.dto.UserSignInDto;
+import com.epam.esm.dto.UserSignUpDto;
 import com.epam.esm.dto.mapping.UserDtoMapper;
 import com.epam.esm.dto.mapping.UserOrderResponseDtoMapper;
 import com.epam.esm.entity.Order;
@@ -52,12 +57,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Long countAll() {
-        return userRepository.countAll();
+        return userRepository.count();
     }
 
     @Override
-    public List<UserDto> findAll(Integer pageNumber, Integer pageSize) {
-        return userRepository.findAll(pageNumber, pageSize)
+    public List<UserDto> findAll(PageDto pageDto) {
+        return userRepository.findAll(pageDto.toPageable())
                 .stream()
                 .map(userMapper::toDto)
                 .collect(Collectors.toList());
@@ -76,7 +81,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = buildUser(userSignUpDto, USER);
-        userRepository.create(user);
+        userRepository.save(user);
 
         authenticateUser(user);
 
@@ -137,18 +142,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Long countAllUserOrders(long id) {
-        return userRepository.countAllUserOrders(id);
+    public Long countAllUserOrders(long userId) {
+        return userRepository.countAllUserOrders(userId);
     }
 
     @Override
-    public List<UserOrderResponseDto> findUserOrders(long id, Integer pageNumber, Integer pageSize) {
-        Optional<User> user = userRepository.findById(id);
-        if (!user.isPresent()) {
-            throw new EntityNotFoundException(id, UserDto.class);
+    public List<UserOrderResponseDto> findUserOrders(long userId, PageDto pageDto) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new EntityNotFoundException(userId, UserDto.class);
         }
-        List<Order> orders = userRepository.findUserOrders(id, pageNumber, pageSize);
-        return orders.stream()
+        return userRepository.findUserOrders(userId, pageDto.toPageable()).stream()
                 .map(userOrderResponseDtoMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -156,10 +160,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserOrderResponseDto findUserOrder(long userId, long orderId){
         Optional<Order> order = orderRepository.findById(orderId);
-        if (!order.isPresent()) {
-            throw new EntityNotFoundException(orderId, UserOrderResponseDto.class);
-        }
-        if (order.get().getUser().getId() != userId) {
+        if (order.isEmpty()) {
             throw new EntityNotFoundException(orderId, UserOrderResponseDto.class);
         }
         return userOrderResponseDtoMapper.toDto(order.get());
@@ -181,7 +182,7 @@ public class UserServiceImpl implements UserService {
         user.setName(name);
         user.setSurname(surname);
         user.setEmail(email);
-        user.setRole(userRoleRepository.findUserRoleByName(USER));
+        user.setRole(userRoleRepository.findUserRoleByName(userRoleName));
 
         return user;
     }

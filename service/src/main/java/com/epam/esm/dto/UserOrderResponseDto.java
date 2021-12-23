@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -14,7 +15,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class UserOrderResponseDto {
+public class UserOrderResponseDto extends RepresentationModel<UserOrderResponseDto>  {
     @ApiModelProperty(notes = "The GiftCertificate order ID")
     private long id;
 

@@ -1,86 +1,81 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.dto.GiftCertificateFilterDto;
 import com.epam.esm.dto.GiftCertificateRequestDto;
 import com.epam.esm.dto.GiftCertificateResponseDto;
+import com.epam.esm.dto.PageDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.mapping.GiftCertificateRequestDtoMapper;
 import com.epam.esm.dto.mapping.GiftCertificateResponseDtoMapper;
-import com.epam.esm.dto.mapping.TagDtoMapper;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
 import com.epam.esm.repository.GiftCertificateRepository;
+import com.epam.esm.repository.GiftCertificateSpecificationBuilder;
 import com.epam.esm.repository.OrderingType;
 import com.epam.esm.repository.TagRepository;
+import com.epam.esm.repository.TagSpecificationBuilder;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.validator.GiftCertificateSearchParamsValidator;
 import com.epam.esm.validator.GiftCertificateRequestValidator;
-import com.epam.esm.validator.TagValidator;
 import com.epam.esm.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.epam.esm.repository.OrderingType.DESC;
 import static com.epam.esm.validator.ValidationError.IMPOSSIBLE_TO_UPDATE_SEVERAL_GIFT_CERTIFICATE_FIELDS;
 import static com.epam.esm.validator.ValidationError.NO_GIFT_CERTIFICATE_FIELDS_TO_UPDATE;
 
 @Service
 @RequiredArgsConstructor
 public class GiftCertificateServiceImpl implements GiftCertificateService {
+    private static final String NAME = "name";
+    private static final String CREATE_DATE = "createDate";
+
     private final GiftCertificateRepository giftCertificateRepository;
-    private final TagRepository tagRepository;
     private final GiftCertificateRequestValidator giftCertificateRequestValidator;
-    private final TagValidator tagValidator;
-    private final GiftCertificateSearchParamsValidator searchParamsValidator;
     private final GiftCertificateRequestDtoMapper giftCertificateRequestDtoMapper;
     private final GiftCertificateResponseDtoMapper giftCertificateResponseDtoMapper;
-    private final TagDtoMapper tagDtoMapper;
+    private final TagRepository tagRepository;
 
     @Override
-    public Long countAll(String[] tagNames, String certificateName, String orderingName, String certificateDescription, String orderingCreateDate) {
-        List<String> tagNamesArray = tagNames == null ? null : Arrays.asList(tagNames);
-        List<ValidationError> validationErrors = searchParamsValidator.validate(tagNamesArray, certificateName, orderingName,
-                certificateDescription, orderingCreateDate);
-        if (!validationErrors.isEmpty()) {
-            throw new InvalidEntityException(validationErrors, String.class);
-        }
+    public Long countAll(GiftCertificateFilterDto filterDto) {
 
-        OrderingType orderingNameType = orderingName == null ? null : OrderingType.valueOf(orderingName);
-        OrderingType orderingCreateDateType = orderingCreateDate == null ? null : OrderingType.valueOf(orderingCreateDate);
+        Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
+                .certificateName(filterDto.getName())
+                .certificateDescription(filterDto.getDescription())
+                .certificateTagNames(getTags(filterDto.getTagNames()))
+                .build();
 
-        return giftCertificateRepository.countAll(tagNamesArray, certificateName, orderingNameType,
-                certificateDescription, orderingCreateDateType);
+        return giftCertificateRepository.count(specification);
     }
 
     @Override
-    public List<GiftCertificateResponseDto> findAll(String[] tagNames, String certificateName, String orderingName,
-                                                    String certificateDescription, String orderingCreateDate,
-                                                    Integer pageNumber, Integer pageSize) {
+    public List<GiftCertificateResponseDto> findAll(GiftCertificateFilterDto filterDto, PageDto pageDto) {
 
-        List<String> tagNamesArray = tagNames == null ? null : Arrays.asList(tagNames);
-        List<ValidationError> validationErrors = searchParamsValidator.validate(tagNamesArray, certificateName, orderingName,
-                                                                                certificateDescription, orderingCreateDate);
-        if (!validationErrors.isEmpty()) {
-            throw new InvalidEntityException(validationErrors, String.class);
-        }
+        Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
+                .certificateName(filterDto.getName())
+                .certificateDescription(filterDto.getDescription())
+                .certificateTagNames(getTags(filterDto.getTagNames()))
+                .build();
 
-        OrderingType orderingNameType = orderingName == null ? null : OrderingType.valueOf(orderingName);
-        OrderingType orderingCreateDateType = orderingCreateDate == null ? null : OrderingType.valueOf(orderingCreateDate);
-        List<GiftCertificate> certificates = giftCertificateRepository.findAll(tagNamesArray, certificateName, orderingNameType,
-                                                                                   certificateDescription, orderingCreateDateType,
-                                                                                   pageNumber, pageSize);
-        return certificates.stream()
+        Pageable pageable = createOrderedPageable(filterDto, pageDto);
+        return giftCertificateRepository.findAll(specification, pageable)
+                .stream()
                 .map(giftCertificateResponseDtoMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -118,7 +113,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         GiftCertificate certificate = giftCertificateRequestDtoMapper.toEntity(certificateDto);
         certificate.setGiftCertificateTags(certificateTags);
 
-        certificate = giftCertificateRepository.create(certificate);
+        certificate = giftCertificateRepository.save(certificate);
         return giftCertificateResponseDtoMapper.toDto(certificate);
     }
 
@@ -158,7 +153,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
 
         updateFieldsWithoutTags(storedCertificate, certificateDto);
-        storedCertificate = giftCertificateRepository.update(storedCertificate);
+        storedCertificate = giftCertificateRepository.save(storedCertificate);
         return giftCertificateResponseDtoMapper.toDto(storedCertificate);
     }
 
@@ -206,5 +201,47 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             }
         }
         return resultCertificateTags;
+    }
+
+    private List<Tag> getTags(List<String> tagNames) {
+        List<Tag> tags = null;
+        if (tagNames != null) {
+            tags = tagRepository.findAll(new TagSpecificationBuilder()
+                    .tagNames(tagNames)
+                    .build());
+        }
+        return tags;
+    }
+
+    private Pageable createOrderedPageable(GiftCertificateFilterDto filterDto, PageDto pageDto) {
+        Sort sort = null;
+        if (filterDto.getOrderingName() != null) {
+            sort = getSort(NAME, filterDto.getOrderingName());
+        }
+
+        if (filterDto.getOrderingCreateDate() != null) {
+            Sort createDateSort = getSort(CREATE_DATE, filterDto.getOrderingCreateDate());
+            if (sort != null) {
+                sort = sort.and(createDateSort);
+            }
+            else {
+                sort = createDateSort;
+            }
+        }
+
+        return sort == null
+                ? PageRequest.of(pageDto.getPageNumber() - 1, pageDto.getPageSize())
+                : PageRequest.of(pageDto.getPageNumber() - 1, pageDto.getPageSize(), sort);
+    }
+
+    private Sort getSort(String orderingColumn, OrderingType orderingType) {
+        Sort sort = Sort.by(orderingColumn);
+        if (orderingType.equals(DESC)) {
+            sort.descending();
+        }
+        else {
+            sort.ascending();
+        }
+        return sort;
     }
 }
