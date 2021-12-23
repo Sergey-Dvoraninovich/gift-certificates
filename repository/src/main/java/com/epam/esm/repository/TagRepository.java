@@ -1,6 +1,15 @@
 package com.epam.esm.repository;
 
+import com.epam.esm.entity.Order;
 import com.epam.esm.entity.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,22 +17,31 @@ import java.util.Optional;
 /**
  * The interface Tag repository.
  */
-public interface TagRepository {
+@Repository
+public interface TagRepository extends PagingAndSortingRepository<Tag, Long>,
+        CrudRepository<Tag, Long> {
     /**
      * Count all Tags amount.
      *
      * @return the long amount of Tags
      */
-    Long countAll();
+    long count();
 
     /**
      * Find all Tags.
      *
-     * @param pageNumber the page number
-     * @param pageSize   the page size
+     * @param pageable the Pageable
      * @return the list of Tags
      */
-    List<Tag> findAll(int pageNumber, int pageSize);
+    Page<Tag> findAll(Pageable pageable);
+
+    /**
+     * Find all Tags.
+     *
+     * @param specification the specification
+     * @return the list of Tags
+     */
+    List<Tag> findAll(Specification<Tag> specification);
 
     /**
      * Find Tag by id.
@@ -31,7 +49,7 @@ public interface TagRepository {
      * @param id the id of Tag
      * @return the optional Tag
      */
-    Optional<Tag> findById(long id);
+    Optional<Tag> findById(Long id);
 
     /**
      * Find Tag by name.
@@ -39,7 +57,7 @@ public interface TagRepository {
      * @param name the Tag name
      * @return the optional Tag
      */
-    Optional<Tag> findByName(String name);
+    Optional<Tag> findTagByName(String name);
 
     /**
      * Create Tag.
@@ -47,20 +65,39 @@ public interface TagRepository {
      * @param tag the Tag
      * @return the Tag
      */
-    Tag create(Tag tag);
+    Tag save(Tag tag);
 
     /**
      * Delete Tag.
      *
      * @param tag the Tag
-     * @return the boolean result of Tag deletion
      */
-    boolean delete(Tag tag);
+    void delete(Tag tag);
 
     /**
-     * Find most widely used Tag of User with highest order coast
+     * Find Orders highest coast.
      *
-     * @return the optional Tag
+     * @return the list
      */
-    Optional<Tag> findMostWidelyUsedTag();
+    @Query( "SELECT o FROM Order o "
+            + "JOIN o.user u "
+            + "JOIN o.orderItems i "
+            + "GROUP BY o "
+            + "ORDER BY SUM(i.price) DESC")
+    List<Order> findOrdersHighestCoast();
+
+    /**
+     * Find most widely used User tags list.
+     *
+     * @param userId the User id
+     * @return the list
+     */
+    @Query( "SELECT t FROM Order o "
+            + "JOIN o.user u "
+            + "JOIN o.orderItems i "
+            + "JOIN i.giftCertificate c "
+            + "JOIN c.giftCertificateTags t "
+            + "WHERE u.id = :userId "
+            + "GROUP BY t")
+    List<Tag> findMostWidelyUsedUserTags(@Param("userId") long userId);
 }

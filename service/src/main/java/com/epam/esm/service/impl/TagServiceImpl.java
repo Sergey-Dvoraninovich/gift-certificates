@@ -1,14 +1,15 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.dto.PageDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.mapping.TagDtoMapper;
+import com.epam.esm.entity.Order;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
-import com.epam.esm.validator.PaginationValidator;
 import com.epam.esm.validator.TagValidator;
 import com.epam.esm.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
@@ -25,16 +26,15 @@ public class TagServiceImpl implements TagService {
     private final TagRepository tagRepository;
     private final TagValidator tagValidator;
     private final TagDtoMapper tagDtoMapper;
-    private final PaginationValidator paginationValidator;
 
     @Override
     public Long countAll() {
-        return tagRepository.countAll();
+        return tagRepository.count();
     }
 
     @Override
-    public List<TagDto> findAll(Integer pageNumber, Integer pageSize){
-        return tagRepository.findAll(pageNumber, pageSize)
+    public List<TagDto> findAll(PageDto pageDto){
+        return tagRepository.findAll(pageDto.toPageable())
                 .stream()
                 .map(tagDtoMapper::toDto)
                 .collect(Collectors.toList());
@@ -53,7 +53,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagDto findByName(String name){
-        Optional<Tag> tag = tagRepository.findByName(name);
+        Optional<Tag> tag = tagRepository.findTagByName(name);
         if (tag.isPresent()) {
             return tagDtoMapper.toDto(tag.get());
         }
@@ -73,11 +73,11 @@ public class TagServiceImpl implements TagService {
         }
 
         String name = tag.getName();
-        if (tagRepository.findByName(name).isPresent()) {
+        if (tagRepository.findTagByName(name).isPresent()) {
             throw new EntityAlreadyExistsException(TagDto.class);
         }
 
-        tag = tagRepository.create(tag);
+        tag = tagRepository.save(tag);
         return tagDtoMapper.toDto(tag);
     }
 
@@ -85,7 +85,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public void delete(long id) {
         Optional<Tag> tag = tagRepository.findById(id);
-        if (!tag.isPresent()){
+        if (tag.isEmpty()){
             throw new EntityNotFoundException(id, TagDto.class);
         }
         tagRepository.delete(tag.get());
@@ -93,10 +93,17 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagDto findMostWidelyUsedTag() {
-        Optional<Tag> optionalTag = tagRepository.findMostWidelyUsedTag();
-        if (!optionalTag.isPresent()) {
+        List<Order> orders = tagRepository.findOrdersHighestCoast();
+        if (orders.size() == 0) {
             throw new EntityNotFoundException(TagDto.class);
         }
-        return tagDtoMapper.toDto(optionalTag.get());
+
+        long userId = orders.get(0).getUser().getId();
+        List<Tag> tags = tagRepository.findMostWidelyUsedUserTags(userId);
+        if (tags.size() == 0) {
+            throw new EntityNotFoundException(TagDto.class);
+        }
+
+        return tagDtoMapper.toDto(tags.get(0));
     }
 }
