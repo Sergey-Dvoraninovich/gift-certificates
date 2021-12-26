@@ -71,4 +71,15 @@ public interface GiftCertificateController extends PagedController<GiftCertifica
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     ResponseEntity<Void> deleteGiftCertificate(@ApiParam(value = "The GiftCertificate ID") @PathVariable("id") @Min(1) long id);
+
+    @ApiOperation(value = "Make GiftCertificate available", response = GiftCertificateResponseDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated a GiftCertificate availability"),
+            @ApiResponse(code = 400, message = "The GiftCertificate can't be updated due to bad request"),
+            @ApiResponse(code = 404, message = "The GiftCertificate you were trying to reach is not found")
+    }
+    )
+    @PostMapping("/{id}/makeAvailable")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    ResponseEntity<GiftCertificateResponseDto> makeGiftCertificateAvailable(@ApiParam(value = "The GiftCertificate ID") @PathVariable("id") @Min(1) long id);
 }

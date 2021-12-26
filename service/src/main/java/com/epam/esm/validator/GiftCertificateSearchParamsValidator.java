@@ -8,17 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.epam.esm.validator.ValidationError.INVALID_CREATE_DATE_ORDERING_TYPE;
-import static com.epam.esm.validator.ValidationError.INVALID_NAME_ORDERING_TYPE;
-import static com.epam.esm.validator.ValidationError.INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION;
-import static com.epam.esm.validator.ValidationError.INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_NAME;
-import static com.epam.esm.validator.ValidationError.INVALID_SYMBOLS_IN_TAG_NAME;
-import static com.epam.esm.validator.ValidationError.TOO_LONG_GIFT_CERTIFICATE_DESCRIPTION;
-import static com.epam.esm.validator.ValidationError.TOO_LONG_GIFT_CERTIFICATE_NAME;
-import static com.epam.esm.validator.ValidationError.TOO_LONG_TAG_NAME;
-import static com.epam.esm.validator.ValidationError.TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION;
-import static com.epam.esm.validator.ValidationError.TOO_SHORT_GIFT_CERTIFICATE_NAME;
-import static com.epam.esm.validator.ValidationError.TOO_SHORT_TAG_NAME;
+import static com.epam.esm.validator.ValidationError.*;
 
 @Component
 public class GiftCertificateSearchParamsValidator {
@@ -34,8 +24,12 @@ public class GiftCertificateSearchParamsValidator {
     private static final int DESCRIPTION_MIN_LENGTH = 2;
     private static final int DESCRIPTION_MAX_LENGTH = 500;
 
+    private static final String TRUE_PARAM = "true";
+    private static final String FALSE_PARAM = "false";
+
+
     public List<ValidationError> validate(List<String> tagNames, String certificateName, String orderingName,
-                                          String certificateDescription, String orderingCreateDate) {
+                                          String certificateDescription, String orderingCreateDate, String showDisabled) {
         List<ValidationError> validationErrors = new ArrayList<>();
 
         if (tagNames != null) {
@@ -93,6 +87,13 @@ public class GiftCertificateSearchParamsValidator {
             boolean result = orderingTypes.stream().filter(type -> type.name().equals(orderingCreateDate)).count() == 1;
             if (!result) {
                 validationErrors.add(INVALID_CREATE_DATE_ORDERING_TYPE);
+            }
+        }
+
+        if (showDisabled != null) {
+            if (!showDisabled.toLowerCase().equals(TRUE_PARAM)
+                && !showDisabled.toLowerCase().equals(FALSE_PARAM)) {
+                validationErrors.add(INVALID_SHOW_DISABLED_PARAM);
             }
         }
 

@@ -162,6 +162,10 @@ public class UserServiceImpl implements UserService {
         Optional<Order> order = orderRepository.findById(orderId);
         if (order.isEmpty()) {
             throw new EntityNotFoundException(orderId, UserOrderResponseDto.class);
+        } else {
+            if (order.get().getUser().getId() != userId) {
+                throw new EntityNotFoundException(orderId, UserOrderResponseDto.class);
+            }
         }
         return userOrderResponseDtoMapper.toDto(order.get());
     }

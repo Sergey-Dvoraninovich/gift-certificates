@@ -81,8 +81,15 @@ public class GiftCertificateControllerImpl implements GiftCertificateController 
     }
 
     @Override
+    public ResponseEntity<GiftCertificateResponseDto> makeGiftCertificateAvailable(@ApiParam(value = "The GiftCertificate ID") @PathVariable("id") @Min(1) long id) {
+        GiftCertificateResponseDto availableGiftCertificate = giftCertificateService.makeAvailable(id);
+        availableGiftCertificate.add(giftCertificateLinksProvider.provide(availableGiftCertificate));
+        return new ResponseEntity<>(availableGiftCertificate, OK);
+    }
+
+    @Override
     public ResponseEntity<Void> deleteGiftCertificate(@ApiParam(value = "The GiftCertificate ID") @PathVariable("id") @Min(1) long id) {
-        giftCertificateService.delete(id);
+        giftCertificateService.disable(id);
         return new ResponseEntity<>(NO_CONTENT);
     }
 }

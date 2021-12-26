@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
@@ -51,7 +52,8 @@ public class TagServiceTest {
     void testFindAll() {
         List<Tag> tags = provideTagsList();
         List<TagDto> tagsDto = provideTagsDtoList();
-        when(tagRepository.findAll(PageRequest.of(PAGE_NUMBER, PAGE_SIZE))).thenReturn((Page<Tag>) provideTagsList());
+        Page<Tag> tagsPage = new PageImpl<>(tags);
+        when(tagRepository.findAll(PageRequest.of(PAGE_NUMBER - 1, PAGE_SIZE))).thenReturn(tagsPage);
         for (int i = 0; i < tags.size(); i++) {
             when(tagDtoMapper.toDto(tags.get(i))).thenReturn(tagsDto.get(i));
         }

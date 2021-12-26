@@ -1,25 +1,7 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.dto.GiftCertificateFilterDto;
-import com.epam.esm.dto.GiftCertificateResponseDto;
-import com.epam.esm.dto.OrderCreateRequestDto;
-import com.epam.esm.dto.OrderItemDto;
-import com.epam.esm.dto.OrderResponseDto;
-import com.epam.esm.dto.OrderUpdateRequestDto;
-import com.epam.esm.dto.TagDto;
-import com.epam.esm.dto.TokenDto;
-import com.epam.esm.dto.UserDto;
-import com.epam.esm.dto.UserOrderResponseDto;
-import com.epam.esm.dto.UserSignInDto;
-import com.epam.esm.dto.UserSignUpDto;
-import com.epam.esm.exception.EntityAlreadyExistsException;
-import com.epam.esm.exception.EntityNotFoundException;
-import com.epam.esm.exception.ExceptionResponse;
-import com.epam.esm.exception.InvalidEntityException;
-import com.epam.esm.exception.InvalidPaginationException;
-import com.epam.esm.exception.JwtTokenException;
-import com.epam.esm.exception.RefreshTokenException;
-import com.epam.esm.exception.UserAuthenticationException;
+import com.epam.esm.dto.*;
+import com.epam.esm.exception.*;
 import com.epam.esm.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -30,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -54,6 +37,7 @@ public class ApplicationExceptionHandler {
 
     private static final String ENTITY_ALREADY_EXISTS_MESSAGE = "entity_already_exists";
     private static final String ENTITY_NOT_FOUND_MESSAGE = "entity_not_found";
+    private static final String ENTITY_NOT_AVAILABLE_MESSAGE = "entity_not_available";
     private static final String INVALID_ENTITY_MESSAGE = "invalid_entity";
     private static final String INVALID_PAGINATION_MESSAGE = "invalid_pagination";
     private static final String INTERNAL_SERVER_ERROR_MESSAGE = "internal_server_error";
@@ -61,6 +45,7 @@ public class ApplicationExceptionHandler {
     private static final String BODY_CANT_BE_EMPTY_MESSAGE = "body_cant_be_empty";
     private static final String ACCESS_DENIED_MESSAGE = "access_denied";
     private static final String BAD_REQUEST_MESSAGE = "bad_request";
+    private static final String REQUESTED_METHOD_NOT_AVAILABLE_MESSAGE = "requested_method_not_available";
 
     private static final String TAG_MESSAGE = "entities.tag";
     private static final String GIFT_CERTIFICATE_MESSAGE = "entities.gift_certificate";
@@ -151,6 +136,8 @@ public class ApplicationExceptionHandler {
     private static final String INVALID_PAGE_NUMBER_MESSAGE = "invalid_entity.invalid_page_number";
     private static final String TOO_SMALL_PAGE_NUMBER_MESSAGE = "invalid_entity.too_small_page_number";
 
+    private static final String INVALID_SHOW_DISABLED_PARAM_MESSAGE = "invalid_entity.invalid_show_disabled_param";
+
     private static final String INVALID_PAGE_SIZE_MESSAGE = "invalid_entity.invalid_page_size";
     private static final String TOO_SMALL_PAGE_SIZE_MESSAGE = "invalid_entity.too_small_page_size";
     private static final String TOO_BIG_PAGE_SIZE_MESSAGE = "invalid_entity.too_big_page_size";
@@ -167,6 +154,8 @@ public class ApplicationExceptionHandler {
 
     private static final String INVALID_LOGIN_MESSAGE = "invalid_login";
     private static final String INVALID_PASSWORD_MESSAGE = "invalid_password";
+
+    private static final String INVALID_USER_ORDER_MESSAGE = "access_exception.invalid_order_user";
 
     private static final String ERROR_SEPARATOR = ", ";
 
@@ -187,6 +176,12 @@ public class ApplicationExceptionHandler {
 
         String errorMessage = String.format(getMessage(ENTITY_ALREADY_EXISTS_MESSAGE), entityName, message);
         return buildErrorResponseEntity(CONFLICT, errorMessage, 40901L);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ExceptionResponse> handleEntityNotAvailable(HttpRequestMethodNotSupportedException e) {
+        String errorMessage = getMessage(REQUESTED_METHOD_NOT_AVAILABLE_MESSAGE);
+        return buildErrorResponseEntity(BAD_REQUEST, errorMessage, 40014L);
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
@@ -234,10 +229,32 @@ public class ApplicationExceptionHandler {
         return buildErrorResponseEntity(NOT_FOUND, errorMessage, 40401L);
     }
 
+    @ExceptionHandler(EntityNotAvailableException.class)
+    public ResponseEntity<ExceptionResponse> handleEntityNotAvailable(EntityNotAvailableException e) {
+        Class<?> entityClass = e.getCauseEntity();
+        String entityName = getEntityMessage(entityClass, ENTITY_PLACEHOLDER_MESSAGE);
+
+        String errorMessage = String.format(getMessage(ENTITY_NOT_AVAILABLE_MESSAGE), entityName, e.getEntityId());
+        return buildErrorResponseEntity(BAD_REQUEST, errorMessage, 40013L);
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ExceptionResponse> handleAccessDenied(AccessDeniedException e) {
-        String errorMessage = String.format(getMessage(ACCESS_DENIED_MESSAGE));
+        String errorMessage = getMessage(ACCESS_DENIED_MESSAGE);
         return buildErrorResponseEntity(FORBIDDEN, errorMessage, 40301L);
+    }
+
+    @ExceptionHandler(AccessException.class)
+    public ResponseEntity<ExceptionResponse> handleAccessDenied(AccessException e) {
+        String errorMessage = getMessage(ACCESS_DENIED_MESSAGE);;
+        AccessException.State error = e.getState();
+        switch (error) {
+            case INVALID_ORDER_USER: {
+                errorMessage = getMessage(INVALID_USER_ORDER_MESSAGE);
+                break;
+            }
+        }
+        return buildErrorResponseEntity(BAD_REQUEST, errorMessage, 400014L);
     }
 
     @ExceptionHandler(InvalidPaginationException.class)
@@ -517,6 +534,11 @@ public class ApplicationExceptionHandler {
                 }
                 case INVALID_ORDER_ORDERING_TYPE: {
                     errorLine.append(getMessage(INVALID_ORDER_ORDERING_TYPE_MESSAGE));
+                    break;
+                }
+
+                case INVALID_SHOW_DISABLED_PARAM: {
+                    errorLine.append(getMessage(INVALID_SHOW_DISABLED_PARAM_MESSAGE));
                     break;
                 }
             }

@@ -5,10 +5,7 @@ import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.UserOrderResponseDto;
 import com.epam.esm.dto.mapping.UserDtoMapper;
 import com.epam.esm.dto.mapping.UserOrderResponseDtoMapper;
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Order;
-import com.epam.esm.entity.OrderItem;
-import com.epam.esm.entity.User;
+import com.epam.esm.entity.*;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.UserRepository;
@@ -21,6 +18,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -63,7 +62,8 @@ public class UserServiceTest {
     void testFindAll() {
         List<User> users = provideUsersList();
         List<UserDto> usersDto = provideUsersDtoList();
-        when(userRepository.findAll(new PageDto(PAGE_NUMBER, PAGE_SIZE).toPageable())).thenReturn((Page<User>) users);
+        Page<User> usersPage = new PageImpl<>(users);
+        when(userRepository.findAll(PageRequest.of(PAGE_NUMBER - 1, PAGE_SIZE))).thenReturn(usersPage);
         for (int i = 0; i < users.size(); i++) {
             when(userDtoMapper.toDto(users.get(i))).thenReturn(usersDto.get(i));
         }
@@ -117,9 +117,10 @@ public class UserServiceTest {
         User user = provideUsersList().get(0);
         List<Order> userOrders = provideUserOrdersList();
         List<UserOrderResponseDto> userOrdersDto = provideUserOrderResponsesDtoList();
+        Page<Order> userOrdersPage = new PageImpl<>(userOrders);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(userRepository.findUserOrders(user.getId(), new PageDto(PAGE_NUMBER, PAGE_SIZE).toPageable())).thenReturn((Page<Order>) userOrders);
+        when(userRepository.findUserOrders(user.getId(),PageRequest.of(PAGE_NUMBER - 1, PAGE_SIZE))).thenReturn(userOrdersPage);
         for (int i = 0; i < userOrders.size(); i++) {
             when(userOrderResponseDtoMapper.toDto(userOrders.get(i))).thenReturn(userOrdersDto.get(i));
         }

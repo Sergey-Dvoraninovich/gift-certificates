@@ -28,6 +28,9 @@ public class GiftCertificateResponseDto extends RepresentationModel<TagDto> {
     @ApiModelProperty(notes = "The GiftCertificate name")
     private String name;
 
+    @ApiModelProperty(notes = "The GiftCertificate availability")
+    private Boolean isAvailable;
+
     @ApiModelProperty(notes = "The GiftCertificate description")
     private String description;
 

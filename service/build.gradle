@@ -9,5 +9,6 @@ dependencies {
     implementation project(":repository")
 
     testImplementation group: 'org.springframework', name: 'spring-test', version: springVersion
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.9.0'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: mockitoVersion
+
 }

@@ -46,5 +46,7 @@ public interface GiftCertificateService {
      *
      * @param id the Gift Certificate id
      */
-    void delete(long id);
+    void disable(long id);
+
+    GiftCertificateResponseDto makeAvailable(long id);
 }

@@ -6,24 +6,18 @@ allprojects {
     }
 
     dependencies {
-        //TODO remove unused dependencies
-        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.6.1'
-        implementation 'commons-codec:commons-codec:1.11'
 
-        implementation group: 'org.springframework.security', name: 'spring-security-web', version: '5.6.0'
-        implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
-
-        implementation group: 'org.springframework.security', name: 'spring-security-core', version: '5.6.0'
-
+        implementation group: 'org.springframework.security', name: 'spring-security-web', version: securityVersion
+        implementation group: 'org.springframework.security', name: 'spring-security-core', version: securityVersion
+        implementation group: 'io.jsonwebtoken', name: 'jjwt', version: jjwtVersion
+        implementation group: 'commons-codec', name: 'commons-codec', version: commonsCodecVersion
 
         implementation group: 'com.h2database', name: 'h2', version: h2Version
 
-
         implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
-        implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.12.5'
+        implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion
         implementation group: 'org.springframework', name: 'spring-context', version: springVersion
         implementation group: 'org.springframework', name: 'spring-tx', version: springVersion
-        implementation group: 'org.springframework', name: 'spring-jdbc', version: springVersion
 
         implementation group: 'org.apache.commons', name: 'commons-lang3', version: commonsLangVersion
         implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: log4jVersion
@@ -31,17 +25,19 @@ allprojects {
         compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
         annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: springDataVersion
         implementation group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: springBootVersion
 
         implementation group: 'javax.validation', name: 'validation-api', version: validationApiVersion
-        implementation 'io.springfox:springfox-swagger2:3.0.0'
-        implementation 'io.springfox:springfox-boot-starter:3.0.0'
+        implementation  group:'io.springfox', name: 'springfox-swagger2', version: swaggerVersion
+        implementation  group: 'io.springfox', name: 'springfox-boot-starter', version: swaggerVersion
 
-        testImplementation 'org.springframework.boot:spring-boot-starter-test:2.5.0'
+
+        testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springTestStarterVersion
         testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion
-        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junitVersion
-        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: junitVersion
-        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: junitVersion
+        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junitJupiterVersion
+        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: junitJupiterVersion
+        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: junitJupiterVersion
     }
 
     test {

@@ -9,6 +9,7 @@ import java.util.List;
 
 public class GiftCertificateSpecificationBuilder {
     private static final String NAME = "name";
+    private static final String IS_AVAILABLE = "isAvailable";
     private static final String DESCRIPTION = "description";
     private static final String GIFT_CERTIFICATE_TAGS = "giftCertificateTags";
 
@@ -28,6 +29,17 @@ public class GiftCertificateSpecificationBuilder {
             Specification<GiftCertificate> partialSpecification
                     = (certificateRoot, criteriaQuery, criteriaBuilder)
                     -> criteriaBuilder.like(certificateRoot.get(NAME), partialName);
+            composedSpecification = composedSpecification.and(partialSpecification);
+        }
+
+        return this;
+    }
+
+    public GiftCertificateSpecificationBuilder certificateAvailability(Boolean isAvailable) {
+        if (isAvailable != null) {
+            Specification<GiftCertificate> partialSpecification
+                    = (certificateRoot, criteriaQuery, criteriaBuilder)
+                    -> criteriaBuilder.equal(certificateRoot.get(IS_AVAILABLE), isAvailable);
             composedSpecification = composedSpecification.and(partialSpecification);
         }
 

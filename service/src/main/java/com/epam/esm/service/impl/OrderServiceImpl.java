@@ -1,27 +1,26 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dto.OrderCreateRequestDto;
-import com.epam.esm.dto.OrderItemDto;
-import com.epam.esm.dto.OrderResponseDto;
-import com.epam.esm.dto.OrderUpdateRequestDto;
-import com.epam.esm.dto.PageDto;
-import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.*;
 import com.epam.esm.dto.mapping.OrderResponseDtoMapper;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.OrderItem;
 import com.epam.esm.entity.User;
+import com.epam.esm.exception.EntityNotAvailableException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderRepository;
+import com.epam.esm.repository.OrderingType;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.validator.OrderCreateValidator;
-import com.epam.esm.validator.OrderSearchParamsValidator;
 import com.epam.esm.validator.OrderUpdateValidator;
 import com.epam.esm.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,9 +29,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.epam.esm.repository.OrderingType.DESC;
+
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
+    private static final String ORDER_CREATE_TIME = "createOrderTime";
+
     private final OrderRepository orderRepository;
     private final GiftCertificateRepository giftCertificateRepository;
     private final UserRepository userRepository;
@@ -41,7 +44,6 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderCreateValidator orderCreateValidator;
     private final OrderUpdateValidator orderUpdateValidator;
-    private final OrderSearchParamsValidator orderSearchParamsValidator;
 
     @Override
     public Long countAll() {
@@ -49,9 +51,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponseDto> findAll(PageDto pageDto){
-
-        return orderRepository.findAll(pageDto.toPageable())
+    public List<OrderResponseDto> findAll(OrderFilterDto orderFilterDto, PageDto pageDto){
+        Pageable pageable = createOrderedPageable(orderFilterDto, pageDto);
+        return orderRepository.findAll(pageable)
                 .stream()
                 .map(orderDtoMapper::toDto)
                 .collect(Collectors.toList());
@@ -106,7 +108,7 @@ public class OrderServiceImpl implements OrderService {
 
         Order order;
         Optional<Order> optionalOrder = orderRepository.findById(id);
-        if (!optionalOrder.isPresent()) {
+        if (optionalOrder.isEmpty()) {
             throw new EntityNotFoundException(id, OrderUpdateRequestDto.class);
         }
         else {
@@ -136,10 +138,14 @@ public class OrderServiceImpl implements OrderService {
         OrderItem orderItem = new OrderItem();
         Optional<GiftCertificate> optionalCertificate;
         optionalCertificate = giftCertificateRepository.findById(orderItemDto.getId());
-        if (!optionalCertificate.isPresent()) {
+        if (optionalCertificate.isEmpty()) {
             throw new EntityNotFoundException(orderItemDto.getId(), OrderItemDto.class);
         }
         else {
+            GiftCertificate certificate = optionalCertificate.get();
+            if (!certificate.getIsAvailable()) {
+                throw new EntityNotAvailableException(orderItemDto.getId(), OrderItemDto.class);
+            }
             orderItem.setGiftCertificate(optionalCertificate.get());
             orderItem.setPrice(optionalCertificate.get().getPrice());
         }
@@ -154,10 +160,31 @@ public class OrderServiceImpl implements OrderService {
                             .filter(storedOrderItem -> storedOrderItem.getGiftCertificate().getId() == orderItemId)
                             .collect(Collectors.toList());
 
-                    return suitableStoredItems.size() == 1
-                            ? suitableStoredItems.get(0)
-                            : createNewOrderItem(orderItemDto);
+                    return suitableStoredItems.size() == 0
+                            ? createNewOrderItem(orderItemDto)
+                            : suitableStoredItems.get(0);
                 })
                 .collect(Collectors.toList());
+    }
+
+    private Pageable createOrderedPageable(OrderFilterDto filterDto, PageDto pageDto) {
+        Sort sort = null;
+        if (filterDto.getOrderingCreateTime() != null) {
+            sort = getSort(ORDER_CREATE_TIME, filterDto.getOrderingCreateTime());
+        }
+
+        return sort == null
+                ? PageRequest.of(pageDto.getPageNumber() - 1, pageDto.getPageSize())
+                : PageRequest.of(pageDto.getPageNumber() - 1, pageDto.getPageSize(), sort);
+    }
+
+    private Sort getSort(String orderingColumn, OrderingType orderingType) {
+        Sort sort = Sort.by(orderingColumn);
+        if (orderingType.equals(DESC)) {
+            sort = sort.descending();
+        } else {
+            sort = sort.ascending();
+        }
+        return sort;
     }
 }

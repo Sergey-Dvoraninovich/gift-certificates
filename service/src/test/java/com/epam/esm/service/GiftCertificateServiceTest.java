@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -70,16 +71,16 @@ public class GiftCertificateServiceTest {
     void testFindAll() {
         GiftCertificateResponseDto certificateDto = provideGiftCertificateResponseDto();
         GiftCertificate certificate = provideGiftCertificate();
-        when(searchParamsValidator.validate(null, null, null, null, null)).thenReturn(Collections.emptyList());
         Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
                 .certificateName(null)
                 .certificateDescription(null)
                 .certificateTagNames(null)
                 .build();
-        when(giftCertificateRepository.findAll(specification, PageRequest.of(PAGE_NUMBER, PAGE_SIZE)))
-                .thenReturn((Page<GiftCertificate>) Arrays.asList(certificate));
+        Page<GiftCertificate> certificatesPage = new PageImpl<>(List.of(certificate));
+        when(giftCertificateRepository.findAll(specification, PageRequest.of(PAGE_NUMBER - 1, PAGE_SIZE)))
+                .thenReturn(certificatesPage);
         when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateDto);
-        List<GiftCertificateResponseDto> expected = Arrays.asList(certificateDto);
+        List<GiftCertificateResponseDto> expected = List.of(certificateDto);
 
         List<GiftCertificateResponseDto> actual = giftCertificateService.findAll(new GiftCertificateFilterDto(), new PageDto(PAGE_NUMBER, PAGE_SIZE));
 
@@ -134,8 +135,6 @@ public class GiftCertificateServiceTest {
         GiftCertificateResponseDto certificateResponseDto = provideGiftCertificateResponseDto();
         certificateResponseDto.setTagsDto(provideTagsDtoForUpdateList());
 
-        when(giftCertificateRequestValidator.validateParams(null, certificateRequestDto.getDescription(),
-                null, null, Collections.emptyList())).thenReturn(Collections.emptyList());
         when(giftCertificateRepository.findById(certificate.getId())).thenReturn(Optional.of(certificate));
         when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateResponseDto);
 
@@ -161,8 +160,6 @@ public class GiftCertificateServiceTest {
         GiftCertificateResponseDto certificateResponseDto = provideGiftCertificateResponseDto();
         certificateResponseDto.setDescription("New description");
 
-        when(giftCertificateRequestValidator.validateParams(null, certificateRequestDto.getDescription(),
-                null, null, Collections.emptyList())).thenReturn(Collections.emptyList());
         when(giftCertificateRepository.findById(certificate.getId())).thenReturn(Optional.of(certificate));
         when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateResponseDto);
 

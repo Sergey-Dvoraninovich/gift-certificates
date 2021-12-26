@@ -13,10 +13,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = TestDatabaseConfig.class)
 @ActiveProfiles(resolver = TestProfileResolver.class)
@@ -34,7 +31,7 @@ public class OrderRepositoryTestCRUD {
         order.setUpdateOrderTime(date);
 
         //When
-        Order actual = orderRepository.create(order);
+        Order actual = orderRepository.save(order);
 
         //Then
         assertNotNull(actual);
@@ -52,7 +49,7 @@ public class OrderRepositoryTestCRUD {
         Order storedOrder = provideStoredOrder(expected);
 
         //When
-        Order actual = orderRepository.update(storedOrder);
+        Order actual = orderRepository.save(storedOrder);
 
         //Then
         assertNotNull(actual);
@@ -68,15 +65,14 @@ public class OrderRepositoryTestCRUD {
         Order order = provideNewOrder();
 
         //Preparation
-        Order storedOrder = orderRepository.create(order);
+        Order storedOrder = orderRepository.save(order);
         assertNotNull(storedOrder);
         assertTrue(storedOrder.getId() > 0);
 
         //When
-        boolean actual = orderRepository.delete(storedOrder);
+        orderRepository.delete(storedOrder);
 
         //Then
-        assertTrue(actual);
         Optional<Order> deletedOrder = orderRepository.findById(storedOrder.getId());
         assertFalse(deletedOrder.isPresent());
     }
@@ -93,7 +89,7 @@ public class OrderRepositoryTestCRUD {
 
     private Order provideStoredOrder(Order order) {
 
-        long generatedId = orderRepository.create(order).getId();
+        long generatedId = orderRepository.save(order).getId();
         assertTrue(generatedId > 0);
 
         return order;

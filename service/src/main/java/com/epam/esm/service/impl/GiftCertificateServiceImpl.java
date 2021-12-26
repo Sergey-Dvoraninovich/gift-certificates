@@ -10,6 +10,7 @@ import com.epam.esm.dto.mapping.GiftCertificateResponseDtoMapper;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.EntityAlreadyExistsException;
+import com.epam.esm.exception.EntityNotAvailableException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
 import com.epam.esm.repository.GiftCertificateRepository;
@@ -55,8 +56,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public Long countAll(GiftCertificateFilterDto filterDto) {
 
+        System.out.println(filterDto.getShowDisabled());
         Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
                 .certificateName(filterDto.getName())
+                .certificateAvailability(filterDto.getShowDisabled() ? null : true)
                 .certificateDescription(filterDto.getDescription())
                 .certificateTagNames(getTags(filterDto.getTagNames()))
                 .build();
@@ -69,6 +72,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
                 .certificateName(filterDto.getName())
+                .certificateAvailability(filterDto.getShowDisabled() ? null : true)
                 .certificateDescription(filterDto.getDescription())
                 .certificateTagNames(getTags(filterDto.getTagNames()))
                 .build();
@@ -121,6 +125,19 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     public GiftCertificateResponseDto update(long id, GiftCertificateRequestDto certificateDto) {
 
+        GiftCertificate storedCertificate;
+        Optional<GiftCertificate> optionalCertificate = giftCertificateRepository.findById(id);
+        if (optionalCertificate.isEmpty()) {
+            throw new EntityNotFoundException(id, GiftCertificateRequestDto.class);
+        }
+        else {
+            storedCertificate = optionalCertificate.get();
+        }
+
+        if (!storedCertificate.getIsAvailable()) {
+            throw new EntityNotAvailableException(id, GiftCertificateRequestDto.class);
+        }
+
         int updatedFieldsAmount = countFieldsToUpdate(certificateDto);
         if (updatedFieldsAmount == 0) {
             throw new InvalidEntityException(Collections.singletonList(NO_GIFT_CERTIFICATE_FIELDS_TO_UPDATE), GiftCertificateRequestDto.class);
@@ -138,15 +155,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             throw new InvalidEntityException(validationErrors, GiftCertificateRequestDto.class);
         }
 
-        GiftCertificate storedCertificate;
-        Optional<GiftCertificate> optionalCertificate = giftCertificateRepository.findById(id);
-        if (!optionalCertificate.isPresent()) {
-            throw new EntityNotFoundException(id, GiftCertificateRequestDto.class);
-        }
-        else {
-            storedCertificate = optionalCertificate.get();
-        }
-
         if (certificateDto.getTagIdsDto() != null) {
             List<Tag> certificateTags = processTagIds(certificateDto.getTagIdsDto());
             storedCertificate.setGiftCertificateTags(certificateTags);
@@ -159,12 +167,27 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     @Transactional
-    public void delete(long id) {
+    public void disable(long id) {
         Optional<GiftCertificate> giftCertificate = giftCertificateRepository.findById(id);
-        if (!giftCertificate.isPresent()){
+        if (giftCertificate.isEmpty()){
             throw new EntityNotFoundException(id, GiftCertificateRequestDto.class);
         }
-        giftCertificateRepository.delete(giftCertificate.get());
+        GiftCertificate storedCertificate = giftCertificate.get();
+        storedCertificate.setIsAvailable(false);
+        giftCertificateRepository.save(storedCertificate);
+    }
+
+    @Override
+    @Transactional
+    public GiftCertificateResponseDto makeAvailable(long id) {
+        Optional<GiftCertificate> giftCertificate = giftCertificateRepository.findById(id);
+        if (giftCertificate.isEmpty()){
+            throw new EntityNotFoundException(id, GiftCertificateRequestDto.class);
+        }
+        GiftCertificate storedCertificate = giftCertificate.get();
+        storedCertificate.setIsAvailable(true);
+        giftCertificateRepository.save(storedCertificate);
+        return giftCertificateResponseDtoMapper.toDto(storedCertificate);
     }
 
     private void updateFieldsWithoutTags(GiftCertificate storedCertificate, GiftCertificateRequestDto certificate){
@@ -237,10 +260,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private Sort getSort(String orderingColumn, OrderingType orderingType) {
         Sort sort = Sort.by(orderingColumn);
         if (orderingType.equals(DESC)) {
-            sort.descending();
-        }
-        else {
-            sort.ascending();
+            sort = sort.descending();
+        } else {
+            sort = sort.ascending();
         }
         return sort;
     }

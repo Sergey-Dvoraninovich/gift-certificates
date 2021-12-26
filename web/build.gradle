@@ -11,8 +11,7 @@ repositories {
 }
 
 dependencies {
-    //TODO remove unused dependencies
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.5.5'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: securityStarterVersion
 
     implementation group: 'org.springframework', name: 'spring-web', version: springVersion
     implementation group: 'org.springframework', name: 'spring-webmvc', version: springVersion

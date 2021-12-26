@@ -1,9 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dto.OrderCreateRequestDto;
-import com.epam.esm.dto.OrderItemDto;
-import com.epam.esm.dto.OrderResponseDto;
-import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.*;
 import com.epam.esm.dto.mapping.OrderResponseDtoMapper;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
@@ -15,7 +12,6 @@ import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.impl.OrderServiceImpl;
 import com.epam.esm.validator.OrderCreateValidator;
-import com.epam.esm.validator.OrderCreateValidatorTest;
 import com.epam.esm.validator.OrderSearchParamsValidator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -24,6 +20,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -35,11 +34,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.epam.esm.repository.OrderingType.ASC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -74,13 +71,14 @@ public class OrderServiceTest {
     void testFindAll() {
         List<Order> orders = provideOrdersList();
         List<OrderResponseDto> ordersDto = provideOrdersDtoList();
-        when(orderSearchParamsValidator.validate(anyString())).thenReturn(Collections.emptyList());
-        when(orderRepository.findAll(ASC, PAGE_NUMBER, PAGE_SIZE)).thenReturn(orders);
+        OrderFilterDto orderFilterDto = new OrderFilterDto();
+        Page<Order> ordersPage = new PageImpl<>(orders);
+        when(orderRepository.findAll(PageRequest.of(PAGE_NUMBER - 1, PAGE_SIZE))).thenReturn(ordersPage);
         for (int i = 0; i < orders.size(); i++) {
             when(orderResponseDtoMapper.toDto(orders.get(i))).thenReturn(ordersDto.get(i));
         }
 
-        List<OrderResponseDto> actualDtoList = orderService.findAll(ASC.name(), PAGE_NUMBER, PAGE_SIZE);
+        List<OrderResponseDto> actualDtoList = orderService.findAll(orderFilterDto, new PageDto(PAGE_NUMBER, PAGE_SIZE));
 
         assertEquals(ordersDto, actualDtoList);
     }
@@ -123,7 +121,7 @@ public class OrderServiceTest {
             when(giftCertificateRepository.findById(orderItems.get(i).getId())).thenReturn(Optional.of(giftCertificates.get(i)));
         }
         when(userRepository.findById(requestDto.getUserId())).thenReturn(Optional.of(provideUsersList().get(0)));
-        when(orderRepository.create(any(Order.class))).thenReturn(order);
+        when(orderRepository.save(any(Order.class))).thenReturn(order);
         when(orderResponseDtoMapper.toDto(order)).thenReturn(responseDto);
 
         OrderResponseDto actual = orderService.create(requestDto);
@@ -135,7 +133,6 @@ public class OrderServiceTest {
     void testDelete() {
         Order order = provideOrdersList().get(0);
         when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
-        when(orderRepository.delete(order)).thenReturn(true);
 
         orderService.delete(order.getId());
     }

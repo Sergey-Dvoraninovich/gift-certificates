@@ -1,9 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dto.OrderCreateRequestDto;
-import com.epam.esm.dto.OrderResponseDto;
-import com.epam.esm.dto.OrderUpdateRequestDto;
-import com.epam.esm.dto.PageDto;
+import com.epam.esm.dto.*;
 
 import java.util.List;
 
@@ -18,7 +15,7 @@ public interface OrderService {
      */
     Long countAll();
 
-    List<OrderResponseDto> findAll(PageDto pageDto);
+    List<OrderResponseDto> findAll(OrderFilterDto orderFilterDto, PageDto pageDto);
 
     /**
      * Find Order by id.

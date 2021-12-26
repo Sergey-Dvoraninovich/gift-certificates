@@ -34,7 +34,7 @@ public class GiftCertificateRepositoryTestCRUD {
         giftCertificate.setLastUpdateDate(date);
 
         //When
-        GiftCertificate certificate = giftCertificateRepository.create(giftCertificate);
+        GiftCertificate certificate = giftCertificateRepository.save(giftCertificate);
 
         //Then
         assertNotNull(certificate);
@@ -55,7 +55,7 @@ public class GiftCertificateRepositoryTestCRUD {
         storedCertificate.setPrice(newPrice);
 
         //When
-        certificate = giftCertificateRepository.create(storedCertificate);
+        certificate = giftCertificateRepository.save(storedCertificate);
 
         //Then
         assertNotNull(certificate);
@@ -74,15 +74,14 @@ public class GiftCertificateRepositoryTestCRUD {
         storedCertificate.setLastUpdateDate(date);
 
         //Preparation
-        storedCertificate = giftCertificateRepository.create(storedCertificate);
+        storedCertificate = giftCertificateRepository.save(storedCertificate);
         assertNotNull(storedCertificate);
         assertTrue(storedCertificate.getId() > 0);
 
         //When
-        boolean actual = giftCertificateRepository.delete(storedCertificate);
+        giftCertificateRepository.delete(storedCertificate);
 
         //Then
-        assertTrue(actual);
         Optional<GiftCertificate> deletedCertificate = giftCertificateRepository.findById(storedCertificate.getId());
         assertFalse(deletedCertificate.isPresent());
     }
@@ -98,7 +97,7 @@ public class GiftCertificateRepositoryTestCRUD {
 
     private GiftCertificate provideStoredGiftCertificate(GiftCertificate certificate) {
 
-        long generatedId = giftCertificateRepository.create(certificate).getId();
+        long generatedId = giftCertificateRepository.save(certificate).getId();
         assertTrue(generatedId > 0);
 
         return certificate;

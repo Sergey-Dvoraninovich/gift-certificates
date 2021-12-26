@@ -23,6 +23,9 @@ public class GiftCertificate {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
+    @Column(name = "available", nullable = false)
+    private Boolean isAvailable;
+
     @Column(name = "description", nullable = false)
     private String description;
 

@@ -1,12 +1,14 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dto.GiftCertificateFilterDto;
+import com.epam.esm.dto.OrderFilterDto;
 import com.epam.esm.dto.PageDto;
 import com.epam.esm.exception.InvalidEntityException;
 import com.epam.esm.exception.InvalidPaginationException;
 import com.epam.esm.repository.OrderingType;
 import com.epam.esm.service.RequestService;
 import com.epam.esm.validator.GiftCertificateSearchParamsValidator;
+import com.epam.esm.validator.OrderSearchParamsValidator;
 import com.epam.esm.validator.PaginationValidator;
 import com.epam.esm.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
@@ -24,16 +26,20 @@ public class RequestServiceImpl implements RequestService {
     private static final String DELIMITER = ",";
 
     private static final String NAME = "name";
+    private static final String SHOW_DISABLED = "showDisabled";
     private static final String DESCRIPTION = "description";
     private static final String TAG_NAMES = "tagNames";
     private static final String ORDERING_NAME = "orderingName";
     private static final String ORDERING_CREATE_DATE = "orderingCreateDate";
+
+    private static final String ORDERING_CREATE_TIME = "orderingCreateTime";
 
     private static final String PAGE_NUMBER = "pageNumber";
     private static final String PAGE_SIZE = "pageSize";
     private static final int DEFAULT_PAGE_SIZE = 10;
 
     private final PaginationValidator paginationValidator;
+    private final OrderSearchParamsValidator orderSearchParamsValidator;
     private final GiftCertificateSearchParamsValidator searchParamsValidator;
 
     @Override
@@ -61,9 +67,29 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    public OrderFilterDto createOrderFilterDto(Map<String, Object> params) {
+        String createTimeOrderingParam = (String) params.get(ORDERING_CREATE_TIME);
+
+        List<ValidationError> validationErrors = orderSearchParamsValidator.validate(createTimeOrderingParam);
+        if (!validationErrors.isEmpty()) {
+            throw new InvalidEntityException(validationErrors, String.class);
+        }
+
+        OrderingType nameOrdering = createTimeOrderingParam == null
+                ? null
+                : OrderingType.valueOf(createTimeOrderingParam);
+
+        return OrderFilterDto.builder()
+                .orderingCreateTime(nameOrdering)
+                .build();
+    }
+
+    @Override
     public GiftCertificateFilterDto createGiftCertificateFilterDTO(Map<String, Object> params) {
         String certificateNameParam = (String) params.get(NAME);
         String certificateDescriptionParam = (String) params.get(DESCRIPTION);
+
+        String showDisabledParam = (String) params.get(SHOW_DISABLED);
 
         String certificateTagNamesParam = (String) params.get(TAG_NAMES);
         List<String> tagNames;
@@ -73,7 +99,7 @@ public class RequestServiceImpl implements RequestService {
         String certificateCreateDateOrderingParam = (String) params.get(ORDERING_CREATE_DATE);
 
         List<ValidationError> validationErrors = searchParamsValidator.validate(tagNames, certificateNameParam, certificateNameOrderingParam,
-                certificateDescriptionParam, certificateCreateDateOrderingParam);
+                certificateDescriptionParam, certificateCreateDateOrderingParam, showDisabledParam);
         if (!validationErrors.isEmpty()) {
             throw new InvalidEntityException(validationErrors, String.class);
         }
@@ -86,8 +112,12 @@ public class RequestServiceImpl implements RequestService {
                 ? null
                 : OrderingType.valueOf(certificateCreateDateOrderingParam);
 
+        // Default value of the parameter is false
+        Boolean showDisabled = Boolean.parseBoolean(showDisabledParam);
+
         return GiftCertificateFilterDto.builder()
                 .name(certificateNameParam)
+                .showDisabled(showDisabled)
                 .description(certificateDescriptionParam)
                 .tagNames(tagNames)
                 .orderingName(nameOrdering)

@@ -20,6 +20,9 @@ public class GiftCertificateFilterDto {
     @ApiModelProperty(notes = "The Gift Certificate name filter param")
     private String description;
 
+    @ApiModelProperty(notes = "The disabled Gift Certificates filter param")
+    private Boolean showDisabled;
+
     @ApiModelProperty(notes = "The Gift Certificate Tag names filter param")
     private List<String> tagNames;
 

@@ -1,14 +1,11 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.TestProfileResolver;
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Order;
-import com.epam.esm.entity.OrderItem;
-import com.epam.esm.entity.Tag;
-import com.epam.esm.entity.User;
+import com.epam.esm.entity.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -22,7 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.epam.esm.repository.OrderingType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -40,7 +36,7 @@ public class OrderRepositoryTestFind {
     void testCountAll() {
         List<Order> expected = provideOrdersList();
 
-        long actual = orderRepository.countAll();
+        long actual = orderRepository.count();
 
         assertEquals(expected.size(), actual);
     }
@@ -50,7 +46,7 @@ public class OrderRepositoryTestFind {
         List<Order> expected = provideOrdersList();
 
         List<Order> actual;
-        actual = orderRepository.findAll(ASC, PAGE_NUMBER, PAGE_SIZE);
+        actual = (List<Order>) orderRepository.findAll(PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
 
         assertEquals(expected, actual);
     }

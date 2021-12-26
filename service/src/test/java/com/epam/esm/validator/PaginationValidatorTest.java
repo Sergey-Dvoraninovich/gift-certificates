@@ -16,7 +16,7 @@ public class PaginationValidatorTest {
 
     @ParameterizedTest
     @MethodSource("providePaginationParams")
-    void testOrderCreateValidator(Integer pageNumber, Integer pageSize, List<ValidationError> expected) {
+    void testOrderCreateValidator(String pageNumber, String pageSize, List<ValidationError> expected) {
 
         List<ValidationError> actual = paginationValidator.validateParams(pageNumber, pageSize);
 
@@ -26,10 +26,10 @@ public class PaginationValidatorTest {
     private static List<Arguments> providePaginationParams() {
         List<Arguments> testCases = new ArrayList<>();
 
-        testCases.add(Arguments.of(10, 10, Collections.emptyList()));
-        testCases.add(Arguments.of(0, 10, Collections.singletonList(TOO_SMALL_PAGE_NUMBER)));
-        testCases.add(Arguments.of(10, 0, Collections.singletonList(TOO_SMALL_PAGE_SIZE)));
-        testCases.add(Arguments.of(10, 100000, Collections.singletonList(TOO_BIG_PAGE_SIZE)));
+        testCases.add(Arguments.of("10", "10", Collections.emptyList()));
+        testCases.add(Arguments.of("0", "10", Collections.singletonList(TOO_SMALL_PAGE_NUMBER)));
+        testCases.add(Arguments.of("10", "0", Collections.singletonList(TOO_SMALL_PAGE_SIZE)));
+        testCases.add(Arguments.of("10", "100000", Collections.singletonList(TOO_BIG_PAGE_SIZE)));
 
         return testCases;
     }

@@ -1,6 +1,7 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dto.GiftCertificateFilterDto;
+import com.epam.esm.dto.OrderFilterDto;
 import com.epam.esm.dto.PageDto;
 
 import java.util.Map;
@@ -18,6 +19,14 @@ public interface RequestService {
      * @return the Page Dto
      */
     PageDto createPageDTO(Map<String, Object> params, Long totalAmount);
+
+    /**
+     * Create Order filter Dto.
+     *
+     * @param params the params
+     * @return the order filter dto
+     */
+    OrderFilterDto createOrderFilterDto(Map<String, Object> params);
 
     /**
      * Create Gift Certificate Filter Dto.
