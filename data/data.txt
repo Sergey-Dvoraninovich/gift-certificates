@@ -59,16 +59,16 @@ INSERT INTO gift_certificates_tags(id_gift_certificate, id_tag) VALUES('10', '6'
 INSERT INTO gift_certificates_tags(id_gift_certificate, id_tag) VALUES('10', '5');
 INSERT INTO gift_certificates_tags(id_gift_certificate, id_tag) VALUES('10', '4');
 
-INSERT INTO users(login, name, surname, email) VALUES('christian_altman', 'Christian', 'Altman', 'christian.altman@gmail.com');
-INSERT INTO users(login, name, surname, email) VALUES('cindy_clark', 'Cindy', 'Clark', 'cindy.clark@gmail.com');
-INSERT INTO users(login, name, surname, email) VALUES('walter_clark', 'Walter', 'Clark', 'walter.clark@gmail.com');
-INSERT INTO users(login, name, surname, email) VALUES('crystal_chean', 'Crystal', 'Chean', 'crystal.chean@gmail.com');
-INSERT INTO users(login, name, surname, email) VALUES('nathan_jeter', 'Nathan', 'Jeter', 'nathan.jeter@gmail.com');
-INSERT INTO users(login, name, surname, email) VALUES('ebonie_walker', 'Ebonie', 'Walker', 'ebonie.walker@gmail.com');
-INSERT INTO users(login, name, surname, email) VALUES('karen_owen', 'Karen', 'Owen', 'karen.owen@gmail.com');
-INSERT INTO users(login, name, surname, email) VALUES('kathy_carreiro', 'Kathy', 'Carreiro', 'kathy.carreiro@gmail.com');
-INSERT INTO users(login, name, surname, email) VALUES('keith_ferrell', 'Keith', 'Ferrell', 'keith.ferrell@gmail.com');
-INSERT INTO users(login, name, surname, email) VALUES('carol_flynn', 'Carol', 'Flynn', 'carol.flynn@gmail.com');
+INSERT INTO users(login, password, id_role, name, surname, email) VALUES('user', 'a0f3285b07c26c0dcd2191447f391170d06035e8d57e31a048ba87074f3a9a15', 1, 'Christian', 'Altman', 'christian.altman@gmail.com');
+INSERT INTO users(login, password, id_role, name, surname, email) VALUES('cindy_admin', 'a0f3285b07c26c0dcd2191447f391170d06035e8d57e31a048ba87074f3a9a15', 2, 'Cindy', 'Clark', 'cindy.clark@gmail.com');
+INSERT INTO users(login, password, id_role, name, surname, email) VALUES('walter_clark', 'a0f3285b07c26c0dcd2191447f391170d06035e8d57e31a048ba87074f3a9a15', 1, 'Walter', 'Clark', 'walter.clark@gmail.com');
+INSERT INTO users(login, password, id_role, name, surname, email) VALUES('crystal_chean', 'a0f3285b07c26c0dcd2191447f391170d06035e8d57e31a048ba87074f3a9a15', 1, 'Crystal', 'Chean', 'crystal.chean@gmail.com');
+INSERT INTO users(login, password, id_role, name, surname, email) VALUES('nathan_jeter', 'a0f3285b07c26c0dcd2191447f391170d06035e8d57e31a048ba87074f3a9a15', 1, 'Nathan', 'Jeter', 'nathan.jeter@gmail.com');
+INSERT INTO users(login, password, id_role, name, surname, email) VALUES('ebonie_walker', 'a0f3285b07c26c0dcd2191447f391170d06035e8d57e31a048ba87074f3a9a15', 1, 'Ebonie', 'Walker', 'ebonie.walker@gmail.com');
+INSERT INTO users(login, password, id_role, name, surname, email) VALUES('karen_owen', 'a0f3285b07c26c0dcd2191447f391170d06035e8d57e31a048ba87074f3a9a15', 1, 'Karen', 'Owen', 'karen.owen@gmail.com');
+INSERT INTO users(login, password, id_role, name, surname, email) VALUES('kathy_carreiro', 'a0f3285b07c26c0dcd2191447f391170d06035e8d57e31a048ba87074f3a9a15', 1, 'Kathy', 'Carreiro', 'kathy.carreiro@gmail.com');
+INSERT INTO users(login, password, id_role, name, surname, email) VALUES('keith_ferrell', 'a0f3285b07c26c0dcd2191447f391170d06035e8d57e31a048ba87074f3a9a15', 1, 'Keith', 'Ferrell', 'keith.ferrell@gmail.com');
+INSERT INTO users(login, password, id_role, name, surname, email) VALUES('carol_flynn', 'a0f3285b07c26c0dcd2191447f391170d06035e8d57e31a048ba87074f3a9a15', 1, 'Carol', 'Flynn', 'carol.flynn@gmail.com');
 
 INSERT INTO orders(id, id_user, create_order_time, update_order_time) VALUES('1', '1', CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3));
 INSERT INTO orders(id, id_user, create_order_time, update_order_time) VALUES('2', '1', CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3));

@@ -260,6 +260,7 @@ public class OrderServiceTest {
     private List<GiftCertificate> provideGistCertificates() {
         GiftCertificate firstCertificate = new GiftCertificate();
         firstCertificate.setId(1L);
+        firstCertificate.setIsAvailable(true);
         firstCertificate.setName("certificate first and second tags");
         firstCertificate.setDescription("certificate with first tag and second tag");
         firstCertificate.setPrice(new BigDecimal("50.00"));
@@ -270,6 +271,7 @@ public class OrderServiceTest {
 
         GiftCertificate secondCertificate = new GiftCertificate();
         secondCertificate.setId(2L);
+        secondCertificate.setIsAvailable(true);
         secondCertificate.setName("certificate second tags");
         secondCertificate.setDescription("certificate with second tag");
         secondCertificate.setPrice(new BigDecimal("100.00"));

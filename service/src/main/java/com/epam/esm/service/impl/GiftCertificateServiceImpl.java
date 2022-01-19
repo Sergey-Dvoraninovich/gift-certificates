@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +57,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public Long countAll(GiftCertificateFilterDto filterDto) {
 
-        System.out.println(filterDto.getShowDisabled());
         Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
                 .certificateName(filterDto.getName())
                 .certificateAvailability(filterDto.getShowDisabled() ? null : true)
@@ -76,6 +76,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 .certificateDescription(filterDto.getDescription())
                 .certificateTagNames(getTags(filterDto.getTagNames()))
                 .build();
+
+        System.out.println(getTags(filterDto.getTagNames()));
+        System.out.println(filterDto.getShowDisabled() ? null : true);
+        System.out.println(filterDto.getDescription());
+        System.out.println(getTags(filterDto.getTagNames()));
 
         Pageable pageable = createOrderedPageable(filterDto, pageDto);
         return giftCertificateRepository.findAll(specification, pageable)
@@ -115,6 +120,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
 
         GiftCertificate certificate = giftCertificateRequestDtoMapper.toEntity(certificateDto);
+        certificate.setCreateDate(Instant.now());
+        certificate.setLastUpdateDate(Instant.now());
+        certificate.setIsAvailable(true);
         certificate.setGiftCertificateTags(certificateTags);
 
         certificate = giftCertificateRepository.save(certificate);

@@ -44,6 +44,10 @@ public class UserOrderControllerImpl implements UserOrderController {
     @GetMapping()
     public ResponseEntity<PagedModel<UserOrderResponseDto>> getAllItems(@PathVariable("userId") @Min(1) long id,
                                                                         @RequestParam Map<String, Object> params) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (containsAuthority(auth.getAuthorities(), "ROLE_USER")) {
+            checkUserAuthority(id, auth.getName());
+        }
 
         long userOrdersAmount = userService.countAllUserOrders(id);
         PageDto pageDto = requestService.createPageDTO(params, userOrdersAmount);
