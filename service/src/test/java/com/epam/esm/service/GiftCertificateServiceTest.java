@@ -87,7 +87,7 @@ public class GiftCertificateServiceTest {
 //        assertEquals(expected, actual);
 
         assertFalse(false);
-        assertFalse(false);
+//        assertFalse(false);
     }
 
     @Test
