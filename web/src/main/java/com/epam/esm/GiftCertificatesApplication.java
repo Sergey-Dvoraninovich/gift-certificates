@@ -13,7 +13,6 @@ public class GiftCertificatesApplication extends SpringBootServletInitializer {
         SpringApplication.run(GiftCertificatesApplication.class, args);
     }
 
-    //some changes
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
         return builder.sources(GiftCertificatesApplication.class);
