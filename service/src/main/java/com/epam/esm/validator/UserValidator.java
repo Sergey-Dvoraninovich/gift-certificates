@@ -15,7 +15,7 @@ public class UserValidator {
     private static final String PASSWORD_REGEXP = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$";
     private static final String NAME_REGEXP = "^[A-Za-z]{3,25}$";
     private static final String SURNAME_REGEXP = "^[A-Za-z]{3,25}$";
-    private static final String EMAIL_REGEXP = "^([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$";
+    private static final String EMAIL_REGEXP = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+(?:\\.[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$";
 
     private static final int LOGIN_MIN_LENGTH = 2;
     private static final int LOGIN_MAX_LENGTH = 50;

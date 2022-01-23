@@ -3,6 +3,7 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dto.TokenDto;
 import com.epam.esm.entity.RefreshToken;
 import com.epam.esm.entity.User;
+import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.RefreshTokenException;
 import com.epam.esm.repository.RefreshTokenRepository;
 import com.epam.esm.repository.UserRepository;
@@ -35,7 +36,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Transactional
     public RefreshToken createRefreshToken(long userId) {
         RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setUser(userRepository.findById(userId).get());
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(userId, User.class));
+        refreshToken.setUser(user);
         refreshToken.setExpirationDate(Instant.now().plus(refreshTokenDaysExpiration, DAYS));
         refreshToken.setToken(generateRefreshToken());
         refreshToken = refreshTokenRepository.save(refreshToken);

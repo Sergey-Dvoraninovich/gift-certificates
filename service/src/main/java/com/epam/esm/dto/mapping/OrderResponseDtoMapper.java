@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -25,9 +26,14 @@ public class OrderResponseDtoMapper {
     public OrderResponseDto toDto(Order entity) {
         OrderResponseDto dto = Objects.isNull(entity) ? null : mapper.map(entity, OrderResponseDto.class);
 
-        List<OrderItemDto> orderItemsDto = entity.getOrderItems().stream()
-                .map(orderItemMapper::toDto)
-                .collect(Collectors.toList());
+        List<OrderItemDto> orderItemsDto = new ArrayList<>();
+        if (entity != null) {
+            orderItemsDto = entity.getOrderItems() == null
+                    ? null
+                    : entity.getOrderItems().stream()
+                    .map(orderItemMapper::toDto)
+                    .collect(Collectors.toList());
+        }
 
         BigDecimal totalPrice = BigDecimal.ZERO;
         int count = 0;
