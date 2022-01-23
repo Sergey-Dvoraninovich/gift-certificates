@@ -24,27 +24,32 @@ public class OrderResponseDtoMapper {
     }
 
     public OrderResponseDto toDto(Order entity) {
-        OrderResponseDto dto = Objects.isNull(entity) ? null : mapper.map(entity, OrderResponseDto.class);
+        OrderResponseDto dto = null;
 
-        List<OrderItemDto> orderItemsDto = new ArrayList<>();
-        if (entity != null) {
-            orderItemsDto = entity.getOrderItems() == null
-                    ? null
-                    : entity.getOrderItems().stream()
-                    .map(orderItemMapper::toDto)
-                    .collect(Collectors.toList());
+        if (!Objects.isNull(entity)) {
+            dto = mapper.map(entity, OrderResponseDto.class);
+
+            List<OrderItemDto> orderItemsDto = new ArrayList<>();
+            if (entity != null) {
+                orderItemsDto = entity.getOrderItems() == null
+                        ? null
+                        : entity.getOrderItems().stream()
+                        .map(orderItemMapper::toDto)
+                        .collect(Collectors.toList());
+            }
+
+            BigDecimal totalPrice = BigDecimal.ZERO;
+            int count = 0;
+            for (OrderItemDto orderItem : orderItemsDto) {
+                totalPrice = totalPrice.add(orderItem.getPrice());
+                count++;
+            }
+
+            dto.setOrderGiftCertificates(orderItemsDto);
+            dto.setTotalPrice(totalPrice);
+            dto.setCount(count);
         }
 
-        BigDecimal totalPrice = BigDecimal.ZERO;
-        int count = 0;
-        for (OrderItemDto orderItem : orderItemsDto) {
-            totalPrice = totalPrice.add(orderItem.getPrice());
-            count++;
-        }
-
-        dto.setOrderGiftCertificates(orderItemsDto);
-        dto.setTotalPrice(totalPrice);
-        dto.setCount(count);
         return dto;
     }
 }
