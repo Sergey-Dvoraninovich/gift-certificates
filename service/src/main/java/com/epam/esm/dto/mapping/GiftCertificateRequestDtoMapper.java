@@ -1,9 +1,7 @@
 package com.epam.esm.dto.mapping;
 
 import com.epam.esm.dto.GiftCertificateRequestDto;
-import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

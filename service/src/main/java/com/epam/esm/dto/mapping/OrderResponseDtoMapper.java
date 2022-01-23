@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -35,7 +34,7 @@ public class OrderResponseDtoMapper {
                         ? null
                         : entity.getOrderItems().stream()
                         .map(orderItemMapper::toDto)
-                        .collect(Collectors.toList());
+                        .toList();
             }
 
             BigDecimal totalPrice = BigDecimal.ZERO;
