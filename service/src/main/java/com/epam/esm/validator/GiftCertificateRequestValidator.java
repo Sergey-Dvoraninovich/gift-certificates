@@ -1,7 +1,6 @@
 package com.epam.esm.validator;
 
 import com.epam.esm.dto.GiftCertificateRequestDto;
-import com.epam.esm.dto.OrderItemDto;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -11,8 +10,26 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.epam.esm.validator.ValidationError.*;
-import static com.epam.esm.validator.ValidationError.NOT_UNIQUE_GIFT_CERTIFICATES_IN_ORDER;
+import static com.epam.esm.validator.ValidationError.GIFT_CERTIFICATE_DESCRIPTION_REQUIRED;
+import static com.epam.esm.validator.ValidationError.GIFT_CERTIFICATE_DURATION_REQUIRED;
+import static com.epam.esm.validator.ValidationError.GIFT_CERTIFICATE_NAME_REQUIRED;
+import static com.epam.esm.validator.ValidationError.GIFT_CERTIFICATE_PRICE_REQUIRED;
+import static com.epam.esm.validator.ValidationError.INVALID_GIFT_CERTIFICATE_PRICE_FORMAT;
+import static com.epam.esm.validator.ValidationError.INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION;
+import static com.epam.esm.validator.ValidationError.INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_GIFT_CERTIFICATE_NAME;
+import static com.epam.esm.validator.ValidationError.INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION;
+import static com.epam.esm.validator.ValidationError.INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DURATION;
+import static com.epam.esm.validator.ValidationError.INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_NAME;
+import static com.epam.esm.validator.ValidationError.INVALID_TAGS_AMOUNT;
+import static com.epam.esm.validator.ValidationError.NOT_UNIQUE_TAGS_IN_GIFT_CERTIFICATE;
+import static com.epam.esm.validator.ValidationError.TOO_BIG_GIFT_CERTIFICATE_PRICE;
+import static com.epam.esm.validator.ValidationError.TOO_LONG_GIFT_CERTIFICATE_DESCRIPTION;
+import static com.epam.esm.validator.ValidationError.TOO_LONG_GIFT_CERTIFICATE_DURATION;
+import static com.epam.esm.validator.ValidationError.TOO_LONG_GIFT_CERTIFICATE_NAME;
+import static com.epam.esm.validator.ValidationError.TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION;
+import static com.epam.esm.validator.ValidationError.TOO_SHORT_GIFT_CERTIFICATE_DURATION;
+import static com.epam.esm.validator.ValidationError.TOO_SHORT_GIFT_CERTIFICATE_NAME;
+import static com.epam.esm.validator.ValidationError.TOO_SMALL_GIFT_CERTIFICATE_PRICE;
 
 @Component
 public class GiftCertificateRequestValidator {

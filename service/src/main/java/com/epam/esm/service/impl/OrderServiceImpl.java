@@ -26,8 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.epam.esm.repository.OrderingType.DESC;
 
@@ -56,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAll(pageable)
                 .stream()
                 .map(orderDtoMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -122,19 +120,14 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderItem createNewOrderItem(OrderItemDto orderItemDto) {
         OrderItem orderItem = new OrderItem();
-        Optional<GiftCertificate> optionalCertificate;
-        optionalCertificate = giftCertificateRepository.findById(orderItemDto.getId());
-        if (optionalCertificate.isEmpty()) {
-            throw new EntityNotFoundException(orderItemDto.getId(), OrderItemDto.class);
+        GiftCertificate certificate = giftCertificateRepository.findById(orderItemDto.getId())
+                .orElseThrow(() -> new EntityNotFoundException(orderItemDto.getId(), OrderItemDto.class));
+
+        if (Boolean.FALSE.equals(certificate.getIsAvailable())) {
+            throw new EntityNotAvailableException(orderItemDto.getId(), OrderItemDto.class);
         }
-        else {
-            GiftCertificate certificate = optionalCertificate.get();
-            if (!certificate.getIsAvailable()) {
-                throw new EntityNotAvailableException(orderItemDto.getId(), OrderItemDto.class);
-            }
-            orderItem.setGiftCertificate(optionalCertificate.get());
-            orderItem.setPrice(optionalCertificate.get().getPrice());
-        }
+        orderItem.setGiftCertificate(certificate);
+        orderItem.setPrice(certificate.getPrice());
         return orderItem;
     }
 
@@ -146,11 +139,11 @@ public class OrderServiceImpl implements OrderService {
                             .filter(storedOrderItem -> storedOrderItem.getGiftCertificate().getId() == orderItemId)
                             .toList();
 
-                    return suitableStoredItems.size() == 0
+                    return suitableStoredItems.isEmpty()
                             ? createNewOrderItem(orderItemDto)
                             : suitableStoredItems.get(0);
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private Pageable createOrderedPageable(OrderFilterDto filterDto, PageDto pageDto) {

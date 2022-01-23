@@ -1,6 +1,10 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dto.*;
+import com.epam.esm.dto.GiftCertificateFilterDto;
+import com.epam.esm.dto.GiftCertificateRequestDto;
+import com.epam.esm.dto.GiftCertificateResponseDto;
+import com.epam.esm.dto.PageDto;
+import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.mapping.GiftCertificateRequestDtoMapper;
 import com.epam.esm.dto.mapping.GiftCertificateResponseDtoMapper;
 import com.epam.esm.entity.GiftCertificate;
@@ -9,7 +13,11 @@ import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotAvailableException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
-import com.epam.esm.repository.*;
+import com.epam.esm.repository.GiftCertificateRepository;
+import com.epam.esm.repository.GiftCertificateSpecificationBuilder;
+import com.epam.esm.repository.OrderingType;
+import com.epam.esm.repository.TagRepository;
+import com.epam.esm.repository.TagSpecificationBuilder;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.validator.GiftCertificateRequestValidator;
 import com.epam.esm.validator.ValidationError;
@@ -49,7 +57,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
                 .certificateName(filterDto.getName())
-                .certificateAvailability(filterDto.getShowDisabled() ? null : true)
+                .certificateAvailability(Boolean.TRUE.equals(filterDto.getShowDisabled()) ? null : true)
                 .certificateDescription(filterDto.getDescription())
                 .certificateTagNames(getTags(filterDto.getTagNames()))
                 .build();
@@ -62,7 +70,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
                 .certificateName(filterDto.getName())
-                .certificateAvailability(filterDto.getShowDisabled() ? null : true)
+                .certificateAvailability(Boolean.TRUE.equals(filterDto.getShowDisabled()) ? null : true)
                 .certificateDescription(filterDto.getDescription())
                 .certificateTagNames(getTags(filterDto.getTagNames()))
                 .build();
