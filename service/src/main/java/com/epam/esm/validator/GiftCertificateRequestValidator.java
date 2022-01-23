@@ -68,7 +68,7 @@ public class GiftCertificateRequestValidator {
         if (certificateDto.getDuration() == null){
             validationErrors.add(GIFT_CERTIFICATE_DURATION_REQUIRED);
         }
-        if (validationErrors.size() == 0) {
+        if (validationErrors.isEmpty()) {
             validationErrors.addAll(validateParams(certificateDto.getName(), certificateDto.getDescription(), certificateDto.getPrice().toString(),
                     String.valueOf(certificateDto.getDuration().toDays()), certificateDto.getTagIdsDto()));
         }

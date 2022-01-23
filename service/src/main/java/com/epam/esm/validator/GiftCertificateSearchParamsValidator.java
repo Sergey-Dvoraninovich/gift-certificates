@@ -90,11 +90,9 @@ public class GiftCertificateSearchParamsValidator {
             }
         }
 
-        if (showDisabled != null) {
-            if (!showDisabled.toLowerCase().equals(TRUE_PARAM)
-                && !showDisabled.toLowerCase().equals(FALSE_PARAM)) {
+        if (showDisabled != null || (!showDisabled.equalsIgnoreCase(TRUE_PARAM)
+                && !showDisabled.equalsIgnoreCase(FALSE_PARAM))) {
                 validationErrors.add(INVALID_SHOW_DISABLED_PARAM);
-            }
         }
 
         return validationErrors;

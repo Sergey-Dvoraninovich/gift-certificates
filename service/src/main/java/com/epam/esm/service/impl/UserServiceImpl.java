@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.epam.esm.entity.UserRoleName.USER;
 import static com.epam.esm.exception.UserAuthenticationException.State.INVALID_PASSWORD;
@@ -128,11 +127,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserOrderResponseDto> findUserOrders(long userId, PageDto pageDto) {
-        User user = userRepository.findById(userId)
+        userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(userId, UserDto.class));
         return userRepository.findUserOrders(userId, pageDto.toPageable()).stream()
                 .map(userOrderResponseDtoMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
