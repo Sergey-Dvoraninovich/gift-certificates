@@ -57,13 +57,21 @@ sonarqube {
     }
 }
 
-jacocoTestReport {
-    reports {
-        xml.enabled true
-    }
+test {
+    finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
-test.finalizedBy jacocoTestReport
-tasks.named('sonarqube').configure {
-    dependsOn test
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
 }
+
+//jacocoTestReport {
+//    reports {
+//        xml.enabled true
+//    }
+//}
+//
+//test.finalizedBy jacocoTestReport
+//tasks.named('sonarqube').configure {
+//    dependsOn test
+//}

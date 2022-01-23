@@ -23,7 +23,9 @@ public class GiftCertificateResponseDtoMapper {
 
     public GiftCertificateResponseDto toDto(GiftCertificate entity) {
         GiftCertificateResponseDto dto = Objects.isNull(entity) ? null : mapper.map(entity, GiftCertificateResponseDto.class);
-        List<TagDto> tagsDto = entity.getGiftCertificateTags().stream()
+        List<TagDto> tagsDto = entity.getGiftCertificateTags() == null
+                ? null
+                : entity.getGiftCertificateTags().stream()
                 .map(tagDtoMapper::toDto)
                 .collect(Collectors.toList());
         dto.setTagsDto(tagsDto);
