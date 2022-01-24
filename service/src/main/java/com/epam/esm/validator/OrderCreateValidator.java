@@ -26,7 +26,7 @@ public class OrderCreateValidator {
         if (orderCreateRequestDto.getOrderGiftCertificates() == null){
             validationErrors.add(ORDER_ITEMS_REQUIRED);
         }
-        if (validationErrors.size() == 0) {
+        if (validationErrors.isEmpty()) {
             validationErrors.addAll(validateParams(orderCreateRequestDto.getOrderGiftCertificates()));
         }
         return validationErrors;

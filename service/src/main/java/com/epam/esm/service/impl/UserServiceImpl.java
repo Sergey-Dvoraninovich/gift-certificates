@@ -127,8 +127,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserOrderResponseDto> findUserOrders(long userId, PageDto pageDto) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(userId, UserDto.class));
+        if (userRepository.findById(userId).isEmpty()) {
+            throw new EntityNotFoundException(userId, UserDto.class);
+        }
         return userRepository.findUserOrders(userId, pageDto.toPageable()).stream()
                 .map(userOrderResponseDtoMapper::toDto)
                 .toList();

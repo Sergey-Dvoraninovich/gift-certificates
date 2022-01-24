@@ -13,7 +13,7 @@ import static com.epam.esm.repository.OrderingType.DESC;
 import static com.epam.esm.validator.ValidationError.INVALID_ORDER_ORDERING_TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class OrderSearchParamsValidatorTest {
+class OrderSearchParamsValidatorTest {
     private OrderSearchParamsValidator orderSearchParamsValidator = new OrderSearchParamsValidator();
 
     @ParameterizedTest

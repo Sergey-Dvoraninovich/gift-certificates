@@ -33,8 +33,7 @@ public class PageModelProvider {
         pageMetadata= new PagedModel.PageMetadata(pageDto.getPageSize(), pageDto.getPageNumber(), totalAmount);
         PagedModel<D> pagedModel = PagedModel.of(dtoList, pageMetadata);
 
-        List<Link> links = provideLinks(controllerClass, pageParams, dtoList,
-                                        totalAmount, pageDto);
+        List<Link> links = provideLinks(controllerClass, pageParams, totalAmount, pageDto);
         pagedModel.add(links);
 
         return pagedModel;
@@ -49,15 +48,14 @@ public class PageModelProvider {
         PagedModel<D> pagedModel = PagedModel.of(dtoList, pageMetadata);
 
         List<Link> links = provideLinks(controllerClass, id,
-                pageParams, dtoList,
-                totalAmount, pageDto);
+                pageParams, totalAmount, pageDto);
         pagedModel.add(links);
 
         return pagedModel;
     }
 
     private  <D, C extends PagedController<D>> List<Link> provideLinks(Class<C> controllerClass,
-                                                                       Map<String, Object> pageParams, List<D> dtoList,
+                                                                       Map<String, Object> pageParams,
                                                                        long totalAmount, PageDto pageDto) {
         Map<String, Object> params = new HashMap<>(pageParams);
         List<Link> links = new ArrayList<>();
@@ -91,7 +89,7 @@ public class PageModelProvider {
     }
 
     private  <D, C extends PagedItemsController<D>> List<Link> provideLinks(Class<C> controllerClass, long id,
-                                                                            Map<String, Object> pageParams, List<D> dtoList,
+                                                                            Map<String, Object> pageParams,
                                                                             long totalAmount, PageDto pageDto) {
         Map<String, Object> params = new HashMap<>(pageParams);
         List<Link> links = new ArrayList<>();

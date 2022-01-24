@@ -50,6 +50,10 @@ allprojects {
     test {
         useJUnitPlatform()
     }
+
+//    jacocoTestReport {
+//        dependsOn test // tests are required to run before generating the report
+//    }
 }
 
 sonarqube {
@@ -65,12 +69,18 @@ test {
 
 jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
-    reports {
-        xml.required = false
-        csv.required = false
-        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
-    }
 }
+
+//jacocoTestReport {
+//    dependsOn test // tests are required to run before generating the report
+//    reports {
+//        xml.enabled true
+//        csv.enabled true
+//        xml.required = true
+//        csv.required = true
+//        //html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+//    }
+//}
 
 //jacocoTestReport {
 //    reports {

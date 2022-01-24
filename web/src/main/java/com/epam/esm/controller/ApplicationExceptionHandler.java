@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
+import static com.epam.esm.exception.AccessException.State.INVALID_ORDER_USER;
 import static com.epam.esm.exception.RefreshTokenException.State.INVALID_TOKEN;
 import static org.springframework.http.HttpStatus.*;
 
@@ -187,8 +187,8 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ExceptionResponse> handleAnyException(NoHandlerFoundException e, HttpServletRequest request) {
-        String errorMessage = getMessage(NOT_FOUND_MESSAGE);;
-        Long errorCode = 40403L;
+        String errorMessage = getMessage(NOT_FOUND_MESSAGE);
+        long errorCode = 40403L;
 
         String requestURL = e.getRequestURL().replaceFirst("/", "");
         int applicationNameLastPosition = requestURL.indexOf("/");
@@ -206,7 +206,7 @@ public class ApplicationExceptionHandler {
                 List<String> validApiVersions = Arrays.stream(ApiVersion.values())
                         .map(Enum::name)
                         .map(String::toLowerCase)
-                        .collect(Collectors.toList());
+                        .toList();
 
                 if (!validApiVersions.contains(apiVersion)) {
                     errorMessage = getMessage(INVALID_VERSION_MESSAGE);
@@ -247,13 +247,10 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler(AccessException.class)
     public ResponseEntity<ExceptionResponse> handleAccessDenied(AccessException e) {
-        String errorMessage = getMessage(ACCESS_DENIED_MESSAGE);;
+        String errorMessage = getMessage(ACCESS_DENIED_MESSAGE);
         AccessException.State error = e.getState();
-        switch (error) {
-            case INVALID_ORDER_USER: {
-                errorMessage = getMessage(INVALID_USER_ORDER_MESSAGE);
-                break;
-            }
+        if (error.equals(INVALID_ORDER_USER)) {
+            errorMessage = getMessage(INVALID_USER_ORDER_MESSAGE);
         }
         return buildErrorResponseEntity(BAD_REQUEST, errorMessage, 400014L);
     }
@@ -288,6 +285,9 @@ public class ApplicationExceptionHandler {
 
                 case PAGE_IS_OUT_OF_RANGE: {
                     errorLine.append(getMessage(PAGE_IS_OUT_OF_RANGE_MESSAGE));
+                    break;
+                }
+                default: {
                     break;
                 }
             }
@@ -540,6 +540,10 @@ public class ApplicationExceptionHandler {
 
                 case INVALID_SHOW_DISABLED_PARAM: {
                     errorLine.append(getMessage(INVALID_SHOW_DISABLED_PARAM_MESSAGE));
+                    break;
+                }
+
+                default: {
                     break;
                 }
             }

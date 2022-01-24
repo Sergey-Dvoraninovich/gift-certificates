@@ -4,6 +4,7 @@ import com.epam.esm.dto.PageDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.mapping.TagDtoMapper;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.impl.TagServiceImpl;
 import com.epam.esm.validator.TagValidator;
@@ -23,11 +24,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TagServiceTest {
+class TagServiceTest {
     private static final Integer PAGE_NUMBER = 1;
     private static final Integer PAGE_SIZE = 10;
 
@@ -109,6 +111,8 @@ public class TagServiceTest {
         when(tagRepository.findById(tag.getId())).thenReturn(Optional.of(tag));
 
         tagService.delete(tag.getId());
+
+        assertDoesNotThrow(() -> new EntityNotFoundException(tag.getId(), TagDto.class));
     }
 
     private List<Tag> provideTagsList() {

@@ -22,7 +22,7 @@ public class OrderUpdateValidator {
         if (orderUpdateRequestDto.getOrderGiftCertificates() == null){
             validationErrors.add(ORDER_ITEMS_REQUIRED);
         }
-        if (validationErrors.size() == 0) {
+        if (validationErrors.isEmpty()) {
             validationErrors.addAll(validateParams(orderUpdateRequestDto.getOrderGiftCertificates()));
         }
         return validationErrors;

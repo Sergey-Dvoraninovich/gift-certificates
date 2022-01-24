@@ -18,7 +18,7 @@ import static com.epam.esm.validator.ValidationError.TOO_LONG_TAG_NAME;
 import static com.epam.esm.validator.ValidationError.TOO_SHORT_TAG_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TagValidatorTest {
+class TagValidatorTest {
     private TagValidator tagValidator = new TagValidator();
 
     @ParameterizedTest

@@ -11,7 +11,7 @@ import java.util.List;
 import static com.epam.esm.validator.ValidationError.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PaginationValidatorTest {
+class PaginationValidatorTest {
     private PaginationValidator paginationValidator = new PaginationValidator();
 
     @ParameterizedTest

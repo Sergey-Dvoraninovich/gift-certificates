@@ -31,7 +31,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequiredArgsConstructor
 public class UserControllerImpl implements UserController {
 
-    private final String ACCESS_DENIED_FOR_USER = "Access denied for user";
+    private static final String ACCESS_DENIED_FOR_USER = "Access denied for user";
 
     private final UserService userService;
     private final RequestService requestService;

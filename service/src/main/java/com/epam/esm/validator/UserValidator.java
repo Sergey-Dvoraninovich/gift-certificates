@@ -49,7 +49,7 @@ public class UserValidator {
         if (userSignUpDto.getEmail() == null){
             validationErrors.add(USER_EMAIL_REQUIRED);
         }
-        if (validationErrors.size() == 0) {
+        if (validationErrors.isEmpty()) {
             validationErrors.addAll(validateParams(userSignUpDto));
         }
         return validationErrors;

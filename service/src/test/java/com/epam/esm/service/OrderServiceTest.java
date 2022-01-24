@@ -34,13 +34,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class OrderServiceTest {
+class OrderServiceTest {
     private static final Integer PAGE_NUMBER = 1;
     private static final Integer PAGE_SIZE = 10;
 
@@ -135,6 +134,8 @@ public class OrderServiceTest {
         when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
 
         orderService.delete(order.getId());
+
+        assertDoesNotThrow(() -> new EntityNotFoundException(order.getId(), OrderResponseDto.class));
     }
 
     private List<OrderResponseDto> provideOrdersDtoList() {

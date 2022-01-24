@@ -42,11 +42,10 @@ public class GiftCertificateSearchParamsValidator {
                     if (!validationErrors.contains(TOO_LONG_TAG_NAME)) {
                         validationErrors.add(TOO_LONG_TAG_NAME);
                     }
-                } else if (!Pattern.matches(TAG_NAME_REGEXP, tagName)) {
-                    if (!validationErrors.contains(INVALID_SYMBOLS_IN_TAG_NAME)) {
+                } else if (!Pattern.matches(TAG_NAME_REGEXP, tagName)
+                           && !validationErrors.contains(INVALID_SYMBOLS_IN_TAG_NAME)) {
                         validationErrors.add(INVALID_SYMBOLS_IN_TAG_NAME);
                     }
-                }
             }
         }
 
@@ -90,8 +89,9 @@ public class GiftCertificateSearchParamsValidator {
             }
         }
 
-        if (showDisabled != null || (!showDisabled.equalsIgnoreCase(TRUE_PARAM)
-                && !showDisabled.equalsIgnoreCase(FALSE_PARAM))) {
+        if (showDisabled != null
+            && !showDisabled.equalsIgnoreCase(TRUE_PARAM)
+            && !showDisabled.equalsIgnoreCase(FALSE_PARAM)) {
                 validationErrors.add(INVALID_SHOW_DISABLED_PARAM);
         }
 
