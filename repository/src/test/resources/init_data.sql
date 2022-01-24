@@ -1,13 +1,21 @@
-USE in_memory_certificates;
+\c in_memory_certificates;
 
-SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE TABLE tags;
-TRUNCATE TABLE gift_certificates;
-TRUNCATE TABLE gift_certificates_tags;
-TRUNCATE TABLE users;
-TRUNCATE TABLE orders;
-TRUNCATE TABLE order_items;
-SET FOREIGN_KEY_CHECKS = 1;
+SET session_replication_role = 'replica';
+TRUNCATE TABLE tags,
+    gift_certificates,
+    gift_certificates_tags,
+    roles,
+    users,
+    orders,
+    order_items;
+ALTER SEQUENCE tags_id_seq RESTART WITH 1;
+ALTER SEQUENCE gift_certificates_id_seq RESTART WITH 1;
+ALTER SEQUENCE gift_certificates_tags_id_seq RESTART WITH 1;
+ALTER SEQUENCE roles_id_seq RESTART WITH 3;
+ALTER SEQUENCE users_id_seq RESTART WITH 1;
+ALTER SEQUENCE orders_id_seq RESTART WITH 4;
+ALTER SEQUENCE order_items_id_seq RESTART WITH 1;
+SET session_replication_role = 'origin';
 
 INSERT INTO gift_certificates(name, description, price, duration, create_date, last_update_date)
 VALUES('certificate first and second tags', 'certificate with first tag and second tags', 50.00, 90, '2000-01-01 11:11:11.222', '2000-01-01 11:11:11.222');
@@ -32,10 +40,15 @@ VALUES (1, 2);
 INSERT INTO gift_certificates_tags(id_gift_certificate, id_tag)
 VALUES (2, 2);
 
-INSERT INTO users(login, name, surname, email)
-VALUES('christian_altman', 'Christian', 'Altman', 'christian.altman@gmail.com');
-INSERT INTO users(login, name, surname, email)
-VALUES('cindy_clark', 'Cindy', 'Clark', 'cindy.clark@gmail.com');
+INSERT INTO ROLES(id, name)
+VALUES(1, 'USER');
+INSERT INTO ROLES(id, name)
+VALUES(2, 'ADMIN');
+
+INSERT INTO users(login, name, surname, email, id_role, password)
+VALUES('christian_altman', 'Christian', 'Altman', 'christian.altman@gmail.com', 1, 'a0f3285b07c26c0dcd2191447f391170d06035e8d57e31a048ba87074f3a9a15');
+INSERT INTO users(login, name, surname, email, id_role, password)
+VALUES('cindy_clark', 'Cindy', 'Clark', 'cindy.clark@gmail.com', 1, 'a0f3285b07c26c0dcd2191447f391170d06035e8d57e31a048ba87074f3a9a15');
 
 INSERT INTO orders(id, id_user, create_order_time, update_order_time)
 VALUES(1, 1, '2000-01-01 11:11:11.222', '2000-01-01 11:11:11.222');

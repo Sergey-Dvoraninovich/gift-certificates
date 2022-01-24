@@ -1,9 +1,10 @@
 package com.epam.esm.repository;
 
+import lombok.Data;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -22,25 +23,15 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 @EnableAutoConfiguration
 @Profile("test")
-@PropertySource("classpath:db-test.properties")
+@ConfigurationProperties(prefix = "db")
+@Data
 public class TestDatabaseConfig {
 
-    @Value("${db.driver}")
     private String driverName;
-
-    @Value("${db.url}")
     private String url;
-
-    @Value("${db.username}")
     private String username;
-
-    @Value("${db.password}")
     private String password;
-
-    @Value("${db.pool.min}")
     private String minPoolSizeLine;
-
-    @Value("${db.pool.max}")
     private String maxPoolSizeLine;
 
     @Autowired

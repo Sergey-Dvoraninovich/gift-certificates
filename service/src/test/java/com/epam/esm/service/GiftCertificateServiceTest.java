@@ -1,8 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dto.GiftCertificateRequestDto;
-import com.epam.esm.dto.GiftCertificateResponseDto;
-import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.*;
 import com.epam.esm.dto.mapping.GiftCertificateRequestDtoMapper;
 import com.epam.esm.dto.mapping.GiftCertificateResponseDtoMapper;
 import com.epam.esm.entity.GiftCertificate;
@@ -20,6 +18,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -65,29 +67,20 @@ class GiftCertificateServiceTest {
 
     @Test
     void testFindAll() {
-//        GiftCertificateResponseDto certificateDto = provideGiftCertificateResponseDto();
-//        GiftCertificate certificate = provideGiftCertificate();
-//        Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
-//                .certificateName(null)
-//                .certificateAvailability(true)
-//                .certificateDescription(null)
-//                .certificateTagNames(null)
-//                .build();
-//        Page<GiftCertificate> certificatesPage = new PageImpl<>(List.of(certificate));
-//        when(giftCertificateRepository.findAll(specification, PageRequest.of(PAGE_NUMBER - 1, PAGE_SIZE)))
-//                .thenReturn(certificatesPage);
-//        when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateDto);
-//        List<GiftCertificateResponseDto> expected = List.of(certificateDto);
-//
-//        GiftCertificateFilterDto giftCertificateFilterDto = new GiftCertificateFilterDto();
-//        giftCertificateFilterDto.setShowDisabled(false);
-//
-//        List<GiftCertificateResponseDto> actual = giftCertificateService.findAll(giftCertificateFilterDto, new PageDto(PAGE_NUMBER, PAGE_SIZE));
-//
-//        assertEquals(expected, actual);
+        GiftCertificateResponseDto certificateDto = provideGiftCertificateResponseDto();
+        GiftCertificate certificate = provideGiftCertificate();
+        Page<GiftCertificate> certificatesPage = new PageImpl<>(List.of(certificate));
+        when(giftCertificateRepository.findAll(any(Specification.class), any(PageRequest.class)))
+                .thenReturn(certificatesPage);
+        when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateDto);
+        List<GiftCertificateResponseDto> expected = List.of(certificateDto);
 
-//        assertFalse(false);
-        assertFalse(false);
+        GiftCertificateFilterDto giftCertificateFilterDto = new GiftCertificateFilterDto();
+        giftCertificateFilterDto.setShowDisabled(false);
+
+        List<GiftCertificateResponseDto> actual = giftCertificateService.findAll(giftCertificateFilterDto, new PageDto(PAGE_NUMBER, PAGE_SIZE));
+
+        assertEquals(expected, actual);
     }
 
     @Test
