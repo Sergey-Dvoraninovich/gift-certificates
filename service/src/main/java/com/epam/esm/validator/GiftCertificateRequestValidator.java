@@ -10,26 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.epam.esm.validator.ValidationError.GIFT_CERTIFICATE_DESCRIPTION_REQUIRED;
-import static com.epam.esm.validator.ValidationError.GIFT_CERTIFICATE_DURATION_REQUIRED;
-import static com.epam.esm.validator.ValidationError.GIFT_CERTIFICATE_NAME_REQUIRED;
-import static com.epam.esm.validator.ValidationError.GIFT_CERTIFICATE_PRICE_REQUIRED;
-import static com.epam.esm.validator.ValidationError.INVALID_GIFT_CERTIFICATE_PRICE_FORMAT;
-import static com.epam.esm.validator.ValidationError.INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION;
-import static com.epam.esm.validator.ValidationError.INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_GIFT_CERTIFICATE_NAME;
-import static com.epam.esm.validator.ValidationError.INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION;
-import static com.epam.esm.validator.ValidationError.INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_DURATION;
-import static com.epam.esm.validator.ValidationError.INVALID_SYMBOLS_IN_GIFT_CERTIFICATE_NAME;
-import static com.epam.esm.validator.ValidationError.INVALID_TAGS_AMOUNT;
-import static com.epam.esm.validator.ValidationError.NOT_UNIQUE_TAGS_IN_GIFT_CERTIFICATE;
-import static com.epam.esm.validator.ValidationError.TOO_BIG_GIFT_CERTIFICATE_PRICE;
-import static com.epam.esm.validator.ValidationError.TOO_LONG_GIFT_CERTIFICATE_DESCRIPTION;
-import static com.epam.esm.validator.ValidationError.TOO_LONG_GIFT_CERTIFICATE_DURATION;
-import static com.epam.esm.validator.ValidationError.TOO_LONG_GIFT_CERTIFICATE_NAME;
-import static com.epam.esm.validator.ValidationError.TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION;
-import static com.epam.esm.validator.ValidationError.TOO_SHORT_GIFT_CERTIFICATE_DURATION;
-import static com.epam.esm.validator.ValidationError.TOO_SHORT_GIFT_CERTIFICATE_NAME;
-import static com.epam.esm.validator.ValidationError.TOO_SMALL_GIFT_CERTIFICATE_PRICE;
+import static com.epam.esm.validator.ValidationError.*;
 
 @Component
 public class GiftCertificateRequestValidator {
@@ -78,6 +59,16 @@ public class GiftCertificateRequestValidator {
     public List<ValidationError> validateParams(String name, String description, String price, String duration, List<Long> tagIdsDto) {
         List<ValidationError> validationErrors = new ArrayList<>();
 
+        validateName(name, validationErrors);
+        validateDescription(description, validationErrors);
+        validatePrice(price, validationErrors);
+        validateDuration(duration, validationErrors);
+        validateTagIds(tagIdsDto, validationErrors);
+
+        return validationErrors;
+    }
+
+    private void validateName(String name, List<ValidationError> validationErrors) {
         if (name != null) {
             if (name.length() < NAME_MIN_LENGTH) {
                 validationErrors.add(TOO_SHORT_GIFT_CERTIFICATE_NAME);
@@ -95,7 +86,9 @@ public class GiftCertificateRequestValidator {
                 }
             }
         }
+    }
 
+    private void validateDescription(String description, List<ValidationError> validationErrors) {
         if (description != null) {
             if (description.length() < DESCRIPTION_MIN_LENGTH) {
                 validationErrors.add(TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION);
@@ -105,7 +98,7 @@ public class GiftCertificateRequestValidator {
             }
             else {
                 if (!Pattern.matches(DESCRIPTION_NO_LEADING_SYMBOLS_REGEXP, description)
-                    && Pattern.matches(DESCRIPTION_SYMBOLS_REGEXP, description)) {
+                        && Pattern.matches(DESCRIPTION_SYMBOLS_REGEXP, description)) {
                     validationErrors.add(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION);
                 }
                 if (!Pattern.matches(DESCRIPTION_SYMBOLS_REGEXP, description)) {
@@ -113,7 +106,9 @@ public class GiftCertificateRequestValidator {
                 }
             }
         }
+    }
 
+    private void validateDuration(String duration, List<ValidationError> validationErrors) {
         if (duration != null) {
             if (!Pattern.matches(DURATION_REGEXP, duration)) {
                 if (Pattern.matches(DURATION_VALID_UNLIMITED_REGEXP, duration)) {
@@ -125,14 +120,16 @@ public class GiftCertificateRequestValidator {
             } else {
                 Duration durationValue = Duration.ofDays(Long.parseLong(duration));
                 if (durationValue.compareTo(MIN_DURATION) < 0) {
-                     validationErrors.add(TOO_SHORT_GIFT_CERTIFICATE_DURATION);
+                    validationErrors.add(TOO_SHORT_GIFT_CERTIFICATE_DURATION);
                 }
                 if (MAX_DURATION.compareTo(durationValue) < 0) {
-                     validationErrors.add(TOO_LONG_GIFT_CERTIFICATE_DURATION);
+                    validationErrors.add(TOO_LONG_GIFT_CERTIFICATE_DURATION);
                 }
             }
         }
+    }
 
+    private void validatePrice(String price, List<ValidationError> validationErrors) {
         if (price != null) {
             if (!Pattern.matches(PRICE_REGEXP, price)) {
                 validationErrors.add(INVALID_GIFT_CERTIFICATE_PRICE_FORMAT);
@@ -146,7 +143,9 @@ public class GiftCertificateRequestValidator {
                 }
             }
         }
+    }
 
+    private void validateTagIds(List<Long> tagIdsDto, List<ValidationError> validationErrors) {
         if (tagIdsDto != null) {
             if (tagIdsDto.size() > MAX_TAGS_AMOUNT){
                 validationErrors.add(INVALID_TAGS_AMOUNT);
@@ -159,7 +158,5 @@ public class GiftCertificateRequestValidator {
                 validationErrors.add(NOT_UNIQUE_TAGS_IN_GIFT_CERTIFICATE);
             }
         }
-
-        return validationErrors;
     }
 }

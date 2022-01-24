@@ -58,6 +58,16 @@ public class UserValidator {
     public List<ValidationError> validateParams(UserSignUpDto userSignUpDto) {
         List<ValidationError> validationErrors = new ArrayList<>();
 
+        validateLogin(userSignUpDto, validationErrors);
+        validatePassword(userSignUpDto, validationErrors);
+        validateName(userSignUpDto, validationErrors);
+        validateSurname(userSignUpDto, validationErrors);
+        validateEmail(userSignUpDto, validationErrors);
+
+        return validationErrors;
+    }
+
+    private void validateLogin(UserSignUpDto userSignUpDto, List<ValidationError> validationErrors) {
         String login = userSignUpDto.getLogin();
         if (login != null) {
             if (login.length() < LOGIN_MIN_LENGTH) {
@@ -70,7 +80,9 @@ public class UserValidator {
                 validationErrors.add(INVALID_USER_LOGIN);
             }
         }
+    }
 
+    private void validatePassword(UserSignUpDto userSignUpDto, List<ValidationError> validationErrors) {
         String password = userSignUpDto.getPassword();
         if (password != null) {
             if (password.length() < PASSWORD_MIN_LENGTH) {
@@ -83,7 +95,9 @@ public class UserValidator {
                 validationErrors.add(INVALID_USER_PASSWORD);
             }
         }
+    }
 
+    private void validateName(UserSignUpDto userSignUpDto, List<ValidationError> validationErrors) {
         String name = userSignUpDto.getName();
         if (name != null) {
             if (name.length() < NAME_MIN_LENGTH) {
@@ -96,7 +110,9 @@ public class UserValidator {
                 validationErrors.add(INVALID_USER_NAME);
             }
         }
+    }
 
+    private void validateSurname(UserSignUpDto userSignUpDto, List<ValidationError> validationErrors) {
         String surname = userSignUpDto.getSurname();
         if (surname != null) {
             if (surname.length() < SURNAME_MIN_LENGTH) {
@@ -109,20 +125,20 @@ public class UserValidator {
                 validationErrors.add(INVALID_USER_SURNAME);
             }
         }
+    }
 
-        String email = userSignUpDto.getEmail();
-        if (email != null) {
-            if (email.length() < EMAIL_MIN_LENGTH) {
-                validationErrors.add(TOO_SHORT_USER_EMAIL);
+    private void validateEmail(UserSignUpDto userSignUpDto, List<ValidationError> validationErrors) {
+        String surname = userSignUpDto.getSurname();
+        if (surname != null) {
+            if (surname.length() < SURNAME_MIN_LENGTH) {
+                validationErrors.add(TOO_SHORT_USER_SURNAME);
             }
-            else if (email.length() > EMAIL_MAX_LENGTH) {
-                validationErrors.add(TOO_LONG_USER_EMAIL);
+            else if (surname.length() > SURNAME_MAX_LENGTH) {
+                validationErrors.add(TOO_LONG_USER_SURNAME);
             }
-            else if (!Pattern.matches(EMAIL_REGEXP, email)) {
-                validationErrors.add(INVALID_USER_EMAIL);
+            else if (!Pattern.matches(SURNAME_REGEXP, surname)) {
+                validationErrors.add(INVALID_USER_SURNAME);
             }
         }
-
-        return validationErrors;
     }
 }
