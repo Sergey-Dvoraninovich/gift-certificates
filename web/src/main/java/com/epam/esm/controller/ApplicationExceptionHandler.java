@@ -1,7 +1,27 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.dto.*;
-import com.epam.esm.exception.*;
+import com.epam.esm.dto.GiftCertificateFilterDto;
+import com.epam.esm.dto.GiftCertificateResponseDto;
+import com.epam.esm.dto.OrderCreateRequestDto;
+import com.epam.esm.dto.OrderItemDto;
+import com.epam.esm.dto.OrderResponseDto;
+import com.epam.esm.dto.OrderUpdateRequestDto;
+import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.TokenDto;
+import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.UserOrderResponseDto;
+import com.epam.esm.dto.UserSignInDto;
+import com.epam.esm.dto.UserSignUpDto;
+import com.epam.esm.exception.AccessException;
+import com.epam.esm.exception.EntityAlreadyExistsException;
+import com.epam.esm.exception.EntityNotAvailableException;
+import com.epam.esm.exception.EntityNotFoundException;
+import com.epam.esm.exception.ExceptionResponse;
+import com.epam.esm.exception.InvalidEntityException;
+import com.epam.esm.exception.InvalidPaginationException;
+import com.epam.esm.exception.JwtTokenException;
+import com.epam.esm.exception.RefreshTokenException;
+import com.epam.esm.exception.UserAuthenticationException;
 import com.epam.esm.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -25,7 +45,11 @@ import java.util.Locale;
 
 import static com.epam.esm.exception.AccessException.State.INVALID_ORDER_USER;
 import static com.epam.esm.exception.RefreshTokenException.State.INVALID_TOKEN;
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestControllerAdvice
 @RequiredArgsConstructor

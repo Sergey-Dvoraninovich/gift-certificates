@@ -1,16 +1,17 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.TestProfileResolver;
-import com.epam.esm.entity.*;
+import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Order;
+import com.epam.esm.entity.OrderItem;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
@@ -27,10 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestDatabaseConfig.class)
-//@SpringBootTest(classes = TestDatabaseConfig.class)
-@ActiveProfiles(resolver = TestProfileResolver.class)
-@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {"classpath:init_data.sql"})
+@ContextConfiguration(classes = TestRepositoryConfig.class)
 public class OrderRepositoryTestFind {
     private static final Integer PAGE_NUMBER = 1;
     private static final Integer PAGE_SIZE = 10;

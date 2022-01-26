@@ -4,7 +4,7 @@ import com.epam.esm.entity.GiftCertificate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
@@ -12,13 +12,18 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestRepositoryConfig.class)
-public class GiftCertificateRepositoryTestCRUD {
+@DataJpaTest
+public class GiftCertificateRepositoryTest {
+
     @Autowired
     private GiftCertificateRepository giftCertificateRepository;
+
 
     @Test
     void testCreate() {
@@ -33,7 +38,7 @@ public class GiftCertificateRepositoryTestCRUD {
 
         //Then
         assertNotNull(certificate);
-        //assertTrue(certificate.getId() > 0);
+        assertTrue(certificate.getId() > 0);
     }
 
     @Test
@@ -101,4 +106,5 @@ public class GiftCertificateRepositoryTestCRUD {
     private void removeRedundantGiftCertificate(GiftCertificate certificate) {
         giftCertificateRepository.delete(certificate);
     }
+
 }

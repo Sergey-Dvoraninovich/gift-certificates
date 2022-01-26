@@ -1,10 +1,12 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.TestProfileResolver;
-import com.epam.esm.entity.*;
+import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Order;
+import com.epam.esm.entity.OrderItem;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -15,9 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-//@SpringBootTest(classes = TestDatabaseConfig.class)
-@ActiveProfiles(resolver = TestProfileResolver.class)
-@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {"classpath:init_data.sql"})
+@SpringBootTest(classes = TestRepositoryConfig.class)
 public class UserRepositoryTestFind {
     private static final Integer PAGE_NUMBER = 0;
     private static final Integer PAGE_SIZE = 10;

@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +15,7 @@ import java.util.Optional;
  */
 @Repository
 public interface GiftCertificateRepository extends PagingAndSortingRepository<GiftCertificate, Long>,
-        JpaSpecificationExecutor<GiftCertificate>, CrudRepository<GiftCertificate, Long> {
+        JpaSpecificationExecutor<GiftCertificate> {
 
     /**
      * Count Gift Certificate amount.
@@ -30,7 +29,7 @@ public interface GiftCertificateRepository extends PagingAndSortingRepository<Gi
      * Find all Gift Certificates.
      *
      * @param specification the specification
-     * @param pageable the Pageable
+     * @param pageable      the Pageable
      * @return the list of Gift Certificates
      */
     Page<GiftCertificate> findAll(Specification<GiftCertificate> specification, Pageable pageable);

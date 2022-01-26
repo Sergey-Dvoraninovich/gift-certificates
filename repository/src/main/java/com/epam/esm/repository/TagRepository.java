@@ -18,8 +18,7 @@ import java.util.Optional;
  * The interface Tag repository.
  */
 @Repository
-public interface TagRepository extends PagingAndSortingRepository<Tag, Long>,
-        CrudRepository<Tag, Long> {
+public interface TagRepository extends PagingAndSortingRepository<Tag, Long> {
     /**
      * Count all Tags amount.
      *
@@ -79,7 +78,7 @@ public interface TagRepository extends PagingAndSortingRepository<Tag, Long>,
      *
      * @return the list
      */
-    @Query( "SELECT o FROM Order o "
+    @Query("SELECT o FROM Order o "
             + "JOIN o.user u "
             + "JOIN o.orderItems i "
             + "GROUP BY o "
@@ -92,7 +91,7 @@ public interface TagRepository extends PagingAndSortingRepository<Tag, Long>,
      * @param userId the User id
      * @return the list
      */
-    @Query( "SELECT t FROM Order o "
+    @Query("SELECT t FROM Order o "
             + "JOIN o.user u "
             + "JOIN o.orderItems i "
             + "JOIN i.giftCertificate c "

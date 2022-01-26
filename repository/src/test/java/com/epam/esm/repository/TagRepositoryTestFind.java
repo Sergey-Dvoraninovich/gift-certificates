@@ -1,12 +1,9 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.TestProfileResolver;
 import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,12 +13,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestDatabaseConfig.class)
-//@SpringBootTest(classes = TestDatabaseConfig.class)
-@ActiveProfiles(resolver = TestProfileResolver.class)
+@ContextConfiguration(classes = TestRepositoryConfig.class)
 @Transactional
 public class TagRepositoryTestFind {
     private static final Integer PAGE_NUMBER = 1;
@@ -51,7 +48,7 @@ public class TagRepositoryTestFind {
         List<Tag> expected = provideNewTagsList();
 
         //When
-        List<Tag> actual = (List<Tag>) tagRepository.findAll(PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
+        List<Tag> actual = (List<Tag>) tagRepository.findAll();
 
         //Then
         assertNotNull(actual);
