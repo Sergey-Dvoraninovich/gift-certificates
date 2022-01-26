@@ -39,6 +39,14 @@ public class DatabaseConfig {
         dataSource.setMinIdle(Integer.parseInt(minPoolSize));
         dataSource.setMaxTotal(Integer.parseInt(maxPoolSize));
 
+//        dataSource.setDriverClassName("org.h2.Driver");
+//        dataSource.setUrl("jdbc:h2:mem:db;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;INIT=CREATE SCHEMA IF NOT EXISTS in_memory_certificates\\\\; \\\n" +
+//                "        RUNSCRIPT FROM 'classpath:init_schema.sql'");
+//        dataSource.setUsername("root");
+//        dataSource.setPassword("root");
+//        dataSource.setMinIdle(Integer.parseInt("2"));
+//        dataSource.setMaxTotal(Integer.parseInt("2"));
+
         return dataSource;
     }
 

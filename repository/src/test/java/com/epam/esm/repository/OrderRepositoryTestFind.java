@@ -2,10 +2,16 @@ package com.epam.esm.repository;
 
 import com.epam.esm.TestProfileResolver;
 import com.epam.esm.entity.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -15,8 +21,14 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-@SpringBootTest(classes = TestDatabaseConfig.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = TestDatabaseConfig.class)
+//@SpringBootTest(classes = TestDatabaseConfig.class)
 @ActiveProfiles(resolver = TestProfileResolver.class)
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {"classpath:init_data.sql"})
 public class OrderRepositoryTestFind {
@@ -26,35 +38,37 @@ public class OrderRepositoryTestFind {
     @Autowired
     private OrderRepository orderRepository;
 
-//    @Test
-//    void testCountAll() {
-//        List<Order> expected = provideOrdersList();
-//
-//        long actual = orderRepository.count();
-//
-//        assertEquals(expected.size(), actual);
-//    }
-//
-//    @Test
-//    void testFindAll() {
-//        List<Order> expected = provideOrdersList();
-//
-//        List<Order> actual;
-//        actual = (List<Order>) orderRepository.findAll(PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
-//
-//        assertEquals(expected, actual);
-//    }
-//
-//    @Test
-//    void testFindById() {
-//        Order expectedOrder = provideOrdersList().get(0);
-//        Optional<Order> user = orderRepository.findById(expectedOrder.getId());
-//        boolean result = false;
-//        if (user.isPresent()){
-//            result = user.get().getId() == expectedOrder.getId();
-//        }
-//        assertTrue(result);
-//    }
+    @Test
+    void testCountAll() {
+        List<Order> expected = provideOrdersList();
+
+        long actual = orderRepository.count();
+
+        assertEquals(expected.size(), actual);
+    }
+
+    @Test
+    void testFindAll() {
+        Page<Order> expected = new PageImpl<>(provideOrdersList());
+
+        Page<Order> actual;
+        actual = orderRepository.findAll(PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
+
+        List<Order> list = actual.stream().toList();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void testFindById() {
+        Order expectedOrder = provideOrdersList().get(0);
+        Optional<Order> user = orderRepository.findById(expectedOrder.getId());
+        boolean result = false;
+        if (user.isPresent()){
+            result = user.get().getId() == expectedOrder.getId();
+        }
+        assertTrue(result);
+    }
 
     private List<Order> provideOrdersList() {
         Instant date;

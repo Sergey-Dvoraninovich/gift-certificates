@@ -1,21 +1,3 @@
-\c in_memory_certificates;
-
-SET session_replication_role = 'replica';
-TRUNCATE TABLE tags,
-    gift_certificates,
-    gift_certificates_tags,
-    roles,
-    users,
-    orders,
-    order_items;
-ALTER SEQUENCE tags_id_seq RESTART WITH 1;
-ALTER SEQUENCE gift_certificates_id_seq RESTART WITH 1;
-ALTER SEQUENCE gift_certificates_tags_id_seq RESTART WITH 1;
-ALTER SEQUENCE roles_id_seq RESTART WITH 3;
-ALTER SEQUENCE users_id_seq RESTART WITH 1;
-ALTER SEQUENCE orders_id_seq RESTART WITH 4;
-ALTER SEQUENCE order_items_id_seq RESTART WITH 1;
-SET session_replication_role = 'origin';
 
 INSERT INTO gift_certificates(name, description, price, duration, create_date, last_update_date)
 VALUES('certificate first and second tags', 'certificate with first tag and second tags', 50.00, 90, '2000-01-01 11:11:11.222', '2000-01-01 11:11:11.222');
