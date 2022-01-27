@@ -65,7 +65,7 @@ allprojects {
 
 sonarqube {
     properties {
-        property 'sonar.projectKey', certificates
+        property 'sonar.projectKey', 'certificates'
         property 'sonar.host.url', 'http://localhost:9000'
         property "sonar.login", '2e90326b2e990488b6afcb5d21e482f8a87c4970'
     }
