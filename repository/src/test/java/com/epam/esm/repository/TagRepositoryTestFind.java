@@ -1,15 +1,11 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.TestProfileResolver;
 import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,82 +15,78 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestDatabaseConfig.class)
-//@SpringBootTest(classes = TestDatabaseConfig.class)
-@ActiveProfiles(resolver = TestProfileResolver.class)
-@Transactional
+@DataJpaTest
 public class TagRepositoryTestFind {
-    private static final Integer PAGE_NUMBER = 1;
+    private static final Integer PAGE_NUMBER = 0;
     private static final Integer PAGE_SIZE = 10;
 
     @Autowired
     private TagRepository tagRepository;
 
+//    @Test
+//    void countAll() {
+//        //Given
+//        List<Tag> expected = provideNewTagsList();
+//
+//        //When
+//        long actual = tagRepository.count();
+//
+//        //Then
+//        assertEquals(expected.size(), actual);
+//
+//        //Clean
+//        expected.forEach(this::removeRedundantTag);
+//    }
+
+//    @Test
+//    void testFindAll() {
+//        //Given
+//        List<Tag> expected = provideNewTagsList();
+//
+//        //When
+//        Page<Tag> page = tagRepository.findAll(PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
+//
+//        //Then
+//        List<Tag> actual = page.stream().toList();
+//        assertNotNull(actual);
+//        assertEquals(expected, actual);
+//
+//        //Clean
+//        expected.forEach(this::removeRedundantTag);
+//    }
+
     @Test
-    void countAll() {
+    void testFindById() {
         //Given
-        List<Tag> expected = provideNewTagsList();
+        Tag expected = provideNewTag("new tag");
 
         //When
-        long actual = tagRepository.count();
-
-        //Then
-        assertEquals(expected.size(), actual);
-
-        //Clean
-        expected.forEach(tag -> removeRedundantTag(tag));
-    }
-
-    @Test
-    void testFindAll() {
-        //Given
-        List<Tag> expected = provideNewTagsList();
-
-        //When
-        List<Tag> actual = (List<Tag>) tagRepository.findAll(PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
+        Optional<Tag> actualOptional = tagRepository.findById(expected.getId());
+        Tag actual = actualOptional.orElseGet(null);
 
         //Then
         assertNotNull(actual);
         assertEquals(expected, actual);
 
         //Clean
-        expected.forEach(tag -> removeRedundantTag(tag));
-    }
-
-    @Test
-    void testFindById() {
-        //Given
-        Tag expectedTag = provideNewTag("new tag");
-
-        //When
-        Optional<Tag> actualTagOptional = tagRepository.findById(expectedTag.getId());
-        Tag actualTag = actualTagOptional.orElseGet(null);
-
-        //Then
-        assertNotNull(actualTag);
-        assertEquals(expectedTag.getId(), actualTag.getId());
-        assertEquals(expectedTag.getName(), actualTag.getName());
-
-        //Clean
-        removeRedundantTag(actualTag);
+        removeRedundantTag(actual);
     }
 
     @Test
     void testFindByName() {
         //Given
-        Tag expectedTag = provideNewTag("new tag");
+        Tag expected = provideNewTag("new tag");
 
         //When
-        Optional<Tag> actualTagOptional = tagRepository.findTagByName(expectedTag.getName());
-        Tag actualTag = actualTagOptional.orElseGet(null);
+        Optional<Tag> actualOptional = tagRepository.findTagByName(expected.getName());
+        Tag actual = actualOptional.orElseGet(null);
 
         //Then
-        assertNotNull(actualTag);
-        assertEquals(expectedTag.getId(), actualTag.getId());
-        assertEquals(expectedTag.getName(), actualTag.getName());
+        assertNotNull(actual);
+        assertEquals(expected, actual);
 
         //Clean
-        removeRedundantTag(actualTag);
+        removeRedundantTag(actual);
     }
 
     private Tag provideNewTag(String tagName) {
@@ -115,12 +107,11 @@ public class TagRepositoryTestFind {
         //Remove old tags form DB.
         Arrays.asList("first tag", "second tag", "third tag").forEach(tagName -> {
             Optional<Tag> oldTagOptional = tagRepository.findTagByName(tagName);
-            if (oldTagOptional.isPresent()) {
-                tagRepository.delete(oldTagOptional.get());
-            }});
+            oldTagOptional.ifPresent(tag -> tagRepository.delete(tag));
+        });
 
         //Create new tags
         List<String> tagNameList = Arrays.asList("first new tag", "second new tag", "third new tag");
-        return tagNameList.stream().map(tagName -> provideNewTag(tagName)).collect(Collectors.toList());
+        return tagNameList.stream().map(this::provideNewTag).collect(Collectors.toList());
     }
 }

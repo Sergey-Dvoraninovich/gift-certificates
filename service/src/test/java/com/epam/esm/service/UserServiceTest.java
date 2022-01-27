@@ -1,9 +1,19 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dto.*;
+import com.epam.esm.dto.PageDto;
+import com.epam.esm.dto.TokenDto;
+import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.UserOrderResponseDto;
+import com.epam.esm.dto.UserSignInDto;
+import com.epam.esm.dto.UserSignUpDto;
 import com.epam.esm.dto.mapping.UserDtoMapper;
 import com.epam.esm.dto.mapping.UserOrderResponseDtoMapper;
-import com.epam.esm.entity.*;
+import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Order;
+import com.epam.esm.entity.OrderItem;
+import com.epam.esm.entity.RefreshToken;
+import com.epam.esm.entity.User;
+import com.epam.esm.entity.UserRole;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.InvalidEntityException;
 import com.epam.esm.exception.UserAuthenticationException;
@@ -39,6 +49,7 @@ import static com.epam.esm.entity.UserRoleName.USER;
 import static com.epam.esm.validator.ValidationError.INVALID_USER_LOGIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -140,7 +151,7 @@ class UserServiceTest {
 
         try {
             userService.signUp(userSignUpDto);
-            assertTrue(false);
+            fail();
         } catch (InvalidEntityException e) {
             assertTrue(true);
         }
@@ -157,7 +168,7 @@ class UserServiceTest {
 
         try {
             userService.signUp(userSignUpDto);
-            assertTrue(false);
+            fail();
         } catch (InvalidEntityException e) {
             assertTrue(true);
         }
@@ -195,7 +206,7 @@ class UserServiceTest {
 
         try {
             userService.login(userSignInDto);
-            assertTrue(false);
+            fail();
         } catch (UserAuthenticationException e) {
             assertTrue(true);
         }
@@ -212,7 +223,7 @@ class UserServiceTest {
 
         try {
             userService.login(userSignInDto);
-            assertTrue(false);
+            fail();
         } catch (UserAuthenticationException e) {
             assertTrue(true);
         }
@@ -225,7 +236,7 @@ class UserServiceTest {
 
         try {
             userService.findById(nonExistingId);
-            assertTrue(false);
+            fail();
         } catch (EntityNotFoundException e) {
             assertTrue(true);
         }
@@ -238,7 +249,7 @@ class UserServiceTest {
 
         try {
             userService.findById(nonExistingId);
-            assertTrue(false);
+            fail();
         } catch (EntityNotFoundException e) {
             assertTrue(true);
         }
@@ -285,7 +296,7 @@ class UserServiceTest {
 
         try {
             userService.findUserOrder(wrongUser.getId(), userOrder.getId());
-            assertTrue(false);
+            fail();
         } catch (EntityNotFoundException e) {
             assertTrue(true);
         }

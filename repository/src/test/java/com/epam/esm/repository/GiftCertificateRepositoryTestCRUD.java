@@ -1,27 +1,27 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.TestProfileResolver;
 import com.epam.esm.entity.GiftCertificate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestDatabaseConfig.class)
-@ActiveProfiles(resolver = TestProfileResolver.class)
-@Transactional
+@DataJpaTest
 public class GiftCertificateRepositoryTestCRUD {
+
     @Autowired
     private GiftCertificateRepository giftCertificateRepository;
 
@@ -38,7 +38,7 @@ public class GiftCertificateRepositoryTestCRUD {
 
         //Then
         assertNotNull(certificate);
-        //assertTrue(certificate.getId() > 0);
+        assertTrue(certificate.getId() > 0);
     }
 
     @Test
@@ -76,7 +76,7 @@ public class GiftCertificateRepositoryTestCRUD {
         //Preparation
         storedCertificate = giftCertificateRepository.save(storedCertificate);
         assertNotNull(storedCertificate);
-        //assertTrue(storedCertificate.getId() > 0);
+        assertTrue(storedCertificate.getId() > 0);
 
         //When
         giftCertificateRepository.delete(storedCertificate);
@@ -98,7 +98,7 @@ public class GiftCertificateRepositoryTestCRUD {
     private GiftCertificate provideStoredGiftCertificate(GiftCertificate certificate) {
 
         long generatedId = giftCertificateRepository.save(certificate).getId();
-        //assertTrue(generatedId > 0);
+        assertTrue(generatedId > 0);
 
         return certificate;
     }

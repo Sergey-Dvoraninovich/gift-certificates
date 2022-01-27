@@ -1,15 +1,15 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.TestProfileResolver;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -22,12 +22,10 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(classes = TestDatabaseConfig.class)
-@ActiveProfiles(resolver = TestProfileResolver.class)
-@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {"classpath:init_data.sql"})
-//@EnableConfigurationProperties(value = TestDatabaseConfig.class)
+@ExtendWith(SpringExtension.class)
+@DataJpaTest
 public class GiftCertificateRepositoryTestFind {
-    private static final Integer PAGE_NUMBER = 1;
+    private static final Integer PAGE_NUMBER = 0;
     private static final Integer PAGE_SIZE = 10;
 
     @Autowired
@@ -35,73 +33,98 @@ public class GiftCertificateRepositoryTestFind {
 
     @Test
     void testCount() {
-        List<GiftCertificate> expected = Arrays.asList(provideMultipleTagsGiftCertificate());
+        //Given
+        List<GiftCertificate> expected = List.of(provideMultipleTagsGiftCertificate());
 
         Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
                 .certificateTagNames(List.of(provideTagsList().get(0)))
                 .build();
+
+        //When
         long actual = giftCertificateRepository.count(specification);
 
+        //Then
         assertEquals(expected.size(), actual);
     }
 
     @Test
     void testFindByTagName() {
-        List<GiftCertificate> expected = Arrays.asList(provideMultipleTagsGiftCertificate());
+        //Given
+        List<GiftCertificate> expected = List.of(provideMultipleTagsGiftCertificate());
 
         Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
                 .certificateTagNames(List.of(provideTagsList().get(0)))
                 .build();
-        List<GiftCertificate> actual = (List<GiftCertificate>) giftCertificateRepository.findAll(specification,
-                                                                         PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
 
+        //When
+        Page<GiftCertificate> page = giftCertificateRepository.findAll(specification,
+                PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
+
+        //Then
+        List<GiftCertificate> actual = page.stream().toList();
         assertEquals(expected, actual);
     }
 
     @Test
     void testFindSeveralByTagNames() {
+        //Given
         List<GiftCertificate> expected = Arrays.asList(provideMultipleTagsGiftCertificate());
 
         Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
                 .certificateTagNames(provideTagsList())
                 .build();
-        List<GiftCertificate> actual = (List<GiftCertificate>) giftCertificateRepository.findAll(specification,
+
+        //When
+        Page<GiftCertificate> page = giftCertificateRepository.findAll(specification,
                 PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
 
+        //Then
+        List<GiftCertificate> actual = page.stream().toList();
         assertEquals(expected, actual);
     }
 
     @Test
     void testFindByName() {
+        //Given
         List<GiftCertificate> expected = Arrays.asList(provideMultipleTagsGiftCertificate());
         String name = expected.get(0).getName();
 
         Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
                 .certificateName(name)
                 .build();
-        List<GiftCertificate> actual = (List<GiftCertificate>) giftCertificateRepository.findAll(specification,
+
+        //When
+        Page<GiftCertificate> page = giftCertificateRepository.findAll(specification,
                 PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
 
+        //Then
+        List<GiftCertificate> actual = page.stream().toList();
         assertEquals(expected, actual);
     }
 
 
     @Test
     void testFindByDescription() {
+        //Given
         List<GiftCertificate> expected = Arrays.asList(provideMultipleTagsGiftCertificate());
         String description = expected.get(0).getDescription();
 
         Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
                 .certificateDescription(description)
                 .build();
-        List<GiftCertificate> actual = (List<GiftCertificate>) giftCertificateRepository.findAll(specification,
+
+        //When
+        Page<GiftCertificate> page = giftCertificateRepository.findAll(specification,
                 PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
 
+        //Then
+        List<GiftCertificate> actual = page.stream().toList();
         assertEquals(expected, actual);
     }
 
     @Test
     void findByAllParams(){
+        //Given
         GiftCertificate certificate = provideSingleTagCertificate();
         String name = certificate.getName();
         String description = certificate.getDescription();
@@ -112,19 +135,25 @@ public class GiftCertificateRepositoryTestFind {
                 .certificateDescription(description)
                 .certificateTagNames(List.of(provideTagsList().get(1)))
                 .build();
-        List<GiftCertificate> actual = (List<GiftCertificate>) giftCertificateRepository.findAll(specification,
-                PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
-        long actualFirstId = actual.get(0).getId();
 
+        //When
+        Page<GiftCertificate> actual = giftCertificateRepository.findAll(specification,
+                PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
+
+        //Then
+        long actualFirstId = actual.stream().toList().get(0).getId();
         assertEquals(expectedFirstId, actualFirstId);
     }
 
     @Test
     void testFindById() {
+        //Given
         GiftCertificate expected = provideMultipleTagsGiftCertificate();
 
+        //When
         Optional<GiftCertificate> actual = giftCertificateRepository.findById(expected.getId());
 
+        //When
         assertEquals(expected, actual.get());
     }
 
@@ -132,6 +161,7 @@ public class GiftCertificateRepositoryTestFind {
     private GiftCertificate provideMultipleTagsGiftCertificate() {
         GiftCertificate giftCertificate = new GiftCertificate();
         giftCertificate.setId(1L);
+        giftCertificate.setIsAvailable(true);
         giftCertificate.setName("certificate first and second tags");
         giftCertificate.setDescription("certificate with first tag and second tags");
         giftCertificate.setPrice(new BigDecimal("50.00"));
@@ -147,6 +177,7 @@ public class GiftCertificateRepositoryTestFind {
     private GiftCertificate provideSingleTagCertificate() {
         GiftCertificate giftCertificate = new GiftCertificate();
         giftCertificate.setId(2L);
+        giftCertificate.setIsAvailable(true);
         giftCertificate.setName("certificate second tag");
         giftCertificate.setDescription("certificate with second tag");
         giftCertificate.setPrice(new BigDecimal("100.00"));
@@ -162,6 +193,7 @@ public class GiftCertificateRepositoryTestFind {
     private GiftCertificate provideCertificateWithoutTag() {
         GiftCertificate giftCertificate = new GiftCertificate();
         giftCertificate.setId(3L);
+        giftCertificate.setIsAvailable(true);
         giftCertificate.setName("certificate");
         giftCertificate.setDescription("certificate");
         giftCertificate.setPrice(new BigDecimal("200.00"));
@@ -175,6 +207,7 @@ public class GiftCertificateRepositoryTestFind {
     private GiftCertificate provideGiftCertificate() {
         GiftCertificate giftCertificate = new GiftCertificate();
         giftCertificate.setId(4L);
+        giftCertificate.setIsAvailable(true);
         giftCertificate.setName("test certificate");
         giftCertificate.setDescription("New certificate for test");
         giftCertificate.setPrice(new BigDecimal("200.00"));

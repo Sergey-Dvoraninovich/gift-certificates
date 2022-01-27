@@ -1,26 +1,24 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.TestProfileResolver;
 import com.epam.esm.entity.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.transaction.Transactional;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestDatabaseConfig.class)
-@ActiveProfiles(resolver = TestProfileResolver.class)
-@Transactional
+@DataJpaTest
 public class OrderRepositoryTestCRUD {
     @Autowired
     private OrderRepository orderRepository;
@@ -38,8 +36,10 @@ public class OrderRepositoryTestCRUD {
 
         //Then
         assertNotNull(actual);
-        //System.out.println(actual);
-        //assertTrue(actual.getId() > 0);
+        assertTrue(actual.getId() > 0);
+
+        //Clean
+        removeRedundantOrder(order);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class OrderRepositoryTestCRUD {
 
         //Then
         assertNotNull(actual);
-        assertEquals(actual, expected);
+        assertEquals(expected.getUpdateOrderTime(), actual.getUpdateOrderTime());
 
         //Clean
         removeRedundantOrder(expected);
@@ -71,7 +71,7 @@ public class OrderRepositoryTestCRUD {
         //Preparation
         Order storedOrder = orderRepository.save(order);
         assertNotNull(storedOrder);
-        //assertTrue(storedOrder.getId() > 0);
+        assertTrue(storedOrder.getId() > 0);
 
         //When
         orderRepository.delete(storedOrder);
@@ -94,7 +94,7 @@ public class OrderRepositoryTestCRUD {
     private Order provideStoredOrder(Order order) {
 
         long generatedId = orderRepository.save(order).getId();
-        //assertTrue(generatedId > 0);
+        assertTrue(generatedId > 0);
 
         return order;
     }

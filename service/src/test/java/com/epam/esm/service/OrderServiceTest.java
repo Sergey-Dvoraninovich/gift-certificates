@@ -1,6 +1,11 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dto.*;
+import com.epam.esm.dto.OrderCreateRequestDto;
+import com.epam.esm.dto.OrderFilterDto;
+import com.epam.esm.dto.OrderItemDto;
+import com.epam.esm.dto.OrderResponseDto;
+import com.epam.esm.dto.PageDto;
+import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.mapping.OrderResponseDtoMapper;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
@@ -34,7 +39,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -101,7 +109,7 @@ class OrderServiceTest {
 
         try {
             orderService.findById(nonExistingId);
-            assertTrue(false);
+            fail();
         } catch (EntityNotFoundException e) {
             assertTrue(true);
         }

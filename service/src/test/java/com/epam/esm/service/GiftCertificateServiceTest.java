@@ -1,6 +1,10 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dto.*;
+import com.epam.esm.dto.GiftCertificateFilterDto;
+import com.epam.esm.dto.GiftCertificateRequestDto;
+import com.epam.esm.dto.GiftCertificateResponseDto;
+import com.epam.esm.dto.PageDto;
+import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.mapping.GiftCertificateRequestDtoMapper;
 import com.epam.esm.dto.mapping.GiftCertificateResponseDtoMapper;
 import com.epam.esm.entity.GiftCertificate;
@@ -33,7 +37,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -109,8 +116,8 @@ class GiftCertificateServiceTest {
         when(tagRepository.findById(any(Long.class))).thenReturn(Optional.empty());
 
         when(giftCertificateRepository.save(any(GiftCertificate.class))).thenReturn(certificate);
-        for (int i = 0; i < tags.size(); i++){
-            when(tagRepository.findById(tags.get(i).getId())).thenReturn(Optional.of(tags.get(i)));
+        for (Tag tag : tags) {
+            when(tagRepository.findById(tag.getId())).thenReturn(Optional.of(tag));
         }
 
         GiftCertificateResponseDto actual = giftCertificateService.create(certificateDto);
@@ -134,8 +141,8 @@ class GiftCertificateServiceTest {
         when(giftCertificateRepository.findById(certificate.getId())).thenReturn(Optional.of(certificate));
         when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateResponseDto);
 
-        for (int i = 0; i < tags.size(); i++){
-            when(tagRepository.findById(tags.get(i).getId())).thenReturn(Optional.of(tags.get(i)));
+        for (Tag tag : tags) {
+            when(tagRepository.findById(tag.getId())).thenReturn(Optional.of(tag));
         }
 
         when(giftCertificateRepository.save(any(GiftCertificate.class))).thenReturn(certificate);
@@ -176,7 +183,7 @@ class GiftCertificateServiceTest {
 
         try {
             giftCertificateService.update(1L, certificateRequestDto);
-            assertTrue(false);
+            fail();
         } catch (InvalidEntityException e) {
             assertTrue(true);
         }
@@ -194,7 +201,7 @@ class GiftCertificateServiceTest {
 
         try {
             giftCertificateService.update(certificateId, certificateRequestDto);
-            assertTrue(false);
+            fail();
         } catch (InvalidEntityException e) {
             assertTrue(true);
         }
@@ -325,10 +332,10 @@ class GiftCertificateServiceTest {
     }
 
     private List<Long> provideTagIdsList() {
-        return Arrays.asList(new Long[]{1L, 2L});
+        return Arrays.asList(1L, 2L);
     }
 
     private List<Long> provideTagIdsForUpdateList() {
-        return Arrays.asList(new Long[]{1L, 2L, 3L});
+        return Arrays.asList(1L, 2L, 3L);
     }
 }
