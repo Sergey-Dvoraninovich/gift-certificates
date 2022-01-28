@@ -11,25 +11,25 @@ import static com.epam.esm.validator.ValidationError.*;
 
 @Component
 public class UserValidator {
-    private static final String LOGIN_REGEXP = "^[A-Za-z_]{3,25}$";
+    private static final String LOGIN_REGEXP = "^[A-Za-z_]{2,50}$";
     private static final String PASSWORD_REGEXP = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$";
-    private static final String NAME_REGEXP = "^[A-Za-z]{3,25}$";
-    private static final String SURNAME_REGEXP = "^[A-Za-z]{3,25}$";
+    private static final String NAME_REGEXP = "^[A-Za-z]{2,45}$";
+    private static final String SURNAME_REGEXP = "^[A-Za-z]{2,45}$";
     private static final String EMAIL_REGEXP = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
 
     private static final int LOGIN_MIN_LENGTH = 2;
     private static final int LOGIN_MAX_LENGTH = 50;
 
-    private static final int PASSWORD_MIN_LENGTH = 2;
+    private static final int PASSWORD_MIN_LENGTH = 8;
     private static final int PASSWORD_MAX_LENGTH = 45;
 
     private static final int NAME_MIN_LENGTH = 2;
-    private static final int NAME_MAX_LENGTH = 100;
+    private static final int NAME_MAX_LENGTH = 45;
 
     private static final int SURNAME_MIN_LENGTH = 2;
     private static final int SURNAME_MAX_LENGTH = 45;
 
-    private static final int EMAIL_MIN_LENGTH = 4;
+    private static final int EMAIL_MIN_LENGTH = 5;
     private static final int EMAIL_MAX_LENGTH = 255;
 
     public List<ValidationError> validateWithRequiredParams(UserSignUpDto userSignUpDto) {

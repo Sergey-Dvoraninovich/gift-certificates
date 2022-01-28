@@ -243,6 +243,19 @@ class UserServiceTest {
     }
 
     @Test
+    void testFindByLoginNotFound() {
+        String login = "user";
+        when(userRepository.findByLogin(login)).thenReturn(Optional.empty());
+
+        try {
+            userService.findByLogin(login);
+            fail();
+        } catch (EntityNotFoundException e) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
     void testFindUserOrdersNoUser() {
         long nonExistingId = 9999999L;
         when(userRepository.findById(nonExistingId)).thenReturn(Optional.empty());
@@ -253,6 +266,30 @@ class UserServiceTest {
         } catch (EntityNotFoundException e) {
             assertTrue(true);
         }
+    }
+
+    @Test
+    void testGetUserPasswordNoUser() {
+        UserDto userDto = provideUsersDtoList().get(0);
+        when(userRepository.findById(userDto.getId())).thenReturn(Optional.empty());
+
+        try {
+            userService.getUserPassword(userDto);
+            fail();
+        } catch (EntityNotFoundException e) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    void testGetUserPassword() {
+        User user = provideUser();
+        UserDto userDto = provideUsersDtoList().get(0);
+        when(userRepository.findById(userDto.getId())).thenReturn(Optional.of(user));
+
+        String password = userService.getUserPassword(userDto);
+
+        assertEquals(user.getPassword(), password);
     }
 
     @Test
@@ -352,6 +389,18 @@ class UserServiceTest {
         user.setSurname("Piterson");
         user.setEmail("alex.piterson@gmail.com");
         user.setRole(provideRole());
+        return user;
+    }
+
+    private User provideUser() {
+        User user = new User();
+        user.setId(1L);
+        user.setLogin("ivan_ivanov");
+        user.setPassword("a0f3285b07c26c0dcd2191447f391170d06035e8d57e31a048ba87074f3a9a15");
+        user.setName("Ivan");
+        user.setSurname("Ivanov");
+        user.setEmail("ivan.ivanov@gmail.com");
+
         return user;
     }
 
