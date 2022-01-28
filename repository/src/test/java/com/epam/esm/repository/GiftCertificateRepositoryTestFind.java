@@ -103,24 +103,24 @@ public class GiftCertificateRepositoryTestFind {
     }
 
 
-//    @Test
-//    void testFindByDescription() {
-//        //Given
-//        List<GiftCertificate> expected = Arrays.asList(provideMultipleTagsGiftCertificate());
-//        String description = expected.get(0).getDescription();
-//
-//        Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
-//                .certificateDescription(description)
-//                .build();
-//
-//        //When
-//        Page<GiftCertificate> page = giftCertificateRepository.findAll(specification,
-//                PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
-//
-//        //Then
-//        List<GiftCertificate> actual = page.stream().toList();
-//        assertEquals(expected, actual);
-//    }
+    @Test
+    void testFindByDescription() {
+        //Given
+        List<GiftCertificate> expected = Arrays.asList(provideMultipleTagsGiftCertificate());
+        String description = expected.get(0).getDescription();
+
+        Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
+                .certificateDescription(description)
+                .build();
+
+        //When
+        Page<GiftCertificate> page = giftCertificateRepository.findAll(specification,
+                PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
+
+        //Then
+        List<GiftCertificate> actual = page.stream().toList();
+        assertEquals(expected, actual);
+    }
 
     @Test
     void findByAllParams(){
