@@ -1,8 +1,0 @@
-HELP.md
-.gradle
-db-production.properties
-.idea
-/build
-/repository/build/
-/service/build/
-/web/build/
