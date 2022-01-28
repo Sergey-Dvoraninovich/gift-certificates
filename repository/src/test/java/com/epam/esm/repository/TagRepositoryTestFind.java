@@ -23,38 +23,6 @@ public class TagRepositoryTestFind {
     @Autowired
     private TagRepository tagRepository;
 
-//    @Test
-//    void countAll() {
-//        //Given
-//        List<Tag> expected = provideNewTagsList();
-//
-//        //When
-//        long actual = tagRepository.count();
-//
-//        //Then
-//        assertEquals(expected.size(), actual);
-//
-//        //Clean
-//        expected.forEach(this::removeRedundantTag);
-//    }
-
-//    @Test
-//    void testFindAll() {
-//        //Given
-//        List<Tag> expected = provideNewTagsList();
-//
-//        //When
-//        Page<Tag> page = tagRepository.findAll(PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
-//
-//        //Then
-//        List<Tag> actual = page.stream().toList();
-//        assertNotNull(actual);
-//        assertEquals(expected, actual);
-//
-//        //Clean
-//        expected.forEach(this::removeRedundantTag);
-//    }
-
     @Test
     void testFindById() {
         //Given

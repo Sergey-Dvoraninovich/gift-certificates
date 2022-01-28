@@ -1,6 +1,11 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.entity.*;
+import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Order;
+import com.epam.esm.entity.OrderItem;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.User;
+import com.epam.esm.entity.UserRole;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

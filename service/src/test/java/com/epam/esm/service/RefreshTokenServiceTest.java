@@ -2,6 +2,7 @@ package com.epam.esm.service;
 
 import com.epam.esm.entity.User;
 import com.epam.esm.entity.UserRole;
+import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.repository.RefreshTokenRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.impl.RefreshTokenServiceImpl;
@@ -13,7 +14,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static com.epam.esm.entity.UserRoleName.USER;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class RefreshTokenServiceTest {
@@ -32,18 +38,18 @@ public class RefreshTokenServiceTest {
     }
 
     @Test
-    void testFindById() {
-//        User user = provideUser();
-//
-//        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-//        doNothing().when(refreshTokenRepository).save(any());
-//
-//        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
-//
-//        assertNotNull(refreshToken);
-//        assertTrue(refreshToken.getId() > 0);
-//        assertTrue(Instant.now().isBefore(refreshToken.getExpirationDate()));
-//        assertNotNull(refreshToken);
+    void testSignUpUserExists() {
+        User user = provideUser();
+
+        when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
+
+        try {
+            refreshTokenService.createRefreshToken(user.getId());
+            fail();
+        } catch (EntityNotFoundException e) {
+            assertTrue(true);
+        }
+
     }
 
     private User provideUser() {

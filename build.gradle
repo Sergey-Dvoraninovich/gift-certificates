@@ -19,8 +19,6 @@ allprojects {
         implementation group: 'io.jsonwebtoken', name: 'jjwt', version: jjwtVersion
         implementation group: 'commons-codec', name: 'commons-codec', version: commonsCodecVersion
 
-        //implementation group: 'com.h2database', name: 'h2', version: h2Version
-
         implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
         implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion
         implementation group: 'org.springframework', name: 'spring-context', version: springVersion
@@ -36,10 +34,6 @@ allprojects {
         implementation group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: springBootVersion
 
         implementation group: 'org.hibernate', name: 'hibernate-core', version: hibernateCoreVersion
-
-        //implementation "org.springdoc:springdoc-openapi-ui:1.6.4"
-
-       // implementation 'org.springdoc:springdoc-openapi-ui:1.6.5'
 
         implementation group: 'javax.validation', name: 'validation-api', version: validationApiVersion
         implementation  group:'io.springfox', name: 'springfox-swagger2', version: swaggerVersion
