@@ -7,7 +7,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.epam.esm.validator.ValidationError.*;
+import static com.epam.esm.validator.ValidationError.INVALID_USER_EMAIL;
+import static com.epam.esm.validator.ValidationError.INVALID_USER_LOGIN;
+import static com.epam.esm.validator.ValidationError.INVALID_USER_NAME;
+import static com.epam.esm.validator.ValidationError.INVALID_USER_PASSWORD;
+import static com.epam.esm.validator.ValidationError.INVALID_USER_SURNAME;
+import static com.epam.esm.validator.ValidationError.TOO_LONG_USER_EMAIL;
+import static com.epam.esm.validator.ValidationError.TOO_LONG_USER_LOGIN;
+import static com.epam.esm.validator.ValidationError.TOO_LONG_USER_NAME;
+import static com.epam.esm.validator.ValidationError.TOO_LONG_USER_PASSWORD;
+import static com.epam.esm.validator.ValidationError.TOO_LONG_USER_SURNAME;
+import static com.epam.esm.validator.ValidationError.TOO_SHORT_USER_EMAIL;
+import static com.epam.esm.validator.ValidationError.TOO_SHORT_USER_LOGIN;
+import static com.epam.esm.validator.ValidationError.TOO_SHORT_USER_NAME;
+import static com.epam.esm.validator.ValidationError.TOO_SHORT_USER_PASSWORD;
+import static com.epam.esm.validator.ValidationError.TOO_SHORT_USER_SURNAME;
+import static com.epam.esm.validator.ValidationError.USER_EMAIL_REQUIRED;
+import static com.epam.esm.validator.ValidationError.USER_LOGIN_REQUIRED;
+import static com.epam.esm.validator.ValidationError.USER_NAME_REQUIRED;
+import static com.epam.esm.validator.ValidationError.USER_PASSWORD_REQUIRED;
+import static com.epam.esm.validator.ValidationError.USER_SURNAME_REQUIRED;
 
 @Component
 public class UserValidator {

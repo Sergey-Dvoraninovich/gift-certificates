@@ -6,6 +6,7 @@ pipeline {
             steps {
                 bat "./gradlew test"
                 bat "./gradlew jacocoTestReport"
+                bat "./gradlew codeCoverageReport"
             }
         }
         stage('Build') {

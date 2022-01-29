@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-public class OrderRepositoryTestCRUD {
+class OrderRepositoryCRUDTest {
     @Autowired
     private OrderRepository orderRepository;
 

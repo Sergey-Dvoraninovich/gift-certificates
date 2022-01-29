@@ -328,11 +328,13 @@ class UserServiceTest {
     void testFindUserOrderWrongUser() {
         User wrongUser = provideUsersList().get(1);
         Order userOrder = provideUserOrdersList().get(0);
+        long userId = wrongUser.getId();
+        long orderId = userOrder.getId();
 
         when(orderRepository.findById(userOrder.getId())).thenReturn(Optional.of(userOrder));
 
         try {
-            userService.findUserOrder(wrongUser.getId(), userOrder.getId());
+            userService.findUserOrder(userId, orderId);
             fail();
         } catch (EntityNotFoundException e) {
             assertTrue(true);

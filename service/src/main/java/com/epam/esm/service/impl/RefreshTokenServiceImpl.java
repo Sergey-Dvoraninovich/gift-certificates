@@ -9,8 +9,8 @@ import com.epam.esm.repository.RefreshTokenRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.JwtService;
 import com.epam.esm.service.RefreshTokenService;
+import com.epam.esm.service.TokenProperties;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +26,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
-    @Value("${refreshTokenExpirationDays}")
-    private Long refreshTokenDaysExpiration;
+    private final TokenProperties tokenProperties;
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
     private final JwtService jwtService;
@@ -39,7 +38,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(userId, User.class));
         refreshToken.setUser(user);
-        refreshToken.setExpirationDate(Instant.now().plus(refreshTokenDaysExpiration, DAYS));
+        refreshToken.setExpirationDate(Instant.now().plus(tokenProperties.getRefreshTokenExpirationDays(), DAYS));
         refreshToken.setToken(generateRefreshToken());
         refreshToken = refreshTokenRepository.save(refreshToken);
         return refreshToken;

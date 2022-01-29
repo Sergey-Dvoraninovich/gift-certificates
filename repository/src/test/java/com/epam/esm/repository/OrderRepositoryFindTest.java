@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-public class OrderRepositoryTestFind {
+class OrderRepositoryFindTest {
     private static final Integer PAGE_NUMBER = 0;
     private static final Integer PAGE_SIZE = 10;
 

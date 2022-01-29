@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-public class TagRepositoryTestCRUD {
+class TagRepositoryCRUDTest {
 
     @Autowired
     private TagRepository tagRepository;

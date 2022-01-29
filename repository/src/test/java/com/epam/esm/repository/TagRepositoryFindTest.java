@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-public class TagRepositoryTestFind {
+class TagRepositoryFindTest {
     private static final Integer PAGE_NUMBER = 0;
     private static final Integer PAGE_SIZE = 10;
 

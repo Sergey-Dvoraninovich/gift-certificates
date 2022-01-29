@@ -31,7 +31,7 @@ import static com.epam.esm.validator.ValidationError.USER_PASSWORD_REQUIRED;
 import static com.epam.esm.validator.ValidationError.USER_SURNAME_REQUIRED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class UserValidatorTest {
+class UserValidatorTest {
     private UserValidator userValidator = new UserValidator();
 
     @ParameterizedTest

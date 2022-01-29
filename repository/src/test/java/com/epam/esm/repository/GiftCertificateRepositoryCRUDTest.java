@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-public class GiftCertificateRepositoryTestCRUD {
+class GiftCertificateRepositoryCRUDTest {
 
     @Autowired
     private GiftCertificateRepository giftCertificateRepository;

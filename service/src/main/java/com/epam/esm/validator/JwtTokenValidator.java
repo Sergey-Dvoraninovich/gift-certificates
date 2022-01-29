@@ -1,11 +1,8 @@
 package com.epam.esm.validator;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import org.springframework.beans.factory.annotation.Value;
+import com.epam.esm.service.TokenProperties;
+import io.jsonwebtoken.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -13,16 +10,16 @@ import java.util.Optional;
 import static com.epam.esm.validator.JwtTokenValidationError.*;
 
 @Component
+@RequiredArgsConstructor
 public class JwtTokenValidator {
 
-    @Value("${jwtSecret}")
-    private String jwtSecret;
+    private final TokenProperties tokenProperties;
 
     public Optional<JwtTokenValidationError> validateJwtToken(String accessToken) {
         Optional<JwtTokenValidationError> validationError = Optional.empty();
         try {
             Jwts.parser()
-                    .setSigningKey(jwtSecret)
+                    .setSigningKey(tokenProperties.getJwtSecret())
                     .parseClaimsJws(accessToken);
 
         } catch (SignatureException exception) {
