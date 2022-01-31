@@ -22,7 +22,7 @@ import static com.epam.esm.validator.ValidationError.TOO_SHORT_TAG_NAME;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GiftCertificateSearchParamsValidatorTest {
+class GiftCertificateSearchParamsValidatorTest {
     private GiftCertificateSearchParamsValidator searchParamsValidator = new GiftCertificateSearchParamsValidator();
 
     @ParameterizedTest

@@ -36,7 +36,7 @@ public class PaginationValidator {
                     paginationErrors.add(TOO_BIG_PAGE_SIZE);
                 }
             } catch (NumberFormatException e) {
-                paginationErrors.add(INVALID_PAGE_NUMBER);
+                paginationErrors.add(INVALID_PAGE_SIZE);
             }
         }
 

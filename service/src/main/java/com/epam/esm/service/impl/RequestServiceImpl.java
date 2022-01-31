@@ -106,11 +106,11 @@ public class RequestServiceImpl implements RequestService {
 
         OrderingType nameOrdering = certificateNameOrderingParam == null
                 ? null
-                : OrderingType.valueOf(certificateNameOrderingParam);
+                : OrderingType.valueOf(certificateNameOrderingParam.toUpperCase());
 
         OrderingType createDateOrdering = certificateCreateDateOrderingParam == null
                 ? null
-                : OrderingType.valueOf(certificateCreateDateOrderingParam);
+                : OrderingType.valueOf(certificateCreateDateOrderingParam.toUpperCase());
 
         // Default value of the parameter is false
         Boolean showDisabled = Boolean.parseBoolean(showDisabledParam);

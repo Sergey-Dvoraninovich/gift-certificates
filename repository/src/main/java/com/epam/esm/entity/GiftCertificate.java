@@ -24,7 +24,7 @@ public class GiftCertificate {
     private String name;
 
     @Column(name = "available", nullable = false)
-    private Boolean isAvailable;
+    private boolean isAvailable;
 
     @Column(name = "description", nullable = false)
     private String description;
@@ -48,4 +48,12 @@ public class GiftCertificate {
             joinColumns = @JoinColumn(name = "id_gift_certificate"),
             inverseJoinColumns = @JoinColumn(name = "id_tag"))
     private List<Tag> giftCertificateTags = new ArrayList<>();
+
+    public void setIsAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
+
+    public boolean getIsAvailable() {
+        return this.isAvailable;
+    }
 }

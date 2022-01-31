@@ -1,24 +1,25 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.TestProfileResolver;
 import com.epam.esm.entity.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = TestDatabaseConfig.class)
-@ActiveProfiles(resolver = TestProfileResolver.class)
-@Transactional
-public class OrderRepositoryTestCRUD {
+@ExtendWith(SpringExtension.class)
+@DataJpaTest
+class OrderRepositoryCRUDTest {
     @Autowired
     private OrderRepository orderRepository;
 
@@ -36,6 +37,9 @@ public class OrderRepositoryTestCRUD {
         //Then
         assertNotNull(actual);
         assertTrue(actual.getId() > 0);
+
+        //Clean
+        removeRedundantOrder(order);
     }
 
     @Test
@@ -53,7 +57,7 @@ public class OrderRepositoryTestCRUD {
 
         //Then
         assertNotNull(actual);
-        assertEquals(actual, expected);
+        assertEquals(expected.getUpdateOrderTime(), actual.getUpdateOrderTime());
 
         //Clean
         removeRedundantOrder(expected);

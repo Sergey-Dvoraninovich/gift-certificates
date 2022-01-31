@@ -17,8 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,29 +35,21 @@ public class TagServiceImpl implements TagService {
         return tagRepository.findAll(pageDto.toPageable())
                 .stream()
                 .map(tagDtoMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public TagDto findById(long id){
-        Optional<Tag> tag = tagRepository.findById(id);
-        if (tag.isPresent()) {
-            return tagDtoMapper.toDto(tag.get());
-        }
-        else {
-            throw new EntityNotFoundException(id, TagDto.class);
-        }
+        Tag tag = tagRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(id, TagDto.class));
+        return tagDtoMapper.toDto(tag);
     }
 
     @Override
     public TagDto findByName(String name){
-        Optional<Tag> tag = tagRepository.findTagByName(name);
-        if (tag.isPresent()) {
-            return tagDtoMapper.toDto(tag.get());
-        }
-        else {
-            throw new EntityNotFoundException(TagDto.class);
-        }
+        Tag tag = tagRepository.findTagByName(name)
+                .orElseThrow(() -> new EntityNotFoundException(TagDto.class));
+        return tagDtoMapper.toDto(tag);
     }
 
     @Transactional
@@ -84,23 +74,21 @@ public class TagServiceImpl implements TagService {
     @Transactional
     @Override
     public void delete(long id) {
-        Optional<Tag> tag = tagRepository.findById(id);
-        if (tag.isEmpty()){
-            throw new EntityNotFoundException(id, TagDto.class);
-        }
-        tagRepository.delete(tag.get());
+        Tag tag = tagRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(id, TagDto.class));
+        tagRepository.delete(tag);
     }
 
     @Override
     public TagDto findMostWidelyUsedTag() {
         List<Order> orders = tagRepository.findOrdersHighestCoast();
-        if (orders.size() == 0) {
+        if (orders.isEmpty()) {
             throw new EntityNotFoundException(TagDto.class);
         }
 
         long userId = orders.get(0).getUser().getId();
         List<Tag> tags = tagRepository.findMostWidelyUsedUserTags(userId);
-        if (tags.size() == 0) {
+        if (tags.isEmpty()) {
             throw new EntityNotFoundException(TagDto.class);
         }
 

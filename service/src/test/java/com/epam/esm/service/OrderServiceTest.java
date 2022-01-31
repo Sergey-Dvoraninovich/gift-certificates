@@ -1,6 +1,11 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dto.*;
+import com.epam.esm.dto.OrderCreateRequestDto;
+import com.epam.esm.dto.OrderFilterDto;
+import com.epam.esm.dto.OrderItemDto;
+import com.epam.esm.dto.OrderResponseDto;
+import com.epam.esm.dto.PageDto;
+import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.mapping.OrderResponseDtoMapper;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
@@ -34,13 +39,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class OrderServiceTest {
+class OrderServiceTest {
     private static final Integer PAGE_NUMBER = 1;
     private static final Integer PAGE_SIZE = 10;
 
@@ -102,7 +109,7 @@ public class OrderServiceTest {
 
         try {
             orderService.findById(nonExistingId);
-            assertTrue(false);
+            fail();
         } catch (EntityNotFoundException e) {
             assertTrue(true);
         }
@@ -135,6 +142,8 @@ public class OrderServiceTest {
         when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
 
         orderService.delete(order.getId());
+
+        assertDoesNotThrow(() -> new EntityNotFoundException(order.getId(), OrderResponseDto.class));
     }
 
     private List<OrderResponseDto> provideOrdersDtoList() {
@@ -260,6 +269,7 @@ public class OrderServiceTest {
     private List<GiftCertificate> provideGistCertificates() {
         GiftCertificate firstCertificate = new GiftCertificate();
         firstCertificate.setId(1L);
+        firstCertificate.setIsAvailable(true);
         firstCertificate.setName("certificate first and second tags");
         firstCertificate.setDescription("certificate with first tag and second tag");
         firstCertificate.setPrice(new BigDecimal("50.00"));
@@ -270,6 +280,7 @@ public class OrderServiceTest {
 
         GiftCertificate secondCertificate = new GiftCertificate();
         secondCertificate.setId(2L);
+        secondCertificate.setIsAvailable(true);
         secondCertificate.setName("certificate second tags");
         secondCertificate.setDescription("certificate with second tag");
         secondCertificate.setPrice(new BigDecimal("100.00"));

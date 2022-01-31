@@ -26,8 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.epam.esm.repository.OrderingType.DESC;
 
@@ -56,18 +54,14 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAll(pageable)
                 .stream()
                 .map(orderDtoMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public OrderResponseDto findById(long id) {
-        Optional<Order> order = orderRepository.findById(id);
-        if (order.isPresent()) {
-            return orderDtoMapper.toDto(order.get());
-        }
-        else {
-            throw new EntityNotFoundException(id, OrderResponseDto.class);
-        }
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(id, OrderResponseDto.class));
+        return orderDtoMapper.toDto(order);
     }
 
     @Override
@@ -80,19 +74,17 @@ public class OrderServiceImpl implements OrderService {
 
         List<OrderItem> orderItems = orderCreateRequestDto.getOrderGiftCertificates().stream()
                 .map(this::createNewOrderItem)
-                .collect(Collectors.toList());
+                .toList();
 
         long userId = orderCreateRequestDto.getUserId();
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (!optionalUser.isPresent()) {
-            throw new EntityNotFoundException(userId, UserDto.class);
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(userId, UserDto.class));
 
         Order order = new Order();
         order.setCreateOrderTime(Instant.now());
         order.setUpdateOrderTime(Instant.now());
         order.setOrderItems(orderItems);
-        order.setUser(optionalUser.get());
+        order.setUser(user);
 
         order = orderRepository.save(order);
         return orderDtoMapper.toDto(order);
@@ -106,17 +98,11 @@ public class OrderServiceImpl implements OrderService {
             throw new InvalidEntityException(validationErrors, OrderCreateRequestDto.class);
         }
 
-        Order order;
-        Optional<Order> optionalOrder = orderRepository.findById(id);
-        if (optionalOrder.isEmpty()) {
-            throw new EntityNotFoundException(id, OrderUpdateRequestDto.class);
-        }
-        else {
-            order = optionalOrder.get();
-        }
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(id, OrderUpdateRequestDto.class));
 
         List<OrderItem> orderItems = processOrderItems(orderUpdateRequestDto.getOrderGiftCertificates(),
-                                                       optionalOrder.get().getOrderItems());
+                                                       order.getOrderItems());
         order.setUpdateOrderTime(Instant.now());
         order.setOrderItems(orderItems);
 
@@ -127,28 +113,21 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void delete(long id) {
-        Optional<Order> optionalOrder = orderRepository.findById(id);
-        if (!optionalOrder.isPresent()){
-            throw new EntityNotFoundException(id, OrderResponseDto.class);
-        }
-        orderRepository.delete(optionalOrder.get());
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(id, OrderResponseDto.class));
+        orderRepository.delete(order);
     }
 
     private OrderItem createNewOrderItem(OrderItemDto orderItemDto) {
         OrderItem orderItem = new OrderItem();
-        Optional<GiftCertificate> optionalCertificate;
-        optionalCertificate = giftCertificateRepository.findById(orderItemDto.getId());
-        if (optionalCertificate.isEmpty()) {
-            throw new EntityNotFoundException(orderItemDto.getId(), OrderItemDto.class);
+        GiftCertificate certificate = giftCertificateRepository.findById(orderItemDto.getId())
+                .orElseThrow(() -> new EntityNotFoundException(orderItemDto.getId(), OrderItemDto.class));
+
+        if (Boolean.FALSE.equals(certificate.getIsAvailable())) {
+            throw new EntityNotAvailableException(orderItemDto.getId(), OrderItemDto.class);
         }
-        else {
-            GiftCertificate certificate = optionalCertificate.get();
-            if (!certificate.getIsAvailable()) {
-                throw new EntityNotAvailableException(orderItemDto.getId(), OrderItemDto.class);
-            }
-            orderItem.setGiftCertificate(optionalCertificate.get());
-            orderItem.setPrice(optionalCertificate.get().getPrice());
-        }
+        orderItem.setGiftCertificate(certificate);
+        orderItem.setPrice(certificate.getPrice());
         return orderItem;
     }
 
@@ -158,13 +137,13 @@ public class OrderServiceImpl implements OrderService {
                     final long orderItemId = orderItemDto.getId();
                     List<OrderItem> suitableStoredItems = orderItems.stream()
                             .filter(storedOrderItem -> storedOrderItem.getGiftCertificate().getId() == orderItemId)
-                            .collect(Collectors.toList());
+                            .toList();
 
-                    return suitableStoredItems.size() == 0
+                    return suitableStoredItems.isEmpty()
                             ? createNewOrderItem(orderItemDto)
                             : suitableStoredItems.get(0);
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private Pageable createOrderedPageable(OrderFilterDto filterDto, PageDto pageDto) {

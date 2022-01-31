@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -23,22 +22,29 @@ public class OrderResponseDtoMapper {
     }
 
     public OrderResponseDto toDto(Order entity) {
-        OrderResponseDto dto = Objects.isNull(entity) ? null : mapper.map(entity, OrderResponseDto.class);
+        OrderResponseDto dto = null;
 
-        List<OrderItemDto> orderItemsDto = entity.getOrderItems().stream()
-                .map(orderItemMapper::toDto)
-                .collect(Collectors.toList());
+        if (!Objects.isNull(entity)) {
+            dto = mapper.map(entity, OrderResponseDto.class);
 
-        BigDecimal totalPrice = BigDecimal.ZERO;
-        int count = 0;
-        for (OrderItemDto orderItem : orderItemsDto) {
-            totalPrice = totalPrice.add(orderItem.getPrice());
-            count++;
+            List<OrderItemDto> orderItemsDto = entity.getOrderItems() == null
+                    ? null
+                    : entity.getOrderItems().stream()
+                    .map(orderItemMapper::toDto)
+                    .toList();
+
+            BigDecimal totalPrice = BigDecimal.ZERO;
+            int count = 0;
+            for (OrderItemDto orderItem : orderItemsDto) {
+                totalPrice = totalPrice.add(orderItem.getPrice());
+                count++;
+            }
+
+            dto.setOrderGiftCertificates(orderItemsDto);
+            dto.setTotalPrice(totalPrice);
+            dto.setCount(count);
         }
 
-        dto.setOrderGiftCertificates(orderItemsDto);
-        dto.setTotalPrice(totalPrice);
-        dto.setCount(count);
         return dto;
     }
 }

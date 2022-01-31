@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.epam.esm.validator.ValidationError.*;
+import static com.epam.esm.validator.ValidationError.TOO_BIG_PAGE_SIZE;
+import static com.epam.esm.validator.ValidationError.TOO_SMALL_PAGE_NUMBER;
+import static com.epam.esm.validator.ValidationError.TOO_SMALL_PAGE_SIZE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PaginationValidatorTest {
+class PaginationValidatorTest {
     private PaginationValidator paginationValidator = new PaginationValidator();
 
     @ParameterizedTest

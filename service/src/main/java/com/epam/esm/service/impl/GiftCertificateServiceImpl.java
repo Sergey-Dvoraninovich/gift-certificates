@@ -31,11 +31,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.epam.esm.repository.OrderingType.DESC;
 import static com.epam.esm.validator.ValidationError.IMPOSSIBLE_TO_UPDATE_SEVERAL_GIFT_CERTIFICATE_FIELDS;
@@ -56,10 +55,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public Long countAll(GiftCertificateFilterDto filterDto) {
 
-        System.out.println(filterDto.getShowDisabled());
         Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
                 .certificateName(filterDto.getName())
-                .certificateAvailability(filterDto.getShowDisabled() ? null : true)
+                .certificateAvailability(Boolean.TRUE.equals(filterDto.getShowDisabled()) ? null : true)
                 .certificateDescription(filterDto.getDescription())
                 .certificateTagNames(getTags(filterDto.getTagNames()))
                 .build();
@@ -72,7 +70,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
                 .certificateName(filterDto.getName())
-                .certificateAvailability(filterDto.getShowDisabled() ? null : true)
+                .certificateAvailability(Boolean.TRUE.equals(filterDto.getShowDisabled()) ? null : true)
                 .certificateDescription(filterDto.getDescription())
                 .certificateTagNames(getTags(filterDto.getTagNames()))
                 .build();
@@ -81,18 +79,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return giftCertificateRepository.findAll(specification, pageable)
                 .stream()
                 .map(giftCertificateResponseDtoMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public GiftCertificateResponseDto findById(long id) {
-        Optional<GiftCertificate> certificateOptional = giftCertificateRepository.findById(id);
-        if (certificateOptional.isPresent()) {
-            return giftCertificateResponseDtoMapper.toDto(certificateOptional.get());
-        }
-        else {
-            throw new EntityNotFoundException(id, GiftCertificateRequestDto.class);
-        }
+        GiftCertificate certificate = giftCertificateRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(id, GiftCertificateRequestDto.class));
+        return giftCertificateResponseDtoMapper.toDto(certificate);
     }
 
     @Override
@@ -115,6 +109,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
 
         GiftCertificate certificate = giftCertificateRequestDtoMapper.toEntity(certificateDto);
+        certificate.setCreateDate(Instant.now());
+        certificate.setLastUpdateDate(Instant.now());
+        certificate.setIsAvailable(true);
         certificate.setGiftCertificateTags(certificateTags);
 
         certificate = giftCertificateRepository.save(certificate);
@@ -125,16 +122,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     public GiftCertificateResponseDto update(long id, GiftCertificateRequestDto certificateDto) {
 
-        GiftCertificate storedCertificate;
-        Optional<GiftCertificate> optionalCertificate = giftCertificateRepository.findById(id);
-        if (optionalCertificate.isEmpty()) {
-            throw new EntityNotFoundException(id, GiftCertificateRequestDto.class);
-        }
-        else {
-            storedCertificate = optionalCertificate.get();
-        }
+        GiftCertificate storedCertificate = giftCertificateRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(id, GiftCertificateRequestDto.class));
 
-        if (!storedCertificate.getIsAvailable()) {
+        if (Boolean.FALSE.equals(storedCertificate.getIsAvailable())) {
             throw new EntityNotAvailableException(id, GiftCertificateRequestDto.class);
         }
 
@@ -168,11 +159,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional
     public void disable(long id) {
-        Optional<GiftCertificate> giftCertificate = giftCertificateRepository.findById(id);
-        if (giftCertificate.isEmpty()){
-            throw new EntityNotFoundException(id, GiftCertificateRequestDto.class);
-        }
-        GiftCertificate storedCertificate = giftCertificate.get();
+        GiftCertificate storedCertificate = giftCertificateRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(id, GiftCertificateRequestDto.class));
         storedCertificate.setIsAvailable(false);
         giftCertificateRepository.save(storedCertificate);
     }
@@ -180,11 +168,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional
     public GiftCertificateResponseDto makeAvailable(long id) {
-        Optional<GiftCertificate> giftCertificate = giftCertificateRepository.findById(id);
-        if (giftCertificate.isEmpty()){
-            throw new EntityNotFoundException(id, GiftCertificateRequestDto.class);
-        }
-        GiftCertificate storedCertificate = giftCertificate.get();
+        GiftCertificate storedCertificate = giftCertificateRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(id, GiftCertificateRequestDto.class));
+        storedCertificate.setIsAvailable(false);
         storedCertificate.setIsAvailable(true);
         giftCertificateRepository.save(storedCertificate);
         return giftCertificateResponseDtoMapper.toDto(storedCertificate);
@@ -215,13 +201,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private List<Tag> processTagIds(List<Long> certificateTagIds){
         List<Tag> resultCertificateTags = new ArrayList<>();
         for (Long tagId: certificateTagIds) {
-            Optional<Tag> tagOptional = tagRepository.findById(tagId);
-
-            if (tagOptional.isPresent()) {
-                resultCertificateTags.add(tagOptional.get());
-            } else {
-                throw new EntityNotFoundException(tagId, TagDto.class);
-            }
+            Tag tag = tagRepository.findById(tagId)
+                    .orElseThrow(() -> new EntityNotFoundException(tagId, TagDto.class));
+            resultCertificateTags.add(tag);
         }
         return resultCertificateTags;
     }

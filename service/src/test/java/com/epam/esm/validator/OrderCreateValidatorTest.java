@@ -17,7 +17,7 @@ import static com.epam.esm.validator.ValidationError.ORDER_ITEMS_REQUIRED;
 import static com.epam.esm.validator.ValidationError.ORDER_USER_REQUIRED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class OrderCreateValidatorTest {
+class OrderCreateValidatorTest {
     private OrderCreateValidator orderCreateValidator = new OrderCreateValidator();
 
     @ParameterizedTest

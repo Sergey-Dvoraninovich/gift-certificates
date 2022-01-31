@@ -1,13 +1,7 @@
 package com.epam.esm.controller.impl;
 
 import com.epam.esm.controller.OrderController;
-import com.epam.esm.dto.OrderCreateRequestDto;
-import com.epam.esm.dto.OrderFilterDto;
-import com.epam.esm.dto.OrderItemDto;
-import com.epam.esm.dto.OrderResponseDto;
-import com.epam.esm.dto.OrderUpdateRequestDto;
-import com.epam.esm.dto.PageDto;
-import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.*;
 import com.epam.esm.exception.AccessException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.provider.PageModelProvider;
@@ -29,7 +23,6 @@ import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.epam.esm.exception.AccessException.State.INVALID_ORDER_USER;
 import static org.springframework.http.HttpStatus.*;
@@ -76,8 +69,8 @@ public class OrderControllerImpl implements OrderController {
         OrderResponseDto orderDto = orderService.findById(orderId);
         List<OrderItemDto> orderItemsDto = orderDto.getOrderGiftCertificates().stream()
                 .filter(orderItemDto -> orderItemDto.getId() == orderItemId)
-                .collect(Collectors.toList());
-        if (orderItemsDto.size() < 1) {
+                .toList();
+        if (orderItemsDto.isEmpty()) {
             throw new EntityNotFoundException(orderItemId, OrderItemDto.class);
         }
 

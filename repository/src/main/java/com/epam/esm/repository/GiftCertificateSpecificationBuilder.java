@@ -63,7 +63,7 @@ public class GiftCertificateSpecificationBuilder {
             Specification<GiftCertificate> partialSpecification
                     = (certificateRoot, criteriaQuery, criteriaBuilder) -> {
                 Predicate result;
-                if (tags.size() != 0) {
+                if (!tags.isEmpty()) {
                     result = criteriaBuilder.isMember(tags.get(0), certificateRoot.get(GIFT_CERTIFICATE_TAGS));
                 }
                 else {

@@ -25,7 +25,7 @@ public class TagValidator {
         if (tagDto.getName() == null){
             validationErrors.add(TAG_NAME_REQUIRED);
         }
-        if (validationErrors.size() == 0) {
+        if (validationErrors.isEmpty()) {
             validationErrors.addAll(validateParams(tagDto.getName()));
         }
         return validationErrors;

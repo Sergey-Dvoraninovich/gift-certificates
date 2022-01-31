@@ -1,11 +1,6 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dto.PageDto;
-import com.epam.esm.dto.TokenDto;
-import com.epam.esm.dto.UserDto;
-import com.epam.esm.dto.UserOrderResponseDto;
-import com.epam.esm.dto.UserSignInDto;
-import com.epam.esm.dto.UserSignUpDto;
+import com.epam.esm.dto.*;
 import com.epam.esm.dto.mapping.UserDtoMapper;
 import com.epam.esm.dto.mapping.UserOrderResponseDtoMapper;
 import com.epam.esm.entity.Order;
@@ -33,8 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.epam.esm.entity.UserRoleName.USER;
 import static com.epam.esm.exception.UserAuthenticationException.State.INVALID_PASSWORD;
@@ -65,7 +58,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(pageDto.toPageable())
                 .stream()
                 .map(userMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -76,7 +69,7 @@ public class UserServiceImpl implements UserService {
         }
 
         List<ValidationError> validationErrors = userValidator.validateWithRequiredParams(userSignUpDto);
-        if (validationErrors.size() != 0) {
+        if (!validationErrors.isEmpty()) {
             throw new InvalidEntityException(validationErrors, UserSignUpDto.class);
         }
 
@@ -91,11 +84,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public TokenDto login(UserSignInDto userSignInDto) {
-        Optional<User> optionalUser = userRepository.findByLogin(userSignInDto.getLogin());
-        if (optionalUser.isEmpty()) {
-            throw new UserAuthenticationException(NO_USER_WITH_SUCH_LOGIN);
-        }
-        User user = optionalUser.get();
+        User user = userRepository.findByLogin(userSignInDto.getLogin())
+                .orElseThrow(() -> new UserAuthenticationException(NO_USER_WITH_SUCH_LOGIN));
 
         String encodedPassword = DigestUtils.sha256Hex(userSignInDto.getPassword());
         if (!encodedPassword.equals(user.getPassword())) {
@@ -110,35 +100,24 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto findById(long id) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isPresent()) {
-            return userMapper.toDto(user.get());
-        }
-        else {
-            throw new EntityNotFoundException(id, UserDto.class);
-        }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(id, UserDto.class));
+        return userMapper.toDto(user);
     }
 
     @Override
     public UserDto findByLogin(String login) {
-        Optional<User> user = userRepository.findByLogin(login);
-        if (user.isPresent()) {
-            return userMapper.toDto(user.get());
-        }
-        else {
-            throw new EntityNotFoundException(UserDto.class);
-        }
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new EntityNotFoundException(UserDto.class));
+        return userMapper.toDto(user);
     }
 
     @Override
     public String getUserPassword(UserDto userDto) {
-        Optional<User> user = userRepository.findById(userDto.getId());
-        if (user.isPresent()) {
-            return user.get().getPassword();
-        }
-        else {
-            throw new EntityNotFoundException(userDto.getId(), UserDto.class);
-        }
+        long id = userDto.getId();
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(id, UserDto.class));
+        return user.getPassword();
     }
 
     @Override
@@ -148,26 +127,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserOrderResponseDto> findUserOrders(long userId, PageDto pageDto) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
+        if (userRepository.findById(userId).isEmpty()) {
             throw new EntityNotFoundException(userId, UserDto.class);
         }
         return userRepository.findUserOrders(userId, pageDto.toPageable()).stream()
                 .map(userOrderResponseDtoMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public UserOrderResponseDto findUserOrder(long userId, long orderId){
-        Optional<Order> order = orderRepository.findById(orderId);
-        if (order.isEmpty()) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() ->new EntityNotFoundException(orderId, UserOrderResponseDto.class));
+        if (order.getUser().getId() != userId) {
             throw new EntityNotFoundException(orderId, UserOrderResponseDto.class);
-        } else {
-            if (order.get().getUser().getId() != userId) {
-                throw new EntityNotFoundException(orderId, UserOrderResponseDto.class);
-            }
         }
-        return userOrderResponseDtoMapper.toDto(order.get());
+        return userOrderResponseDtoMapper.toDto(order);
     }
 
     private User buildUser(UserSignUpDto userSignUpDto, UserRoleName userRoleName) {

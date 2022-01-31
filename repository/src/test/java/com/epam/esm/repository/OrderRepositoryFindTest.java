@@ -1,13 +1,18 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.TestProfileResolver;
-import com.epam.esm.entity.*;
+import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Order;
+import com.epam.esm.entity.OrderItem;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.User;
+import com.epam.esm.entity.UserRole;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -19,14 +24,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static com.epam.esm.entity.UserRoleName.USER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = TestDatabaseConfig.class)
-@ActiveProfiles(resolver = TestProfileResolver.class)
-@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {"classpath:init_data.sql"})
-public class OrderRepositoryTestFind {
-    private static final Integer PAGE_NUMBER = 1;
+@ExtendWith(SpringExtension.class)
+@DataJpaTest
+class OrderRepositoryFindTest {
+    private static final Integer PAGE_NUMBER = 0;
     private static final Integer PAGE_SIZE = 10;
 
     @Autowired
@@ -34,32 +39,40 @@ public class OrderRepositoryTestFind {
 
     @Test
     void testCountAll() {
+        //Given
         List<Order> expected = provideOrdersList();
 
+        //When
         long actual = orderRepository.count();
 
+        //Then
         assertEquals(expected.size(), actual);
     }
 
     @Test
     void testFindAll() {
+        //Given
         List<Order> expected = provideOrdersList();
 
-        List<Order> actual;
-        actual = (List<Order>) orderRepository.findAll(PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
+        //When
+        Page<Order> page = orderRepository.findAll(PageRequest.of(PAGE_NUMBER, PAGE_SIZE));
 
-        assertEquals(expected, actual);
+        //Then
+        List<Order> actual = page.stream().toList();
+        assertEquals(expected.size(), actual.size());
     }
 
     @Test
     void testFindById() {
+        //Given
         Order expectedOrder = provideOrdersList().get(0);
-        Optional<Order> user = orderRepository.findById(expectedOrder.getId());
-        boolean result = false;
-        if (user.isPresent()){
-            result = user.get().getId() == expectedOrder.getId();
-        }
-        assertTrue(result);
+
+        //When
+        Optional<Order> order = orderRepository.findById(expectedOrder.getId());
+
+        //Then
+        assertTrue(order.isPresent());
+        assertEquals(expectedOrder.getId(), order.get().getId());
     }
 
     private List<Order> provideOrdersList() {
@@ -77,7 +90,7 @@ public class OrderRepositoryTestFind {
 
         Order secondOrder = new Order();
         secondOrder.setId(2L);
-        secondOrder.setOrderItems(Arrays.asList(orderItems.get(2)));
+        secondOrder.setOrderItems(List.of(orderItems.get(2)));
         secondOrder.setUser(users.get(0));
         date = Instant.from(ZonedDateTime.of(2011, 1, 1, 11, 11, 11, 222000000, ZoneId.of("Europe/Minsk")));
         secondOrder.setCreateOrderTime(date);
@@ -188,6 +201,8 @@ public class OrderRepositoryTestFind {
         User firstUser = new User();
         firstUser.setId(1L);
         firstUser.setLogin("christian_altman");
+        firstUser.setPassword("a0f3285b07c26c0dcd2191447f391170d06035e8d57e31a048ba87074f3a9a15");
+        firstUser.setRole(provideRole());
         firstUser.setName("Christian");
         firstUser.setSurname("Altman");
         firstUser.setEmail("christian.altman@gmail.com");
@@ -195,10 +210,19 @@ public class OrderRepositoryTestFind {
         User secondUser = new User();
         secondUser.setId(2L);
         secondUser.setLogin("cindy_clark");
+        secondUser.setPassword("a0f3285b07c26c0dcd2191447f391170d06035e8d57e31a048ba87074f3a9a15");
+        secondUser.setRole(provideRole());
         secondUser.setName("Cindy");
         secondUser.setSurname("Clark");
         secondUser.setEmail("cindy.clark@gmail.com");
 
         return Arrays.asList(firstUser, secondUser);
+    }
+
+    private UserRole provideRole() {
+        UserRole role = new UserRole();
+        role.setId(1);
+        role.setName(USER);
+        return role;
     }
 }

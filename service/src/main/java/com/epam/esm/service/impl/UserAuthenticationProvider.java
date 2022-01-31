@@ -1,5 +1,6 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -20,7 +21,9 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
         String login = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-        com.epam.esm.entity.User user = userRepository.findByLogin(login).get();
+        com.epam.esm.entity.User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new EntityNotFoundException(User.class));
+
         UserDetails principal = User.builder()
                 .username(user.getLogin())
                 .password(user.getPassword())

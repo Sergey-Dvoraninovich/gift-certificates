@@ -14,7 +14,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class UserOrderLinksProvider implements ChildLinksProvider<Long, UserOrderResponseDto> {
-    private static final String USER_ORDERS_REL = "orders";
 
     public List<Link> provide(Long userId, UserOrderResponseDto userOrderResponseDto) {
 

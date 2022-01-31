@@ -22,7 +22,7 @@ public class OrderUpdateValidator {
         if (orderUpdateRequestDto.getOrderGiftCertificates() == null){
             validationErrors.add(ORDER_ITEMS_REQUIRED);
         }
-        if (validationErrors.size() == 0) {
+        if (validationErrors.isEmpty()) {
             validationErrors.addAll(validateParams(orderUpdateRequestDto.getOrderGiftCertificates()));
         }
         return validationErrors;
@@ -31,6 +31,12 @@ public class OrderUpdateValidator {
     public List<ValidationError> validateParams(List<OrderItemDto> orderItemsDto) {
         List<ValidationError> validationErrors = new ArrayList<>();
 
+        validateOrderItemsDto(orderItemsDto, validationErrors);
+
+        return validationErrors;
+    }
+
+    private void validateOrderItemsDto(List<OrderItemDto> orderItemsDto, List<ValidationError> validationErrors) {
         if (orderItemsDto != null) {
             if (orderItemsDto.size() > MAX_ORDER_ITEMS_AMOUNT){
                 validationErrors.add(INVALID_ORDER_ITEMS_AMOUNT);
@@ -43,7 +49,5 @@ public class OrderUpdateValidator {
                 validationErrors.add(NOT_UNIQUE_GIFT_CERTIFICATES_IN_ORDER);
             }
         }
-
-        return validationErrors;
     }
 }

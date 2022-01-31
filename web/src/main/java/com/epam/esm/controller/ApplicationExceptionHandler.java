@@ -1,27 +1,7 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.dto.GiftCertificateFilterDto;
-import com.epam.esm.dto.GiftCertificateResponseDto;
-import com.epam.esm.dto.OrderCreateRequestDto;
-import com.epam.esm.dto.OrderItemDto;
-import com.epam.esm.dto.OrderResponseDto;
-import com.epam.esm.dto.OrderUpdateRequestDto;
-import com.epam.esm.dto.TagDto;
-import com.epam.esm.dto.TokenDto;
-import com.epam.esm.dto.UserDto;
-import com.epam.esm.dto.UserOrderResponseDto;
-import com.epam.esm.dto.UserSignInDto;
-import com.epam.esm.dto.UserSignUpDto;
-import com.epam.esm.exception.AccessException;
-import com.epam.esm.exception.EntityAlreadyExistsException;
-import com.epam.esm.exception.EntityNotAvailableException;
-import com.epam.esm.exception.EntityNotFoundException;
-import com.epam.esm.exception.ExceptionResponse;
-import com.epam.esm.exception.InvalidEntityException;
-import com.epam.esm.exception.InvalidPaginationException;
-import com.epam.esm.exception.JwtTokenException;
-import com.epam.esm.exception.RefreshTokenException;
-import com.epam.esm.exception.UserAuthenticationException;
+import com.epam.esm.dto.*;
+import com.epam.esm.exception.*;
 import com.epam.esm.validator.ValidationError;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -42,15 +22,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
+import static com.epam.esm.exception.AccessException.State.INVALID_ORDER_USER;
 import static com.epam.esm.exception.RefreshTokenException.State.INVALID_TOKEN;
-import static com.epam.esm.exception.UserAuthenticationException.State.INVALID_LOGIN;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -179,6 +154,8 @@ public class ApplicationExceptionHandler {
     private static final String INVALID_LOGIN_MESSAGE = "invalid_login";
     private static final String INVALID_PASSWORD_MESSAGE = "invalid_password";
 
+    private static final String INVALID_LOGIN_OR_PASSWORD_MESSAGE = "invalid_login_or_password";
+
     private static final String INVALID_USER_ORDER_MESSAGE = "access_exception.invalid_order_user";
 
     private static final String ERROR_SEPARATOR = ", ";
@@ -210,8 +187,8 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ExceptionResponse> handleAnyException(NoHandlerFoundException e, HttpServletRequest request) {
-        String errorMessage = getMessage(NOT_FOUND_MESSAGE);;
-        Long errorCode = 40403L;
+        String errorMessage = getMessage(NOT_FOUND_MESSAGE);
+        long errorCode = 40403L;
 
         String requestURL = e.getRequestURL().replaceFirst("/", "");
         int applicationNameLastPosition = requestURL.indexOf("/");
@@ -229,7 +206,7 @@ public class ApplicationExceptionHandler {
                 List<String> validApiVersions = Arrays.stream(ApiVersion.values())
                         .map(Enum::name)
                         .map(String::toLowerCase)
-                        .collect(Collectors.toList());
+                        .toList();
 
                 if (!validApiVersions.contains(apiVersion)) {
                     errorMessage = getMessage(INVALID_VERSION_MESSAGE);
@@ -270,13 +247,10 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler(AccessException.class)
     public ResponseEntity<ExceptionResponse> handleAccessDenied(AccessException e) {
-        String errorMessage = getMessage(ACCESS_DENIED_MESSAGE);;
+        String errorMessage = getMessage(ACCESS_DENIED_MESSAGE);
         AccessException.State error = e.getState();
-        switch (error) {
-            case INVALID_ORDER_USER: {
-                errorMessage = getMessage(INVALID_USER_ORDER_MESSAGE);
-                break;
-            }
+        if (error.equals(INVALID_ORDER_USER)) {
+            errorMessage = getMessage(INVALID_USER_ORDER_MESSAGE);
         }
         return buildErrorResponseEntity(BAD_REQUEST, errorMessage, 400014L);
     }
@@ -311,6 +285,9 @@ public class ApplicationExceptionHandler {
 
                 case PAGE_IS_OUT_OF_RANGE: {
                     errorLine.append(getMessage(PAGE_IS_OUT_OF_RANGE_MESSAGE));
+                    break;
+                }
+                default: {
                     break;
                 }
             }
@@ -565,6 +542,10 @@ public class ApplicationExceptionHandler {
                     errorLine.append(getMessage(INVALID_SHOW_DISABLED_PARAM_MESSAGE));
                     break;
                 }
+
+                default: {
+                    break;
+                }
             }
             errorLine.append(ERROR_SEPARATOR);
         }
@@ -578,26 +559,26 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler(JwtTokenException.class)
     public ResponseEntity<ExceptionResponse> handleDefault(JwtTokenException e) {
         String errorMessage = getMessage(BAD_REQUEST_MESSAGE);
-        long errorCode = 40000L;
+        long errorCode = 40300L;
         switch (e.getState()) {
             case INVALID_JWT_SIGNATURE: {
                 errorMessage = getMessage(INVALID_JWT_SIGNATURE_MESSAGE);
-                errorCode = 40007L;
+                errorCode = 40301L;
                 break;
             }
             case JWT_EXPIRED: {
                 errorMessage = getMessage(JWT_EXPIRED_MESSAGE);
-                errorCode = 40008L;
+                errorCode = 40302L;
                 break;
             }
             case UNSUPPORTED_JWT: {
                 errorMessage = getMessage(UNSUPPORTED_JWT_MESSAGE);
-                errorCode = 40009L;
+                errorCode = 40303L;
                 break;
             }
             case INVALID_JWT: {
                 errorMessage = getMessage(INVALID_JWT_MESSAGE);
-                errorCode = 40010L;
+                errorCode = 40304L;
                 break;
             }
         }
@@ -610,27 +591,19 @@ public class ApplicationExceptionHandler {
         long errorCode;
         if (e.getState().equals(INVALID_TOKEN)) {
             errorMessage = getMessage(INVALID_REFRESH_TOKEN_MESSAGE);
-            errorCode = 40005L;
+            errorCode = 40305L;
         }
         else  {
             errorMessage = getMessage(REFRESH_TOKEN_EXPIRED_MESSAGE);
-            errorCode = 40006L;
+            errorCode = 40305L;
         }
         return buildErrorResponseEntity(BAD_REQUEST, errorMessage, errorCode);
     }
 
     @ExceptionHandler(UserAuthenticationException.class)
     public ResponseEntity<ExceptionResponse> handleUserAuthentication(UserAuthenticationException e) {
-        String errorMessage;
-        long errorCode;
-        if (e.getState().equals(INVALID_LOGIN)) {
-            errorMessage = getMessage(INVALID_LOGIN_MESSAGE);
-            errorCode = 40011L;
-        }
-        else  {
-            errorMessage = getMessage(INVALID_PASSWORD_MESSAGE);
-            errorCode = 40012L;
-        }
+        String errorMessage = getMessage(INVALID_LOGIN_OR_PASSWORD_MESSAGE);
+        long errorCode = 40306L;
         return buildErrorResponseEntity(BAD_REQUEST, errorMessage, errorCode);
     }
 

@@ -16,7 +16,7 @@ import static com.epam.esm.validator.ValidationError.NOT_UNIQUE_GIFT_CERTIFICATE
 import static com.epam.esm.validator.ValidationError.ORDER_ITEMS_REQUIRED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class OrderUpdateValidatorTest {
+class OrderUpdateValidatorTest {
     private OrderUpdateValidator orderUpdateValidator = new OrderUpdateValidator();
 
     @ParameterizedTest

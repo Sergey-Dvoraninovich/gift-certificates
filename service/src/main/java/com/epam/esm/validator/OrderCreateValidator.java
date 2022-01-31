@@ -8,10 +8,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import static com.epam.esm.validator.ValidationError.INVALID_ORDER_ITEMS_AMOUNT;
-import static com.epam.esm.validator.ValidationError.NOT_UNIQUE_GIFT_CERTIFICATES_IN_ORDER;
-import static com.epam.esm.validator.ValidationError.ORDER_ITEMS_REQUIRED;
-import static com.epam.esm.validator.ValidationError.ORDER_USER_REQUIRED;
+import static com.epam.esm.validator.ValidationError.*;
 
 @Component
 public class OrderCreateValidator {
@@ -26,7 +23,7 @@ public class OrderCreateValidator {
         if (orderCreateRequestDto.getOrderGiftCertificates() == null){
             validationErrors.add(ORDER_ITEMS_REQUIRED);
         }
-        if (validationErrors.size() == 0) {
+        if (validationErrors.isEmpty()) {
             validationErrors.addAll(validateParams(orderCreateRequestDto.getOrderGiftCertificates()));
         }
         return validationErrors;
@@ -35,6 +32,12 @@ public class OrderCreateValidator {
     public List<ValidationError> validateParams(List<OrderItemDto> orderItemsDto) {
         List<ValidationError> validationErrors = new ArrayList<>();
 
+        validateOrderItemsDto(orderItemsDto, validationErrors);
+
+        return validationErrors;
+    }
+
+    private void validateOrderItemsDto(List<OrderItemDto> orderItemsDto, List<ValidationError> validationErrors) {
         if (orderItemsDto != null) {
             if (orderItemsDto.size() > MAX_ORDER_ITEMS_AMOUNT){
                 validationErrors.add(INVALID_ORDER_ITEMS_AMOUNT);
@@ -47,7 +50,5 @@ public class OrderCreateValidator {
                 validationErrors.add(NOT_UNIQUE_GIFT_CERTIFICATES_IN_ORDER);
             }
         }
-
-        return validationErrors;
     }
 }

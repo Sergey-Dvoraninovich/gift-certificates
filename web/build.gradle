@@ -1,4 +1,5 @@
 plugins {
+    id 'org.springframework.boot' version '2.5.5'
     id 'war'
 }
 
@@ -22,6 +23,28 @@ dependencies {
     implementation project(":service")
 }
 
-war {
-    archiveName 'certificates.war'
+bootJar {
+    archiveName 'certificates.jar'
 }
+
+war {
+    archiveName 'app.war'
+}
+
+//sonarqube {
+//    properties {
+//        property 'sonar.host.url', 'http://localhost:9000'
+//        property "sonar.login", '2e90326b2e990488b6afcb5d21e482f8a87c4970'
+//    }
+//}
+//
+//jacocoTestReport {
+//    reports {
+//        xml.enabled true
+//    }
+//}
+//
+//test.finalizedBy jacocoTestReport
+//tasks.named('sonarqube').configure {
+//    dependsOn test
+//}

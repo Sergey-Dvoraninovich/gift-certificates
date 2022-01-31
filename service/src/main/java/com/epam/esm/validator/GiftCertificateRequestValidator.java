@@ -1,7 +1,6 @@
 package com.epam.esm.validator;
 
 import com.epam.esm.dto.GiftCertificateRequestDto;
-import com.epam.esm.dto.OrderItemDto;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static com.epam.esm.validator.ValidationError.*;
-import static com.epam.esm.validator.ValidationError.NOT_UNIQUE_GIFT_CERTIFICATES_IN_ORDER;
 
 @Component
 public class GiftCertificateRequestValidator {
@@ -51,7 +49,7 @@ public class GiftCertificateRequestValidator {
         if (certificateDto.getDuration() == null){
             validationErrors.add(GIFT_CERTIFICATE_DURATION_REQUIRED);
         }
-        if (validationErrors.size() == 0) {
+        if (validationErrors.isEmpty()) {
             validationErrors.addAll(validateParams(certificateDto.getName(), certificateDto.getDescription(), certificateDto.getPrice().toString(),
                     String.valueOf(certificateDto.getDuration().toDays()), certificateDto.getTagIdsDto()));
         }
@@ -61,6 +59,16 @@ public class GiftCertificateRequestValidator {
     public List<ValidationError> validateParams(String name, String description, String price, String duration, List<Long> tagIdsDto) {
         List<ValidationError> validationErrors = new ArrayList<>();
 
+        validateName(name, validationErrors);
+        validateDescription(description, validationErrors);
+        validatePrice(price, validationErrors);
+        validateDuration(duration, validationErrors);
+        validateTagIds(tagIdsDto, validationErrors);
+
+        return validationErrors;
+    }
+
+    private void validateName(String name, List<ValidationError> validationErrors) {
         if (name != null) {
             if (name.length() < NAME_MIN_LENGTH) {
                 validationErrors.add(TOO_SHORT_GIFT_CERTIFICATE_NAME);
@@ -78,7 +86,9 @@ public class GiftCertificateRequestValidator {
                 }
             }
         }
+    }
 
+    private void validateDescription(String description, List<ValidationError> validationErrors) {
         if (description != null) {
             if (description.length() < DESCRIPTION_MIN_LENGTH) {
                 validationErrors.add(TOO_SHORT_GIFT_CERTIFICATE_DESCRIPTION);
@@ -88,7 +98,7 @@ public class GiftCertificateRequestValidator {
             }
             else {
                 if (!Pattern.matches(DESCRIPTION_NO_LEADING_SYMBOLS_REGEXP, description)
-                    && Pattern.matches(DESCRIPTION_SYMBOLS_REGEXP, description)) {
+                        && Pattern.matches(DESCRIPTION_SYMBOLS_REGEXP, description)) {
                     validationErrors.add(INVALID_LEADING_OR_CLOSING_SYMBOLS_IN_GIFT_CERTIFICATE_DESCRIPTION);
                 }
                 if (!Pattern.matches(DESCRIPTION_SYMBOLS_REGEXP, description)) {
@@ -96,7 +106,9 @@ public class GiftCertificateRequestValidator {
                 }
             }
         }
+    }
 
+    private void validateDuration(String duration, List<ValidationError> validationErrors) {
         if (duration != null) {
             if (!Pattern.matches(DURATION_REGEXP, duration)) {
                 if (Pattern.matches(DURATION_VALID_UNLIMITED_REGEXP, duration)) {
@@ -108,14 +120,16 @@ public class GiftCertificateRequestValidator {
             } else {
                 Duration durationValue = Duration.ofDays(Long.parseLong(duration));
                 if (durationValue.compareTo(MIN_DURATION) < 0) {
-                     validationErrors.add(TOO_SHORT_GIFT_CERTIFICATE_DURATION);
+                    validationErrors.add(TOO_SHORT_GIFT_CERTIFICATE_DURATION);
                 }
                 if (MAX_DURATION.compareTo(durationValue) < 0) {
-                     validationErrors.add(TOO_LONG_GIFT_CERTIFICATE_DURATION);
+                    validationErrors.add(TOO_LONG_GIFT_CERTIFICATE_DURATION);
                 }
             }
         }
+    }
 
+    private void validatePrice(String price, List<ValidationError> validationErrors) {
         if (price != null) {
             if (!Pattern.matches(PRICE_REGEXP, price)) {
                 validationErrors.add(INVALID_GIFT_CERTIFICATE_PRICE_FORMAT);
@@ -129,7 +143,9 @@ public class GiftCertificateRequestValidator {
                 }
             }
         }
+    }
 
+    private void validateTagIds(List<Long> tagIdsDto, List<ValidationError> validationErrors) {
         if (tagIdsDto != null) {
             if (tagIdsDto.size() > MAX_TAGS_AMOUNT){
                 validationErrors.add(INVALID_TAGS_AMOUNT);
@@ -142,7 +158,5 @@ public class GiftCertificateRequestValidator {
                 validationErrors.add(NOT_UNIQUE_TAGS_IN_GIFT_CERTIFICATE);
             }
         }
-
-        return validationErrors;
     }
 }

@@ -1,13 +1,16 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dto.*;
+import com.epam.esm.dto.GiftCertificateFilterDto;
+import com.epam.esm.dto.GiftCertificateRequestDto;
+import com.epam.esm.dto.GiftCertificateResponseDto;
+import com.epam.esm.dto.PageDto;
+import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.mapping.GiftCertificateRequestDtoMapper;
 import com.epam.esm.dto.mapping.GiftCertificateResponseDtoMapper;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.InvalidEntityException;
 import com.epam.esm.repository.GiftCertificateRepository;
-import com.epam.esm.repository.GiftCertificateSpecificationBuilder;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.impl.GiftCertificateServiceImpl;
 import com.epam.esm.validator.GiftCertificateRequestValidator;
@@ -35,12 +38,14 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class GiftCertificateServiceTest {
+class GiftCertificateServiceTest {
     private static final Integer PAGE_NUMBER = 1;
     private static final Integer PAGE_SIZE = 10;
 
@@ -71,18 +76,16 @@ public class GiftCertificateServiceTest {
     void testFindAll() {
         GiftCertificateResponseDto certificateDto = provideGiftCertificateResponseDto();
         GiftCertificate certificate = provideGiftCertificate();
-        Specification<GiftCertificate> specification = new GiftCertificateSpecificationBuilder()
-                .certificateName(null)
-                .certificateDescription(null)
-                .certificateTagNames(null)
-                .build();
         Page<GiftCertificate> certificatesPage = new PageImpl<>(List.of(certificate));
-        when(giftCertificateRepository.findAll(specification, PageRequest.of(PAGE_NUMBER - 1, PAGE_SIZE)))
+        when(giftCertificateRepository.findAll(any(Specification.class), any(PageRequest.class)))
                 .thenReturn(certificatesPage);
         when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateDto);
         List<GiftCertificateResponseDto> expected = List.of(certificateDto);
 
-        List<GiftCertificateResponseDto> actual = giftCertificateService.findAll(new GiftCertificateFilterDto(), new PageDto(PAGE_NUMBER, PAGE_SIZE));
+        GiftCertificateFilterDto giftCertificateFilterDto = new GiftCertificateFilterDto();
+        giftCertificateFilterDto.setShowDisabled(false);
+
+        List<GiftCertificateResponseDto> actual = giftCertificateService.findAll(giftCertificateFilterDto, new PageDto(PAGE_NUMBER, PAGE_SIZE));
 
         assertEquals(expected, actual);
     }
@@ -113,8 +116,8 @@ public class GiftCertificateServiceTest {
         when(tagRepository.findById(any(Long.class))).thenReturn(Optional.empty());
 
         when(giftCertificateRepository.save(any(GiftCertificate.class))).thenReturn(certificate);
-        for (int i = 0; i < tags.size(); i++){
-            when(tagRepository.findById(tags.get(i).getId())).thenReturn(Optional.of(tags.get(i)));
+        for (Tag tag : tags) {
+            when(tagRepository.findById(tag.getId())).thenReturn(Optional.of(tag));
         }
 
         GiftCertificateResponseDto actual = giftCertificateService.create(certificateDto);
@@ -138,8 +141,8 @@ public class GiftCertificateServiceTest {
         when(giftCertificateRepository.findById(certificate.getId())).thenReturn(Optional.of(certificate));
         when(giftCertificateResponseDtoMapper.toDto(certificate)).thenReturn(certificateResponseDto);
 
-        for (int i = 0; i < tags.size(); i++){
-            when(tagRepository.findById(tags.get(i).getId())).thenReturn(Optional.of(tags.get(i)));
+        for (Tag tag : tags) {
+            when(tagRepository.findById(tag.getId())).thenReturn(Optional.of(tag));
         }
 
         when(giftCertificateRepository.save(any(GiftCertificate.class))).thenReturn(certificate);
@@ -173,11 +176,14 @@ public class GiftCertificateServiceTest {
 
     @Test
     void testUpdateNoFields() {
+        long certificateId = 1L;
         GiftCertificateRequestDto certificateRequestDto = GiftCertificateRequestDto.builder().build();
+        GiftCertificate certificate = provideGiftCertificate();
+        when(giftCertificateRepository.findById(certificateId)).thenReturn(Optional.of(certificate));
 
         try {
             giftCertificateService.update(1L, certificateRequestDto);
-            assertTrue(false);
+            fail();
         } catch (InvalidEntityException e) {
             assertTrue(true);
         }
@@ -185,30 +191,47 @@ public class GiftCertificateServiceTest {
 
     @Test
     void testUpdateSeveralFields() {
+        long certificateId = 1L;
         GiftCertificateRequestDto certificateRequestDto = GiftCertificateRequestDto.builder()
                 .name("name")
                 .description("description")
                 .build();
+        GiftCertificate certificate = provideGiftCertificate();
+        when(giftCertificateRepository.findById(certificateId)).thenReturn(Optional.of(certificate));
 
         try {
-            giftCertificateService.update(1L, certificateRequestDto);
-            assertTrue(false);
+            giftCertificateService.update(certificateId, certificateRequestDto);
+            fail();
         } catch (InvalidEntityException e) {
             assertTrue(true);
         }
     }
 
     @Test
-    void testDelete() {
+    void testDisable() {
         GiftCertificate certificate = provideGiftCertificate();
         when(giftCertificateRepository.findById(certificate.getId())).thenReturn(Optional.of(certificate));
 
-        giftCertificateService.delete(certificate.getId());
+        giftCertificateService.disable(certificate.getId());
+
+        assertFalse(certificate.getIsAvailable());
+    }
+
+    @Test
+    void testMakeAvailable() {
+        GiftCertificate certificate = provideGiftCertificate();
+        certificate.setIsAvailable(false);
+        when(giftCertificateRepository.findById(certificate.getId())).thenReturn(Optional.of(certificate));
+
+        giftCertificateService.makeAvailable(certificate.getId());
+
+        assertTrue(certificate.getIsAvailable());
     }
 
     private GiftCertificate provideGiftCertificate() {
         GiftCertificate giftCertificate = new GiftCertificate();
         giftCertificate.setId(1L);
+        giftCertificate.setIsAvailable(true);
         giftCertificate.setName("certificate first and second tags");
         giftCertificate.setDescription("certificate with first tag and second tag");
         giftCertificate.setPrice(new BigDecimal("50.00"));
@@ -250,6 +273,7 @@ public class GiftCertificateServiceTest {
     private GiftCertificateResponseDto provideGiftCertificateResponseDto() {
         GiftCertificateResponseDto certificate = GiftCertificateResponseDto.builder()
                 .id(1L)
+                .isAvailable(true)
                 .name("certificate first and second tags")
                 .description("certificate with first tag and second tag")
                 .price(new BigDecimal("50.00"))
@@ -308,10 +332,10 @@ public class GiftCertificateServiceTest {
     }
 
     private List<Long> provideTagIdsList() {
-        return Arrays.asList(new Long[]{1L, 2L});
+        return Arrays.asList(1L, 2L);
     }
 
     private List<Long> provideTagIdsForUpdateList() {
-        return Arrays.asList(new Long[]{1L, 2L, 3L});
+        return Arrays.asList(1L, 2L, 3L);
     }
 }
